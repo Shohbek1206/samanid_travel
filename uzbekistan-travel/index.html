@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SamanidTravel - Your trusted partner for Central Asia tours. Discover Uzbekistan's ancient Silk Road cities, rich culture, and warm hospitality.">
+    <meta name="keywords" content="Uzbekistan tours, Central Asia travel, Silk Road, Samarkand, Bukhara, Khiva, tour agency">
+    <title>SamanidTravel - Central Asia Tours & Uzbekistan Travel Experts</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Preloader -->
+    <div class="preloader" id="preloader">
+        <div class="preloader-content">
+            <img src="images/logo.png" alt="SamanidTravel" class="preloader-logo">
+            <div class="preloader-spinner"></div>
+        </div>
+    </div>
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-bar-left">
+                <a href="tel:+998914044459"><i class="fas fa-phone"></i> <span data-i18n="phone1">+998 91 404 44 59</span></a>
+                <a href="mailto:bexruz@samanidtraveluz.com"><i class="fas fa-envelope"></i> bexruz@samanidtraveluz.com</a>
+            </div>
+            <div class="top-bar-right">
+                <div class="payment-methods">
+                    <span data-i18n="payment">We accept:</span>
+                    <i class="fas fa-euro-sign" title="EUR"></i>
+                    <i class="fas fa-dollar-sign" title="USD"></i>
+                    <i class="fas fa-credit-card" title="Visa/Mastercard"></i>
+                </div>
+                <div class="language-selector">
+                    <button class="lang-btn active" data-lang="en">EN</button>
+                    <button class="lang-btn" data-lang="de">DE</button>
+                    <button class="lang-btn" data-lang="es">ES</button>
+                    <button class="lang-btn" data-lang="ru">RU</button>
+                    <button class="lang-btn" data-lang="zh">ZH</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="container">
+            <a href="#" class="logo">
+                <img src="images/logo.png" alt="SamanidTravel">
+            </a>
+
+            <nav class="nav" id="nav">
+                <ul class="nav-menu">
+                    <li><a href="#home" class="nav-link active" data-i18n="nav_home">Home</a></li>
+                    <li><a href="#about" class="nav-link" data-i18n="nav_about">About Us</a></li>
+                    <li><a href="#destinations" class="nav-link" data-i18n="nav_destinations">Destinations</a></li>
+                    <li><a href="#tours" class="nav-link" data-i18n="nav_tours">Tours</a></li>
+                    <li><a href="#reviews" class="nav-link" data-i18n="nav_reviews">Reviews</a></li>
+                    <li><a href="#contact" class="nav-link" data-i18n="nav_contact">Contact</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-actions">
+                <a href="#contact" class="btn btn-primary" data-i18n="book_tour">Book a Tour</a>
+                <button class="hamburger" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-slider">
+            <div class="hero-slide active" style="background-image: url('images/hero/hero-samarkand.jpg');">
+                <div class="hero-overlay"></div>
+            </div>
+            <div class="hero-slide" style="background-image: url('images/hero/hero-bukhara.jpg');">
+                <div class="hero-overlay"></div>
+            </div>
+            <div class="hero-slide" style="background-image: url('images/hero/hero-khiva.jpg');">
+                <div class="hero-overlay"></div>
+            </div>
+        </div>
+
+        <div class="hero-content">
+            <div class="container">
+                <span class="hero-subtitle" data-i18n="hero_subtitle">Welcome to SamanidTravel</span>
+                <h1 class="hero-title" data-i18n="hero_title">Discover the Heart of the Silk Road</h1>
+                <p class="hero-text" data-i18n="hero_text">Experience the magic of Uzbekistan with our expertly crafted tours. From ancient cities to warm hospitality, create unforgettable memories.</p>
+                <div class="hero-buttons">
+                    <a href="#tours" class="btn btn-primary btn-lg" data-i18n="explore_tours">Explore Tours</a>
+                    <a href="#about" class="btn btn-outline btn-lg" data-i18n="learn_more">Learn More</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-nav">
+            <button class="hero-nav-btn prev"><i class="fas fa-chevron-left"></i></button>
+            <div class="hero-dots"></div>
+            <button class="hero-nav-btn next"><i class="fas fa-chevron-right"></i></button>
+        </div>
+
+        <div class="hero-scroll">
+            <span data-i18n="scroll_down">Scroll Down</span>
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about section" id="about">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-images">
+                    <div class="about-img-main">
+                        <img src="images/destinations/samarkand-registan.jpg" alt="Registan Square Samarkand">
+                    </div>
+                    <div class="about-img-secondary">
+                        <img src="images/destinations/bukhara-kalon.jpg" alt="Bukhara Poi Kalon">
+                    </div>
+                    <div class="about-experience">
+                        <span class="exp-number">10+</span>
+                        <span class="exp-text" data-i18n="years_exp">Years of Experience</span>
+                    </div>
+                </div>
+
+                <div class="about-content">
+                    <span class="section-subtitle" data-i18n="about_subtitle">About SamanidTravel</span>
+                    <h2 class="section-title" data-i18n="about_title">Your Trusted Partner for Central Asia Adventures</h2>
+                    <p class="about-text" data-i18n="about_text1">Based in the historic city of Bukhara, SamanidTravel is a licensed tour operator specializing in authentic Central Asian experiences. Named after the great Samanid dynasty that once ruled from Bukhara, we take pride in showcasing the rich cultural heritage of Uzbekistan.</p>
+                    <p class="about-text" data-i18n="about_text2">Our team of passionate local experts creates personalized itineraries that go beyond typical tourist routes, offering you genuine connections with local traditions, cuisine, and hospitality.</p>
+
+                    <div class="about-features">
+                        <div class="about-feature">
+                            <div class="feature-icon"><i class="fas fa-award"></i></div>
+                            <div class="feature-content">
+                                <h4 data-i18n="feature1_title">Licensed Operator</h4>
+                                <p data-i18n="feature1_text">Officially registered with Uzbekistan Tourism Committee</p>
+                            </div>
+                        </div>
+                        <div class="about-feature">
+                            <div class="feature-icon"><i class="fas fa-users"></i></div>
+                            <div class="feature-content">
+                                <h4 data-i18n="feature2_title">Expert Local Guides</h4>
+                                <p data-i18n="feature2_text">Knowledgeable multilingual professionals</p>
+                            </div>
+                        </div>
+                        <div class="about-feature">
+                            <div class="feature-icon"><i class="fas fa-heart"></i></div>
+                            <div class="feature-content">
+                                <h4 data-i18n="feature3_title">Personalized Service</h4>
+                                <p data-i18n="feature3_text">Tailored tours to match your interests</p>
+                            </div>
+                        </div>
+                        <div class="about-feature">
+                            <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                            <div class="feature-content">
+                                <h4 data-i18n="feature4_title">Safe & Reliable</h4>
+                                <p data-i18n="feature4_text">Your safety and comfort is our priority</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats" style="background-image: url('images/hero/hero-samarkand.jpg');">
+        <div class="stats-overlay"></div>
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-icon"><i class="fas fa-route"></i></div>
+                    <div class="stat-number" data-count="50">0</div>
+                    <div class="stat-label" data-i18n="stat_tours">Tour Packages</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon"><i class="fas fa-smile"></i></div>
+                    <div class="stat-number" data-count="2500">0</div>
+                    <div class="stat-label" data-i18n="stat_clients">Happy Travelers</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon"><i class="fas fa-map-marker-alt"></i></div>
+                    <div class="stat-number" data-count="25">0</div>
+                    <div class="stat-label" data-i18n="stat_destinations">Destinations</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon"><i class="fas fa-star"></i></div>
+                    <div class="stat-number" data-count="98">0</div>
+                    <div class="stat-label" data-i18n="stat_satisfaction">% Satisfaction</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Destinations Section -->
+    <section class="destinations section" id="destinations">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle" data-i18n="dest_subtitle">Explore Uzbekistan</span>
+                <h2 class="section-title" data-i18n="dest_title">Popular Destinations</h2>
+                <p class="section-desc" data-i18n="dest_desc">Discover the magnificent cities of the ancient Silk Road, where history, architecture, and culture blend seamlessly.</p>
+            </div>
+
+            <div class="destinations-grid">
+                <!-- Destinations will be loaded dynamically from localStorage -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Tours Section -->
+    <section class="tours section" id="tours">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle" data-i18n="tours_subtitle">Our Tour Packages</span>
+                <h2 class="section-title" data-i18n="tours_title">Handcrafted Travel Experiences</h2>
+                <p class="section-desc" data-i18n="tours_desc">Choose from our carefully designed tour packages or let us create a personalized itinerary just for you.</p>
+            </div>
+
+            <div class="tour-filters">
+                <button class="filter-btn active" data-filter="all" data-i18n="filter_all">All Tours</button>
+                <button class="filter-btn" data-filter="classic" data-i18n="filter_classic">Classic</button>
+                <button class="filter-btn" data-filter="adventure" data-i18n="filter_adventure">Adventure</button>
+                <button class="filter-btn" data-filter="cultural" data-i18n="filter_cultural">Cultural</button>
+                <button class="filter-btn" data-filter="short" data-i18n="filter_short">Short Trips</button>
+            </div>
+
+            <div class="tours-grid" id="toursGrid">
+                <!-- Tours will be loaded dynamically from localStorage -->
+            </div>
+
+            <div class="tours-cta">
+                <p data-i18n="custom_tour_text">Don't see what you're looking for? We specialize in creating custom itineraries!</p>
+                <a href="#contact" class="btn btn-secondary btn-lg" data-i18n="request_custom">Request Custom Tour</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Us -->
+    <section class="why-us section" style="background-image: url('images/hero/hero-khiva.jpg');">
+        <div class="why-us-overlay"></div>
+        <div class="container">
+            <div class="section-header light">
+                <span class="section-subtitle" data-i18n="why_subtitle">Why Choose Us</span>
+                <h2 class="section-title" data-i18n="why_title">The SamanidTravel Difference</h2>
+            </div>
+
+            <div class="why-us-grid">
+                <div class="why-card">
+                    <div class="why-icon"><i class="fas fa-medal"></i></div>
+                    <h3 data-i18n="why1_title">Licensed & Certified</h3>
+                    <p data-i18n="why1_text">Officially registered tour operator with the State Committee for Tourism Development of Uzbekistan.</p>
+                </div>
+                <div class="why-card">
+                    <div class="why-icon"><i class="fas fa-user-friends"></i></div>
+                    <h3 data-i18n="why2_title">Small Groups</h3>
+                    <p data-i18n="why2_text">Maximum 12 people per group ensuring personalized attention and authentic experiences.</p>
+                </div>
+                <div class="why-card">
+                    <div class="why-icon"><i class="fas fa-globe-asia"></i></div>
+                    <h3 data-i18n="why3_title">Local Expertise</h3>
+                    <p data-i18n="why3_text">Born and raised in Bukhara, we know every hidden corner and secret story of our homeland.</p>
+                </div>
+                <div class="why-card">
+                    <div class="why-icon"><i class="fas fa-hand-holding-heart"></i></div>
+                    <h3 data-i18n="why4_title">24/7 Support</h3>
+                    <p data-i18n="why4_text">Round-the-clock assistance during your trip. We're always just a call away.</p>
+                </div>
+                <div class="why-card">
+                    <div class="why-icon"><i class="fas fa-credit-card"></i></div>
+                    <h3 data-i18n="why5_title">Flexible Payment</h3>
+                    <p data-i18n="why5_text">Pay in EUR, USD, or by credit card. Secure and convenient payment options.</p>
+                </div>
+                <div class="why-card">
+                    <div class="why-icon"><i class="fas fa-undo"></i></div>
+                    <h3 data-i18n="why6_title">Free Cancellation</h3>
+                    <p data-i18n="why6_text">Flexible booking policies with free cancellation up to 14 days before departure.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reviews Section -->
+    <section class="reviews section" id="reviews">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle" data-i18n="reviews_subtitle">Testimonials</span>
+                <h2 class="section-title" data-i18n="reviews_title">What Our Travelers Say</h2>
+            </div>
+
+            <div class="reviews-slider">
+                <div class="reviews-track">
+                    <div class="review-card">
+                        <div class="review-stars">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                        <p class="review-text" data-i18n="review1_text">"An absolutely magical experience! SamanidTravel exceeded all our expectations. The guides were incredibly knowledgeable and the organization was flawless. Uzbekistan is now one of our favorite destinations."</p>
+                        <div class="review-author">
+                            <div class="author-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="author-info">
+                                <h4>Thomas & Maria Schmidt</h4>
+                                <span data-i18n="review1_location">Germany</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="review-card">
+                        <div class="review-stars">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                        <p class="review-text" data-i18n="review2_text">"Professional, friendly, and truly passionate about their country. The Silk Road tour was a dream come true. Every detail was perfectly arranged, from comfortable hotels to authentic local meals."</p>
+                        <div class="review-author">
+                            <div class="author-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="author-info">
+                                <h4>James Anderson</h4>
+                                <span data-i18n="review2_location">United Kingdom</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="review-card">
+                        <div class="review-stars">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                        <p class="review-text" data-i18n="review3_text">"Viaje increible! The team at SamanidTravel made us feel like family. Their knowledge of history and culture added so much depth to our experience. Highly recommended!"</p>
+                        <div class="review-author">
+                            <div class="author-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="author-info">
+                                <h4>Carlos & Elena Rodriguez</h4>
+                                <span data-i18n="review3_location">Spain</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="review-card">
+                        <div class="review-stars">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                        <p class="review-text" data-i18n="review4_text">"Замечательное путешествие! Прекрасная организация, великолепные гиды, незабываемые впечатления. Узбекистан покорил наши сердца. Спасибо SamanidTravel!"</p>
+                        <div class="review-author">
+                            <div class="author-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="author-info">
+                                <h4>Алексей и Наталья Петровы</h4>
+                                <span data-i18n="review4_location">Russia</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="review-card">
+                        <div class="review-stars">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                        <p class="review-text" data-i18n="review5_text">"非常专业的旅行社！导游知识渊博，行程安排合理。乌兹别克斯坦是一个令人惊叹的目的地，感谢SamanidTravel让我们的旅行如此完美！"</p>
+                        <div class="review-author">
+                            <div class="author-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="author-info">
+                                <h4>王伟 & 李娜</h4>
+                                <span data-i18n="review5_location">China</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="reviews-nav">
+                    <button class="reviews-btn prev"><i class="fas fa-chevron-left"></i></button>
+                    <button class="reviews-btn next"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+
+            <div class="reviews-platforms">
+                <span data-i18n="also_on">Also find us on:</span>
+                <a href="#" class="platform"><i class="fab fa-tripadvisor"></i> TripAdvisor</a>
+                <a href="#" class="platform"><i class="fab fa-google"></i> Google Reviews</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact section" id="contact">
+        <div class="container">
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <span class="section-subtitle" data-i18n="contact_subtitle">Get In Touch</span>
+                    <h2 class="section-title" data-i18n="contact_title">Start Your Journey Today</h2>
+                    <p class="contact-desc" data-i18n="contact_desc">Ready to explore Uzbekistan? Contact us for a free consultation and let us help you plan your perfect Central Asian adventure.</p>
+
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
+                            <div class="contact-text">
+                                <h4 data-i18n="office">Our Office</h4>
+                                <p>Mustakillik st 56/1<br>Bukhara, Uzbekistan</p>
+                            </div>
+                        </div>
+
+                        <div class="contact-item">
+                            <div class="contact-icon"><i class="fas fa-phone-alt"></i></div>
+                            <div class="contact-text">
+                                <h4 data-i18n="phone">Phone</h4>
+                                <p><a href="tel:+998914044459">+998 91 404 44 59</a></p>
+                                <p><a href="tel:+998907155195">+998 90 715 51 95</a></p>
+                            </div>
+                        </div>
+
+                        <div class="contact-item">
+                            <div class="contact-icon"><i class="fas fa-envelope"></i></div>
+                            <div class="contact-text">
+                                <h4 data-i18n="email">Email</h4>
+                                <p><a href="mailto:bexruz@samanidtraveluz.com">bexruz@samanidtraveluz.com</a></p>
+                            </div>
+                        </div>
+
+                        <div class="contact-item">
+                            <div class="contact-icon"><i class="fas fa-clock"></i></div>
+                            <div class="contact-text">
+                                <h4 data-i18n="working_hours">Working Hours</h4>
+                                <p data-i18n="hours_text">Mon - Sat: 9:00 - 18:00<br>Sun: By appointment</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="contact-social">
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-telegram-plane"></i></a>
+                        <a href="https://wa.me/998914044459" class="social-link"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+
+                    <div class="payment-info">
+                        <h4 data-i18n="payment_methods">Payment Methods</h4>
+                        <div class="payment-icons">
+                            <div class="payment-icon">
+                                <i class="fas fa-euro-sign"></i>
+                                <span>EUR</span>
+                            </div>
+                            <div class="payment-icon">
+                                <i class="fas fa-dollar-sign"></i>
+                                <span>USD</span>
+                            </div>
+                            <div class="payment-icon">
+                                <i class="fab fa-cc-visa"></i>
+                                <span>Visa</span>
+                            </div>
+                            <div class="payment-icon">
+                                <i class="fab fa-cc-mastercard"></i>
+                                <span>Mastercard</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="contact-form-wrapper">
+                    <form class="contact-form" id="contactForm">
+                        <h3 data-i18n="form_title">Request Information</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="name" data-i18n="form_name">Full Name *</label>
+                                <input type="text" id="name" name="name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email" data-i18n="form_email">Email *</label>
+                                <input type="email" id="email" name="email" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="phone" data-i18n="form_phone">Phone</label>
+                                <input type="tel" id="phone" name="phone">
+                            </div>
+                            <div class="form-group">
+                                <label for="country" data-i18n="form_country">Country</label>
+                                <input type="text" id="country" name="country">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="travelers" data-i18n="form_travelers">Number of Travelers</label>
+                                <select id="travelers" name="travelers">
+                                    <option value="1">1</option>
+                                    <option value="2" selected>2</option>
+                                    <option value="3-5">3-5</option>
+                                    <option value="6-10">6-10</option>
+                                    <option value="10+">10+</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="travelDate" data-i18n="form_date">Preferred Travel Date</label>
+                                <input type="date" id="travelDate" name="travelDate">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="tour" data-i18n="form_tour">Interested In</label>
+                            <select id="tour" name="tour">
+                                <option value="" data-i18n="select_tour">Select a tour...</option>
+                                <option value="grand-discovery" data-i18n="tour1_title">Grand Uzbekistan Discovery</option>
+                                <option value="treasures" data-i18n="tour2_title">Samarkand & Bukhara Treasures</option>
+                                <option value="aral-expedition" data-i18n="tour3_title">Aral Sea Expedition</option>
+                                <option value="silk-road" data-i18n="tour4_title">Complete Silk Road Journey</option>
+                                <option value="crafts" data-i18n="tour5_title">Crafts & Traditions Tour</option>
+                                <option value="express" data-i18n="tour6_title">Samarkand Express</option>
+                                <option value="custom" data-i18n="custom_tour">Custom Tour</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="message" data-i18n="form_message">Your Message</label>
+                            <textarea id="message" name="message" rows="4" placeholder="Tell us about your travel preferences, interests, or any questions..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg btn-block" data-i18n="send_inquiry">Send Inquiry</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Destination Modal -->
+    <div class="destination-modal" id="destinationModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-container">
+            <button class="modal-close" id="modalClose"><i class="fas fa-times"></i></button>
+            <div class="modal-header" id="modalHeader">
+                <img src="" alt="" id="modalImage">
+                <div class="modal-header-overlay"></div>
+                <div class="modal-header-content">
+                    <h2 id="modalTitle"></h2>
+                    <p id="modalSubtitle"></p>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="modal-section">
+                    <h3><i class="fas fa-history"></i> <span data-i18n="history">History</span></h3>
+                    <p id="modalHistory"></p>
+                </div>
+                <div class="modal-section">
+                    <h3><i class="fas fa-landmark"></i> <span data-i18n="attractions">Main Attractions</span></h3>
+                    <ul id="modalAttractions"></ul>
+                </div>
+                <div class="modal-section">
+                    <h3><i class="fas fa-info-circle"></i> <span data-i18n="facts">Interesting Facts</span></h3>
+                    <ul id="modalFacts"></ul>
+                </div>
+                <div class="modal-cta">
+                    <a href="#contact" class="btn btn-primary" id="modalCta" data-i18n="plan_trip">Plan Your Trip</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-top">
+            <div class="container">
+                <div class="footer-grid">
+                    <div class="footer-col">
+                        <img src="images/logo.png" alt="SamanidTravel" class="footer-logo">
+                        <p class="footer-desc" data-i18n="footer_desc">SamanidTravel is a licensed tour operator based in Bukhara, Uzbekistan, specializing in authentic Central Asian travel experiences.</p>
+                        <div class="footer-social">
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#"><i class="fab fa-telegram-plane"></i></a>
+                            <a href="https://wa.me/998914044459"><i class="fab fa-whatsapp"></i></a>
+                        </div>
+                    </div>
+
+                    <div class="footer-col">
+                        <h4 data-i18n="footer_tours">Our Tours</h4>
+                        <ul>
+                            <li><a href="#tours" data-i18n="tour1_title">Grand Uzbekistan Discovery</a></li>
+                            <li><a href="#tours" data-i18n="tour2_title">Samarkand & Bukhara Treasures</a></li>
+                            <li><a href="#tours" data-i18n="tour3_title">Aral Sea Expedition</a></li>
+                            <li><a href="#tours" data-i18n="tour4_title">Complete Silk Road Journey</a></li>
+                            <li><a href="#tours" data-i18n="custom_tour">Custom Tours</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-col">
+                        <h4 data-i18n="footer_destinations">Destinations</h4>
+                        <ul>
+                            <li><a href="#" class="dest-link" data-dest="samarkand" data-i18n="dest_samarkand">Samarkand</a></li>
+                            <li><a href="#" class="dest-link" data-dest="bukhara" data-i18n="dest_bukhara">Bukhara</a></li>
+                            <li><a href="#" class="dest-link" data-dest="khiva" data-i18n="dest_khiva">Khiva</a></li>
+                            <li><a href="#" class="dest-link" data-dest="tashkent" data-i18n="dest_tashkent">Tashkent</a></li>
+                            <li><a href="#" class="dest-link" data-dest="fergana" data-i18n="dest_fergana">Fergana Valley</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-col">
+                        <h4 data-i18n="footer_contact">Contact Us</h4>
+                        <ul class="footer-contact">
+                            <li><i class="fas fa-map-marker-alt"></i> Mustakillik st 56/1, Bukhara</li>
+                            <li><i class="fas fa-phone"></i> <a href="tel:+998914044459">+998 91 404 44 59</a></li>
+                            <li><i class="fas fa-phone"></i> <a href="tel:+998907155195">+998 90 715 51 95</a></li>
+                            <li><i class="fas fa-envelope"></i> <a href="mailto:bexruz@samanidtraveluz.com">bexruz@samanidtraveluz.com</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="container">
+                <p>&copy; 2024 SamanidTravel. <span data-i18n="rights">All rights reserved.</span></p>
+                <div class="footer-payment">
+                    <span data-i18n="payment">We accept:</span>
+                    <i class="fas fa-euro-sign"></i>
+                    <i class="fas fa-dollar-sign"></i>
+                    <i class="fab fa-cc-visa"></i>
+                    <i class="fab fa-cc-mastercard"></i>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top -->
+    <button class="back-to-top" id="backToTop">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <!-- WhatsApp Float -->
+    <a href="https://wa.me/998914044459" class="whatsapp-float" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+        <span data-i18n="chat_whatsapp">Chat with us</span>
+    </a>
+
+    <!-- Scripts -->
+    <script src="js/translations.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

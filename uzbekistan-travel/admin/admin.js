@@ -1,0 +1,2868 @@
+// ========================================
+// UZBEKISTAN TRAVEL - ADMIN DASHBOARD JS
+// ========================================
+
+document.addEventListener('DOMContentLoaded', function() {
+
+    // ========== Default Tours Data ==========
+    const defaultToursData = [
+        { id: 1, name: 'Grand Uzbekistan Discovery', duration: '8 Days', category: 'classic', image: 'images/destinations/samarkand-registan.jpg', badge: 'Best Seller', badgeType: 'best', highlights: ['4 Cities', 'Meals Included', 'All Transfers'], description: 'Explore all major Silk Road cities - Tashkent, Samarkand, Bukhara, and Khiva in one comprehensive journey.', price: '', currency: 'EUR' },
+        { id: 2, name: 'Samarkand & Bukhara Treasures', duration: '5 Days', category: 'cultural', image: 'images/destinations/bukhara-kalon.jpg', badge: 'Popular', badgeType: 'cultural', highlights: ['2 Cities', 'Private Guide', '4★ Hotels'], description: 'Deep dive into the two most magnificent cities of Central Asia with expert local guides.', price: '', currency: 'EUR' },
+        { id: 3, name: 'Aral Sea Expedition', duration: '6 Days', category: 'adventure', image: 'images/destinations/nukus-aral.jpg', badge: 'Unique', badgeType: 'adventure', highlights: ['Yurt Stay', 'Photo Tour', '4x4 Safari'], description: 'Journey to the mysterious Aral Sea, explore Karakalpakstan and witness the ship graveyard.', price: '', currency: 'EUR' },
+        { id: 4, name: 'Complete Silk Road Journey', duration: '10 Days', category: 'classic', image: 'images/destinations/khiva-ichankala.jpg', badge: '', badgeType: '', highlights: ['6 Cities', 'Speed Train', 'All Inclusive'], description: 'The ultimate Central Asian adventure covering all UNESCO sites and hidden gems of Uzbekistan.', price: '', currency: 'EUR' },
+        { id: 5, name: 'Crafts & Traditions Tour', duration: '7 Days', category: 'cultural', image: 'images/destinations/fergana-crafts.jpg', badge: '', badgeType: '', highlights: ['Workshops', 'Homestay', 'Cooking Class'], description: 'Experience traditional silk weaving, ceramics, and paper making in the Fergana Valley workshops.', price: '', currency: 'EUR' },
+        { id: 6, name: 'Samarkand Express', duration: '3 Days', category: 'short', image: 'images/destinations/tashkent-minor.jpg', badge: 'Weekend', badgeType: 'short', highlights: ['Speed Train', 'VIP Service', 'Flexible'], description: 'Perfect weekend getaway to explore the highlights of Samarkand - ideal for business travelers.', price: '', currency: 'EUR' }
+    ];
+
+    // Initialize tours in localStorage if not exists
+    if (!localStorage.getItem('tours')) {
+        localStorage.setItem('tours', JSON.stringify(defaultToursData));
+    }
+
+    // Get tours from localStorage (editable)
+    function getToursData() {
+        return JSON.parse(localStorage.getItem('tours')) || defaultToursData;
+    }
+
+    // Save tours to localStorage
+    function saveToursData(tours) {
+        localStorage.setItem('tours', JSON.stringify(tours));
+    }
+
+    // For backward compatibility
+    let toursData = getToursData();
+
+    // ========== Default Destinations Data ==========
+    const defaultDestinationsData = [
+        {
+            id: 'samarkand',
+            name: 'Samarkand',
+            subtitle: 'The Pearl of the East',
+            description: 'The jewel of the Silk Road featuring the iconic Registan Square, Gur-e-Amir mausoleum, and Bibi-Khanym mosque.',
+            image: '../images/destinations/samarkand-registan.jpg',
+            tours: 4,
+            attractions: ['Registan Square', 'Gur-e-Amir Mausoleum', 'Shah-i-Zinda', 'Bibi-Khanym Mosque', 'Ulugh Beg Observatory']
+        },
+        {
+            id: 'bukhara',
+            name: 'Bukhara',
+            subtitle: 'The Noble City',
+            description: 'A living museum with 140+ architectural monuments, ancient trading domes, and the majestic Kalyan Minaret.',
+            image: '../images/destinations/bukhara-kalon.jpg',
+            tours: 3,
+            attractions: ['Poi Kalyan Complex', 'Ark Fortress', 'Lyab-i-Hauz', 'Chor-Minor', 'Ismail Samani Mausoleum']
+        },
+        {
+            id: 'khiva',
+            name: 'Khiva',
+            subtitle: 'The Museum City',
+            description: 'Step into a fairy tale in Ichan-Kala, the perfectly preserved inner city that transports you back in time.',
+            image: '../images/destinations/khiva-ichankala.jpg',
+            tours: 2,
+            attractions: ['Ichan-Kala', 'Kalta Minor Minaret', 'Islam Khoja Complex', 'Tash-Khauli Palace', 'Juma Mosque']
+        },
+        {
+            id: 'tashkent',
+            name: 'Tashkent',
+            subtitle: 'The Capital of the Sun',
+            description: 'The modern capital blending Soviet architecture, Islamic heritage, and contemporary culture.',
+            image: '../images/destinations/tashkent-minor.jpg',
+            tours: 3,
+            attractions: ['Hazrati Imam Complex', 'Minor Mosque', 'Chorsu Bazaar', 'Tashkent Metro', 'Amir Timur Square']
+        },
+        {
+            id: 'fergana',
+            name: 'Fergana Valley',
+            subtitle: 'The Garden of Central Asia',
+            description: 'The cradle of Uzbek craftsmanship - silk weaving, ceramics, and traditional artistry.',
+            image: '../images/destinations/fergana-crafts.jpg',
+            tours: 2,
+            attractions: ['Rishtan Ceramics', 'Margilan Silk', 'Kokand Palace', 'Andijan', 'Chust Knives']
+        },
+        {
+            id: 'nukus',
+            name: 'Nukus & Aral Sea',
+            subtitle: 'Art & Desert',
+            description: 'Home to the famous Savitsky Museum and gateway to the mysterious Aral Sea.',
+            image: '../images/destinations/nukus-aral.jpg',
+            tours: 1,
+            attractions: ['Savitsky Museum', 'Aral Sea Ship Graveyard', 'Mizdakhan Necropolis', 'Ayaz-Kala Fortress']
+        }
+    ];
+
+    // Initialize destinations in localStorage if not exists
+    if (!localStorage.getItem('destinations')) {
+        localStorage.setItem('destinations', JSON.stringify(defaultDestinationsData));
+    }
+
+    // Get destinations from localStorage (editable)
+    function getDestinationsData() {
+        return JSON.parse(localStorage.getItem('destinations')) || defaultDestinationsData;
+    }
+
+    // Save destinations to localStorage
+    function saveDestinationsData(destinations) {
+        localStorage.setItem('destinations', JSON.stringify(destinations));
+    }
+
+    // ========== Company Settings ==========
+    const companySettings = {
+        name: 'Samanid Travel',
+        email: 'bexruz@samanidtraveluz.com',
+        phone1: '+998 91 404 44 59',
+        phone2: '+998 90 715 51 95',
+        address: 'Mustakillik st 56/1, Bukhara, Uzbekistan',
+        website: 'www.samanidtraveluz.com',
+        currencies: ['EUR', 'USD'],
+        paymentMethods: ['Visa', 'Mastercard', 'Bank Transfer']
+    };
+
+    // ========== Payment Status Flow ==========
+    // new → payment_pending → paid → completed
+    const paymentStatuses = {
+        'new': { label: 'New', color: '#3498db', next: 'payment_pending' },
+        'payment_pending': { label: 'Payment Pending', color: '#f39c12', next: 'paid' },
+        'paid': { label: 'Paid', color: '#27ae60', next: 'completed' },
+        'completed': { label: 'Tour Completed', color: '#1a5f7a', next: null },
+        'cancelled': { label: 'Cancelled', color: '#e74c3c', next: null }
+    };
+
+    // Reviews will be loaded from localStorage (admin can add real reviews)
+    if (!localStorage.getItem('reviews')) {
+        localStorage.setItem('reviews', JSON.stringify([]));
+    }
+
+    // Initialize empty bookings if none exist (no fake data)
+    if (!localStorage.getItem('bookings')) {
+        localStorage.setItem('bookings', JSON.stringify([]));
+    }
+
+    // Initialize empty subscribers if none exist (no fake data)
+    if (!localStorage.getItem('subscribers')) {
+        localStorage.setItem('subscribers', JSON.stringify([]));
+    }
+
+    // ========== Elements ==========
+    const loginScreen = document.getElementById('loginScreen');
+    const dashboard = document.getElementById('dashboard');
+    const loginForm = document.getElementById('loginForm');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const sidebar = document.getElementById('sidebar');
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebarNavItems = document.querySelectorAll('.sidebar-nav li');
+    const pages = document.querySelectorAll('.page');
+    const modal = document.getElementById('modal');
+    const addTourBtn = document.getElementById('addTourBtn');
+    const addDestBtn = document.getElementById('addDestBtn');
+
+    // ========== Authentication ==========
+    const ADMIN_CREDENTIALS = {
+        username: 'admin',
+        password: 'admin123'
+    };
+
+    // Check if already logged in
+    if (localStorage.getItem('adminLoggedIn') === 'true') {
+        showDashboard();
+    }
+
+    loginForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
+            localStorage.setItem('adminLoggedIn', 'true');
+            showDashboard();
+        } else {
+            alert('Invalid credentials! Use admin / admin123');
+        }
+    });
+
+    logoutBtn.addEventListener('click', function() {
+        localStorage.removeItem('adminLoggedIn');
+        loginScreen.style.display = 'flex';
+        dashboard.style.display = 'none';
+    });
+
+    // ========== Add Tour Button ==========
+    if (addTourBtn) {
+        addTourBtn.addEventListener('click', function() {
+            addNewTour();
+        });
+    }
+
+    // ========== Add Destination Button ==========
+    if (addDestBtn) {
+        addDestBtn.addEventListener('click', function() {
+            addNewDestination();
+        });
+    }
+
+    function showDashboard() {
+        loginScreen.style.display = 'none';
+        dashboard.style.display = 'flex';
+        initDashboard();
+    }
+
+    // ========== Sidebar Toggle ==========
+    menuToggle.addEventListener('click', function() {
+        sidebar.classList.toggle('collapsed');
+        if (window.innerWidth <= 992) {
+            sidebar.classList.toggle('active');
+        }
+    });
+
+    // ========== Page Navigation ==========
+    sidebarNavItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const pageName = this.getAttribute('data-page');
+            navigateToPage(pageName);
+        });
+    });
+
+    document.querySelectorAll('.view-all').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const pageName = this.getAttribute('data-page');
+            navigateToPage(pageName);
+        });
+    });
+
+    function navigateToPage(pageName) {
+        sidebarNavItems.forEach(item => item.classList.remove('active'));
+        document.querySelector(`[data-page="${pageName}"]`).classList.add('active');
+
+        pages.forEach(page => page.classList.remove('active'));
+        document.getElementById(`page-${pageName}`).classList.add('active');
+
+        if (window.innerWidth <= 992) {
+            sidebar.classList.remove('active');
+        }
+
+        // Load page data
+        switch(pageName) {
+            case 'bookings':
+                loadBookings();
+                break;
+            case 'tours':
+                loadTours();
+                break;
+            case 'destinations':
+                loadDestinations();
+                break;
+            case 'customers':
+                loadCustomers();
+                break;
+            case 'subscribers':
+                loadSubscribers();
+                break;
+            case 'reviews':
+                loadReviews();
+                break;
+            case 'messages':
+                loadMessages();
+                break;
+        }
+    }
+
+    // ========== Settings Tabs ==========
+    const settingsTabs = document.querySelectorAll('.settings-sidebar li');
+    settingsTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            settingsTabs.forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+
+            document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(`tab-${this.getAttribute('data-tab')}`).classList.add('active');
+        });
+    });
+
+    // ========== Initialize Dashboard ==========
+    function initDashboard() {
+        loadOverviewStats();
+        loadRecentBookings();
+        initCharts();
+        updateMessageBadge();
+    }
+
+    function loadOverviewStats() {
+        const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+        const inquiries = JSON.parse(localStorage.getItem('inquiries')) || [];
+        const subscribers = JSON.parse(localStorage.getItem('subscribers')) || [];
+
+        // Combine bookings and inquiries for total count
+        const totalInquiries = bookings.length + inquiries.length;
+
+        // Calculate total customers (sum of all travelers)
+        const totalCustomers = bookings.reduce((sum, b) => {
+            const travelers = parseInt(b.travelers) || 1;
+            return sum + travelers;
+        }, 0) + inquiries.reduce((sum, i) => {
+            const travelers = parseInt(i.travelers) || 1;
+            return sum + travelers;
+        }, 0);
+
+        document.getElementById('totalBookings').textContent = totalInquiries;
+        document.getElementById('totalRevenue').textContent = '$' + (totalInquiries * 1500).toLocaleString();
+        document.getElementById('totalCustomers').textContent = totalCustomers;
+    }
+
+    function loadRecentBookings() {
+        const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+        const inquiries = JSON.parse(localStorage.getItem('inquiries')) || [];
+        const tbody = document.getElementById('recentBookingsTable');
+        tbody.innerHTML = '';
+
+        // Combine and sort by date
+        const allBookings = [
+            ...bookings.map(b => ({ ...b, source: 'booking' })),
+            ...inquiries.map(i => ({
+                ...i,
+                fullName: i.name || i.fullName,
+                tourType: i.tour || 'custom',
+                travelDate: i.travelDate || i.date,
+                source: 'inquiry'
+            }))
+        ].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5);
+
+        allBookings.forEach(booking => {
+            const tourName = getTourName(booking.tourType);
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>
+                    <span class="source-badge ${booking.source}">${booking.source === 'inquiry' ? '<i class="fas fa-envelope"></i>' : '<i class="fas fa-calendar"></i>'}</span>
+                    ${booking.fullName}
+                </td>
+                <td>${tourName}</td>
+                <td>${formatDate(booking.travelDate)}</td>
+                <td><span class="status-badge ${booking.status}">${capitalizeFirst(booking.status)}</span></td>
+                <td>
+                    <div class="action-btns">
+                        <button class="action-btn view" onclick="${booking.source === 'inquiry' ? `viewInquiry(${booking.id})` : `viewBooking(${booking.id})`}"><i class="fas fa-eye"></i></button>
+                    </div>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // ========== Charts ==========
+    function initCharts() {
+        const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+        const inquiries = JSON.parse(localStorage.getItem('inquiries')) || [];
+        const allData = [...bookings, ...inquiries];
+
+        // Calculate real weekly data
+        const weeklyData = getWeeklyData(allData);
+
+        // Booking Chart - Real data from localStorage
+        const bookingCtx = document.getElementById('bookingChart');
+        if (bookingCtx) {
+            new Chart(bookingCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Inquiries',
+                        data: weeklyData,
+                        borderColor: '#1a5f7a',
+                        backgroundColor: 'rgba(26, 95, 122, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        // Category Chart - Real data from inquiries
+        const categoryData = getCategoryData(allData);
+        const categoryCtx = document.getElementById('categoryChart');
+        if (categoryCtx) {
+            new Chart(categoryCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: categoryData.labels.length > 0 ? categoryData.labels : ['No Data'],
+                    datasets: [{
+                        data: categoryData.data.length > 0 ? categoryData.data : [1],
+                        backgroundColor: categoryData.data.length > 0 ? ['#1a5f7a', '#c9a227', '#27ae60', '#9b59b6', '#e74c3c', '#3498db'] : ['#ddd']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
+
+        // Analytics Charts
+        initAnalyticsCharts();
+    }
+
+    // Get weekly inquiry data
+    function getWeeklyData(data) {
+        const weekData = [0, 0, 0, 0, 0, 0, 0]; // Mon-Sun
+        const now = new Date();
+        const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+        data.forEach(item => {
+            const itemDate = new Date(item.date);
+            if (itemDate >= weekAgo && itemDate <= now) {
+                const dayIndex = (itemDate.getDay() + 6) % 7; // Convert to Mon=0
+                weekData[dayIndex]++;
+            }
+        });
+
+        return weekData;
+    }
+
+    // Get category distribution from inquiries
+    function getCategoryData(data) {
+        const categories = {};
+        data.forEach(item => {
+            const tour = item.tour || item.tourType || 'other';
+            categories[tour] = (categories[tour] || 0) + 1;
+        });
+
+        const sorted = Object.entries(categories).sort((a, b) => b[1] - a[1]).slice(0, 6);
+        return {
+            labels: sorted.map(([key]) => formatTourLabel(key)),
+            data: sorted.map(([, value]) => value)
+        };
+    }
+
+    function formatTourLabel(tour) {
+        if (!tour) return 'Other';
+        return tour.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ').substring(0, 20);
+    }
+
+    function initAnalyticsCharts() {
+        const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+        const inquiries = JSON.parse(localStorage.getItem('inquiries')) || [];
+        const allData = [...bookings, ...inquiries];
+
+        // Monthly data for traffic chart
+        const monthlyData = getMonthlyData(allData);
+
+        // Traffic Chart - Real monthly data
+        const trafficCtx = document.getElementById('trafficChart');
+        if (trafficCtx) {
+            new Chart(trafficCtx, {
+                type: 'line',
+                data: {
+                    labels: monthlyData.labels,
+                    datasets: [{
+                        label: 'Inquiries',
+                        data: monthlyData.data,
+                        borderColor: '#1a5f7a',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        // Countries Chart - Real data from bookings
+        const countryData = getCountryData(allData);
+        const countriesCtx = document.getElementById('countriesChart');
+        if (countriesCtx) {
+            new Chart(countriesCtx, {
+                type: 'bar',
+                data: {
+                    labels: countryData.labels.length > 0 ? countryData.labels : ['No Data'],
+                    datasets: [{
+                        label: 'Inquiries',
+                        data: countryData.data.length > 0 ? countryData.data : [0],
+                        backgroundColor: '#1a5f7a'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y'
+                }
+            });
+        }
+
+        // Revenue Chart - Calculate from paid bookings
+        const revenueData = getRevenueData(bookings);
+        const revenueCtx = document.getElementById('revenueChart');
+        if (revenueCtx) {
+            new Chart(revenueCtx, {
+                type: 'bar',
+                data: {
+                    labels: revenueData.labels.length > 0 ? revenueData.labels : ['No Data'],
+                    datasets: [{
+                        label: 'Revenue',
+                        data: revenueData.data.length > 0 ? revenueData.data : [0],
+                        backgroundColor: ['#1a5f7a', '#c9a227', '#27ae60', '#9b59b6', '#e74c3c']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        // Sources Chart - Based on inquiry sources
+        const sourceData = getSourceData(allData);
+        const sourcesCtx = document.getElementById('sourcesChart');
+        if (sourcesCtx) {
+            new Chart(sourcesCtx, {
+                type: 'pie',
+                data: {
+                    labels: sourceData.labels.length > 0 ? sourceData.labels : ['No Data'],
+                    datasets: [{
+                        data: sourceData.data.length > 0 ? sourceData.data : [1],
+                        backgroundColor: sourceData.data.length > 0 ? ['#1a5f7a', '#c9a227', '#27ae60', '#9b59b6', '#e74c3c'] : ['#ddd']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
+    }
+
+    // Get monthly data for last 6 months
+    function getMonthlyData(data) {
+        const months = [];
+        const counts = [];
+        const now = new Date();
+
+        for (let i = 5; i >= 0; i--) {
+            const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+            months.push(date.toLocaleString('en', { month: 'short' }));
+
+            const count = data.filter(item => {
+                const itemDate = new Date(item.date);
+                return itemDate.getMonth() === date.getMonth() && itemDate.getFullYear() === date.getFullYear();
+            }).length;
+            counts.push(count);
+        }
+
+        return { labels: months, data: counts };
+    }
+
+    // Get country distribution
+    function getCountryData(data) {
+        const countries = {};
+        data.forEach(item => {
+            const country = item.country || 'Unknown';
+            countries[country] = (countries[country] || 0) + 1;
+        });
+
+        const sorted = Object.entries(countries).sort((a, b) => b[1] - a[1]).slice(0, 6);
+        return {
+            labels: sorted.map(([key]) => getCountryName(key)),
+            data: sorted.map(([, value]) => value)
+        };
+    }
+
+    // Get revenue by tour type
+    function getRevenueData(bookings) {
+        const revenue = {};
+        bookings.filter(b => b.status === 'paid' || b.status === 'completed').forEach(b => {
+            const tour = b.tourType || 'other';
+            const price = parseFloat(b.price) || 0;
+            revenue[tour] = (revenue[tour] || 0) + price;
+        });
+
+        const sorted = Object.entries(revenue).sort((a, b) => b[1] - a[1]).slice(0, 5);
+        return {
+            labels: sorted.map(([key]) => getTourName(key)),
+            data: sorted.map(([, value]) => value)
+        };
+    }
+
+    // Get source distribution
+    function getSourceData(data) {
+        const sources = { 'Website': 0, 'Direct': 0 };
+        data.forEach(item => {
+            if (item.source === 'inquiry') {
+                sources['Website']++;
+            } else {
+                sources['Direct']++;
+            }
+        });
+
+        const sorted = Object.entries(sources).filter(([, v]) => v > 0);
+        return {
+            labels: sorted.map(([key]) => key),
+            data: sorted.map(([, value]) => value)
+        };
+    }
+
+    // ========== Load Bookings ==========
+    function loadBookings() {
+        const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+        const inquiries = JSON.parse(localStorage.getItem('inquiries')) || [];
+        const tbody = document.getElementById('bookingsTable');
+        tbody.innerHTML = '';
+
+        // Combine bookings and inquiries
+        const allBookings = [
+            ...bookings.map(b => ({ ...b, source: 'booking' })),
+            ...inquiries.map(i => ({
+                ...i,
+                fullName: i.name || i.fullName,
+                tourType: i.tour || 'custom',
+                source: 'inquiry'
+            }))
+        ].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        allBookings.forEach(booking => {
+            const tourName = getTourName(booking.tourType);
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><input type="checkbox" data-id="${booking.id}"></td>
+                <td>
+                    <span class="source-icon ${booking.source}" title="${booking.source === 'inquiry' ? 'Website Inquiry' : 'Direct Booking'}">
+                        ${booking.source === 'inquiry' ? '<i class="fas fa-globe"></i>' : '<i class="fas fa-calendar-check"></i>'}
+                    </span>
+                    #${booking.id}
+                </td>
+                <td>${booking.fullName}</td>
+                <td>${booking.email}</td>
+                <td>${tourName}</td>
+                <td>${formatDate(booking.travelDate)}</td>
+                <td>${booking.travelers || 'N/A'}</td>
+                <td><span class="status-badge ${booking.status}">${capitalizeFirst(booking.status)}</span></td>
+                <td>
+                    <div class="action-btns">
+                        <button class="action-btn view" onclick="${booking.source === 'inquiry' ? `viewInquiry(${booking.id})` : `viewBooking(${booking.id})`}"><i class="fas fa-eye"></i></button>
+                        <button class="action-btn edit" onclick="${booking.source === 'inquiry' ? `editInquiry(${booking.id})` : `editBooking(${booking.id})`}"><i class="fas fa-edit"></i></button>
+                        <button class="action-btn delete" onclick="${booking.source === 'inquiry' ? `deleteInquiry(${booking.id})` : `deleteBooking(${booking.id})`}"><i class="fas fa-trash"></i></button>
+                    </div>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        document.getElementById('showingCount').textContent = allBookings.length;
+        document.getElementById('totalCount').textContent = allBookings.length;
+    }
+
+    // ========== Helper: Get image URL for admin panel ==========
+    function getAdminImageUrl(imagePath) {
+        // If it's a base64 image, return as is
+        if (imagePath && imagePath.startsWith('data:')) {
+            return imagePath;
+        }
+        // If it's a relative path without ../, add it for admin panel
+        if (imagePath && !imagePath.startsWith('../') && !imagePath.startsWith('http')) {
+            return '../' + imagePath;
+        }
+        return imagePath;
+    }
+
+    // ========== Load Tours ==========
+    function loadTours() {
+        // Refresh tours data from localStorage
+        toursData = getToursData();
+
+        const grid = document.getElementById('toursGrid');
+        grid.innerHTML = '';
+
+        // Get inquiries count per tour
+        const inquiries = JSON.parse(localStorage.getItem('inquiries')) || [];
+
+        toursData.forEach(tour => {
+            const tourInquiries = inquiries.filter(i => i.tour && i.tour.includes(tour.name.toLowerCase().replace(/\s+/g, '-'))).length;
+            const imageUrl = getAdminImageUrl(tour.image);
+            const priceDisplay = tour.price && tour.price !== 'none' ? `${tour.currency === 'USD' ? '$' : '€'}${tour.price}` : '<span style="color:#999; font-style:italic;">Hidden</span>';
+            const card = document.createElement('div');
+            card.className = 'tour-card-admin';
+            card.innerHTML = `
+                <img src="${imageUrl}" alt="${tour.name}" onerror="this.src='https://via.placeholder.com/400x250?text=${encodeURIComponent(tour.name)}'">
+                <div class="card-body">
+                    <div class="tour-badge-admin ${tour.category}">${capitalizeFirst(tour.category)}</div>
+                    <h3>${tour.name}</h3>
+                    <p class="tour-desc-admin">${tour.description}</p>
+                    <div class="tour-meta">
+                        <span><i class="fas fa-clock"></i> ${tour.duration}</span>
+                        <span><i class="fas fa-tag"></i> ${priceDisplay}</span>
+                        <span><i class="fas fa-envelope"></i> ${tourInquiries} inquiries</span>
+                    </div>
+                    <div class="card-meta">
+                        <span class="category-tag">${tour.category}</span>
+                        <div class="action-btns">
+                            <button class="action-btn view" onclick="viewTour(${tour.id})"><i class="fas fa-eye"></i></button>
+                            <button class="action-btn edit" onclick="editTour(${tour.id})"><i class="fas fa-edit"></i></button>
+                            <button class="action-btn delete" onclick="deleteTour(${tour.id})"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    // ========== Load Destinations ==========
+    function loadDestinations() {
+        const grid = document.getElementById('destinationsGrid');
+        grid.innerHTML = '';
+
+        const destinations = getDestinationsData();
+        destinations.forEach(dest => {
+            const card = document.createElement('div');
+            card.className = 'dest-card-admin';
+            card.innerHTML = `
+                <img src="${dest.image}" alt="${dest.name}" onerror="this.src='https://via.placeholder.com/400x250?text=${dest.name}'">
+                <div class="card-body">
+                    <div class="dest-subtitle">${dest.subtitle}</div>
+                    <h3>${dest.name}</h3>
+                    <p>${dest.description}</p>
+                    <div class="dest-attractions">
+                        ${dest.attractions.slice(0, 3).map(a => `<span class="attraction-tag"><i class="fas fa-landmark"></i> ${a}</span>`).join('')}
+                        ${dest.attractions.length > 3 ? `<span class="more-tag">+${dest.attractions.length - 3} more</span>` : ''}
+                    </div>
+                    <div class="card-meta">
+                        <span><i class="fas fa-route"></i> ${dest.tours} tours</span>
+                        <div class="action-btns">
+                            <button class="action-btn view" onclick="viewDestination('${dest.id}')"><i class="fas fa-eye"></i></button>
+                            <button class="action-btn edit" onclick="editDestination('${dest.id}')"><i class="fas fa-edit"></i></button>
+                            <button class="action-btn delete" onclick="deleteDestination('${dest.id}')" title="Delete"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    // ========== Load Customers ==========
+    function loadCustomers() {
+        const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+        const tbody = document.getElementById('customersTable');
+        tbody.innerHTML = '';
+
+        // Group by email to get unique customers
+        const customers = {};
+        bookings.forEach(b => {
+            if (!customers[b.email]) {
+                customers[b.email] = {
+                    ...b,
+                    bookingCount: 1,
+                    totalSpent: parseFloat(b.price) || 0,
+                    bookings: [b]
+                };
+            } else {
+                customers[b.email].bookingCount++;
+                customers[b.email].totalSpent += parseFloat(b.price) || 0;
+                customers[b.email].bookings.push(b);
+            }
+        });
+
+        Object.values(customers).forEach(customer => {
+            const tr = document.createElement('tr');
+            const escapedName = customer.fullName.replace(/'/g, "\\'");
+            const escapedEmail = customer.email.replace(/'/g, "\\'");
+            tr.innerHTML = `
+                <td>${customer.fullName}</td>
+                <td>${customer.email}</td>
+                <td>${getCountryName(customer.country)}</td>
+                <td>${customer.bookingCount}</td>
+                <td>${customer.totalSpent > 0 ? '€' + customer.totalSpent.toLocaleString() : '-'}</td>
+                <td>
+                    <div class="action-btns">
+                        <button class="action-btn view" onclick="viewCustomer('${escapedEmail}')"><i class="fas fa-eye"></i></button>
+                        <button class="action-btn edit" onclick="emailCustomer('${escapedEmail}', '${escapedName}')"><i class="fas fa-envelope"></i></button>
+                    </div>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // ========== Load Subscribers ==========
+    function loadSubscribers() {
+        const subscribers = JSON.parse(localStorage.getItem('subscribers')) || [];
+        const tbody = document.getElementById('subscribersTable');
+        tbody.innerHTML = '';
+
+        document.getElementById('totalSubscribers').textContent = subscribers.length;
+        document.getElementById('newSubscribers').textContent = Math.floor(subscribers.length * 0.3);
+
+        subscribers.forEach((email, index) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><input type="checkbox" data-email="${email}"></td>
+                <td>${email}</td>
+                <td>${formatDate(new Date(Date.now() - index * 86400000).toISOString())}</td>
+                <td><span class="status-badge confirmed">Active</span></td>
+                <td>
+                    <div class="action-btns">
+                        <button class="action-btn delete" onclick="unsubscribe('${email}')"><i class="fas fa-trash"></i></button>
+                    </div>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // ========== Load Reviews ==========
+    function loadReviews() {
+        const container = document.getElementById('reviewsList');
+        container.innerHTML = '';
+
+        const reviews = JSON.parse(localStorage.getItem('reviews')) || [];
+
+        if (reviews.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-star"></i>
+                    <h3>No Reviews Yet</h3>
+                    <p>Customer reviews will appear here once added.</p>
+                    <button class="btn-primary" onclick="addNewReview()"><i class="fas fa-plus"></i> Add Review</button>
+                </div>
+                <style>
+                    .empty-state { text-align: center; padding: 60px 20px; color: #666; }
+                    .empty-state i { font-size: 48px; color: #ddd; margin-bottom: 20px; }
+                    .empty-state h3 { margin: 0 0 10px 0; color: #333; }
+                    .empty-state p { margin-bottom: 20px; }
+                </style>
+            `;
+            return;
+        }
+
+        reviews.forEach(review => {
+            const card = document.createElement('div');
+            card.className = 'review-card';
+            card.innerHTML = `
+                <div class="review-header">
+                    <div class="review-author">
+                        <div class="author-avatar">${review.author.charAt(0).toUpperCase()}</div>
+                        <div>
+                            <h4>${review.author}</h4>
+                            <span>${review.country} | ${review.tour}</span>
+                        </div>
+                    </div>
+                    <div class="review-rating">
+                        ${'<i class="fas fa-star"></i>'.repeat(review.rating)}
+                    </div>
+                </div>
+                <p class="review-text">"${review.text}"</p>
+                <div class="review-actions">
+                    <button class="action-btn edit" onclick="editReview(${review.id})"><i class="fas fa-edit"></i></button>
+                    <button class="action-btn delete" onclick="deleteReview(${review.id})"><i class="fas fa-trash"></i></button>
+                </div>
+                <style>
+                    .author-avatar { width: 50px; height: 50px; border-radius: 50%; background: #1a5f7a; color: white; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; }
+                    .review-actions { margin-top: 15px; display: flex; gap: 10px; justify-content: flex-end; }
+                </style>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    // Add new review
+    window.addNewReview = function() {
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+        const modalFooter = document.getElementById('modalFooter');
+
+        modalTitle.textContent = 'Add New Review';
+        modalBody.innerHTML = `
+            <form id="addReviewForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Customer Name</label>
+                        <input type="text" id="reviewAuthor" placeholder="e.g., John Smith" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Country</label>
+                        <input type="text" id="reviewCountry" placeholder="e.g., Germany" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Tour</label>
+                        <select id="reviewTour">
+                            ${toursData.map(t => `<option value="${t.name}">${t.name}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Rating</label>
+                        <select id="reviewRating">
+                            <option value="5">5 Stars</option>
+                            <option value="4">4 Stars</option>
+                            <option value="3">3 Stars</option>
+                            <option value="2">2 Stars</option>
+                            <option value="1">1 Star</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Review Text</label>
+                    <textarea id="reviewText" rows="4" placeholder="Customer's review text..." required></textarea>
+                </div>
+            </form>
+            <style>.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }</style>
+        `;
+        modalFooter.innerHTML = `
+            <button class="btn-secondary modal-cancel">Cancel</button>
+            <button class="btn-primary" onclick="saveNewReview()"><i class="fas fa-save"></i> Save Review</button>
+        `;
+
+        modal.classList.add('active');
+    };
+
+    window.saveNewReview = function() {
+        const author = document.getElementById('reviewAuthor').value;
+        const country = document.getElementById('reviewCountry').value;
+        const tour = document.getElementById('reviewTour').value;
+        const rating = parseInt(document.getElementById('reviewRating').value);
+        const text = document.getElementById('reviewText').value;
+
+        if (!author || !country || !text) {
+            alert('Please fill all fields');
+            return;
+        }
+
+        let reviews = JSON.parse(localStorage.getItem('reviews')) || [];
+        const newReview = {
+            id: Date.now(),
+            author,
+            country,
+            tour,
+            rating,
+            text,
+            date: new Date().toISOString()
+        };
+        reviews.push(newReview);
+        localStorage.setItem('reviews', JSON.stringify(reviews));
+
+        modal.classList.remove('active');
+        showNotification('Review added successfully', 'success');
+        loadReviews();
+    };
+
+    window.deleteReview = function(id) {
+        if (confirm('Are you sure you want to delete this review?')) {
+            let reviews = JSON.parse(localStorage.getItem('reviews')) || [];
+            reviews = reviews.filter(r => r.id !== id);
+            localStorage.setItem('reviews', JSON.stringify(reviews));
+            loadReviews();
+        }
+    };
+
+    // ========== Load Messages ==========
+    function loadMessages() {
+        const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+        const container = document.getElementById('messagesList');
+        container.innerHTML = '';
+
+        const messagesWithText = bookings.filter(b => b.message && b.message.length > 0);
+
+        messagesWithText.forEach((booking, index) => {
+            const item = document.createElement('div');
+            item.className = `message-item ${index === 0 ? 'unread' : ''}`;
+            item.innerHTML = `
+                <h4>${booking.fullName}</h4>
+                <p>${booking.message}</p>
+                <span class="message-date">${formatDateTime(booking.date)}</span>
+            `;
+            item.addEventListener('click', () => showMessage(booking));
+            container.appendChild(item);
+        });
+
+        updateMessageBadge();
+    }
+
+    function showMessage(booking) {
+        const view = document.getElementById('messageView');
+        view.innerHTML = `
+            <div class="message-full">
+                <div class="message-header-full">
+                    <h3>${booking.fullName}</h3>
+                    <span>${booking.email}</span>
+                </div>
+                <div class="message-meta">
+                    <span><strong>Tour:</strong> ${getTourName(booking.tourType)}</span>
+                    <span><strong>Travel Date:</strong> ${formatDate(booking.travelDate)}</span>
+                    <span><strong>Travelers:</strong> ${booking.travelers}</span>
+                </div>
+                <div class="message-body">
+                    <p>${booking.message}</p>
+                </div>
+                <div class="message-actions" style="margin-top: 20px;">
+                    <button class="btn-primary" onclick="openReplyModal('${booking.email}', '${booking.fullName.replace(/'/g, "\\'")}', '${booking.message ? booking.message.replace(/'/g, "\\'").substring(0, 100) : ''}')"><i class="fas fa-reply"></i> Reply</button>
+                    <button class="btn-secondary" onclick="archiveMessage('${booking.id}')"><i class="fas fa-archive"></i> Archive</button>
+                </div>
+            </div>
+        `;
+    }
+
+    function updateMessageBadge() {
+        const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+        const messagesCount = bookings.filter(b => b.message && b.message.length > 0 && b.status === 'new').length;
+        document.getElementById('messageBadge').textContent = messagesCount;
+    }
+
+    // ========== Utility Functions ==========
+    function getTourName(type) {
+        const tours = {
+            'classic': 'Classic Silk Road',
+            'luxury': 'Luxury Heritage',
+            'adventure': 'Mountain Adventure',
+            'photography': 'Photography Expedition',
+            'culinary': 'Culinary Discovery',
+            'custom': 'Custom Tour'
+        };
+        return tours[type] || type;
+    }
+
+    function getCountryName(code) {
+        const countries = {
+            'US': 'United States',
+            'UK': 'United Kingdom',
+            'DE': 'Germany',
+            'FR': 'France',
+            'IT': 'Italy',
+            'ES': 'Spain',
+            'JP': 'Japan',
+            'CN': 'China',
+            'KR': 'South Korea',
+            'AU': 'Australia'
+        };
+        return countries[code] || code;
+    }
+
+    function formatDate(dateStr) {
+        if (!dateStr) return 'N/A';
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    function formatDateTime(dateStr) {
+        if (!dateStr) return 'N/A';
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+    }
+
+    function capitalizeFirst(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    // ========== Global Functions ==========
+    window.viewBooking = function(id) {
+        const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+        const booking = bookings.find(b => b.id === id);
+        if (!booking) return;
+
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+        const modalFooter = document.getElementById('modalFooter');
+
+        const statusInfo = paymentStatuses[booking.status] || paymentStatuses['new'];
+        const nextStatus = statusInfo.next;
+
+        modalTitle.textContent = `Booking #${booking.id}`;
+        modalBody.innerHTML = `
+            <div class="booking-details">
+                <!-- Payment Status Progress - 4 Steps -->
+                <div class="payment-progress">
+                    <div class="progress-step ${['new','payment_pending','paid','completed'].indexOf(booking.status) >= 0 ? 'active' : ''} ${booking.status === 'new' ? 'current' : ''}">
+                        <div class="step-icon"><i class="fas fa-envelope"></i></div>
+                        <span>New</span>
+                    </div>
+                    <div class="progress-line ${['payment_pending','paid','completed'].indexOf(booking.status) >= 0 ? 'active' : ''}"></div>
+                    <div class="progress-step ${['payment_pending','paid','completed'].indexOf(booking.status) >= 0 ? 'active' : ''} ${booking.status === 'payment_pending' ? 'current' : ''}">
+                        <div class="step-icon"><i class="fas fa-clock"></i></div>
+                        <span>Payment Pending</span>
+                    </div>
+                    <div class="progress-line ${['paid','completed'].indexOf(booking.status) >= 0 ? 'active' : ''}"></div>
+                    <div class="progress-step ${['paid','completed'].indexOf(booking.status) >= 0 ? 'active' : ''} ${booking.status === 'paid' ? 'current' : ''}">
+                        <div class="step-icon"><i class="fas fa-credit-card"></i></div>
+                        <span>Paid</span>
+                    </div>
+                    <div class="progress-line ${booking.status === 'completed' ? 'active' : ''}"></div>
+                    <div class="progress-step ${booking.status === 'completed' ? 'active' : ''} ${booking.status === 'completed' ? 'current' : ''}">
+                        <div class="step-icon"><i class="fas fa-flag-checkered"></i></div>
+                        <span>Tour Completed</span>
+                    </div>
+                </div>
+
+                <div class="detail-row">
+                    <span class="label">Customer:</span>
+                    <span class="value">${booking.fullName}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Email:</span>
+                    <span class="value"><a href="mailto:${booking.email}" style="color:#1a5f7a; text-decoration:none;">${booking.email}</a></span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Phone:</span>
+                    <span class="value">${booking.phone || 'N/A'}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Country:</span>
+                    <span class="value">${getCountryName(booking.country)}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Tour:</span>
+                    <span class="value">${getTourName(booking.tourType)}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Travel Date:</span>
+                    <span class="value">${formatDate(booking.travelDate)}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Travelers:</span>
+                    <span class="value">${booking.travelers}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Status:</span>
+                    <span class="status-badge ${booking.status}" style="background-color: ${statusInfo.color};">${statusInfo.label}</span>
+                </div>
+                ${booking.paymentMethod ? `
+                <div class="detail-row">
+                    <span class="label">Payment:</span>
+                    <span class="value">${booking.paymentMethod} (${booking.currency || 'EUR'})</span>
+                </div>
+                ` : ''}
+                ${booking.paymentDate ? `
+                <div class="detail-row">
+                    <span class="label">Paid on:</span>
+                    <span class="value">${formatDate(booking.paymentDate)}</span>
+                </div>
+                ` : ''}
+                <div class="detail-row full">
+                    <span class="label">Message:</span>
+                    <span class="value">${booking.message || 'No message'}</span>
+                </div>
+            </div>
+            <style>
+                .booking-details { padding: 10px 0; }
+                .detail-row { display: flex; padding: 12px 0; border-bottom: 1px solid #eee; }
+                .detail-row.full { flex-direction: column; gap: 10px; }
+                .detail-row .label { width: 120px; font-weight: 600; color: #666; }
+                .detail-row .value { flex: 1; }
+                .payment-progress { display: flex; align-items: center; justify-content: space-between; padding: 20px 0; margin-bottom: 20px; background: #f8f9fa; border-radius: 10px; padding: 20px; }
+                .progress-step { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+                .progress-step .step-icon { width: 40px; height: 40px; border-radius: 50%; background: #ddd; display: flex; align-items: center; justify-content: center; color: #999; }
+                .progress-step.active .step-icon { background: #27ae60; color: white; }
+                .progress-step.current .step-icon { background: #1a5f7a; color: white; box-shadow: 0 0 0 4px rgba(26,95,122,0.3); }
+                .progress-step span { font-size: 12px; color: #666; }
+                .progress-line { flex: 1; height: 3px; background: #ddd; margin: 0 5px; }
+                .progress-line.active { background: #27ae60; }
+            </style>
+        `;
+
+        let footerButtons = `<button class="btn-secondary modal-cancel">Close</button>`;
+        if (nextStatus && booking.status !== 'cancelled') {
+            const nextLabel = paymentStatuses[nextStatus].label;
+            if (nextStatus === 'payment_pending') {
+                footerButtons += `<button class="btn-primary" onclick="sendPaymentRequest(${id})"><i class="fas fa-paper-plane"></i> Send Payment Request</button>`;
+            } else if (nextStatus === 'paid') {
+                footerButtons += `<button class="btn-primary" onclick="markAsPaid(${id})"><i class="fas fa-check-circle"></i> Mark as Paid</button>`;
+            } else {
+                footerButtons += `<button class="btn-primary" onclick="updateBookingStatus(${id}, '${nextStatus}')">${nextLabel}</button>`;
+            }
+        }
+        modalFooter.innerHTML = footerButtons;
+
+        modal.classList.add('active');
+    };
+
+    window.editBooking = function(id) {
+        const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+        const booking = bookings.find(b => b.id === id);
+        if (!booking) return;
+
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+        const modalFooter = document.getElementById('modalFooter');
+
+        modalTitle.textContent = `Edit Booking #${booking.id}`;
+        modalBody.innerHTML = `
+            <form id="editBookingForm">
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="editStatus">
+                        <option value="new" ${booking.status === 'new' ? 'selected' : ''}>New</option>
+                        <option value="payment_pending" ${booking.status === 'payment_pending' ? 'selected' : ''}>Payment Pending</option>
+                        <option value="paid" ${booking.status === 'paid' ? 'selected' : ''}>Paid</option>
+                        <option value="completed" ${booking.status === 'completed' ? 'selected' : ''}>Tour Completed</option>
+                        <option value="cancelled" ${booking.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Travel Date</label>
+                        <input type="date" id="editTravelDate" value="${booking.travelDate}">
+                    </div>
+                    <div class="form-group">
+                        <label>Travelers</label>
+                        <input type="text" id="editTravelers" value="${booking.travelers || ''}">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Payment Method</label>
+                        <select id="editPaymentMethod">
+                            <option value="">Not Selected</option>
+                            <option value="Visa" ${booking.paymentMethod === 'Visa' ? 'selected' : ''}>Visa</option>
+                            <option value="Mastercard" ${booking.paymentMethod === 'Mastercard' ? 'selected' : ''}>Mastercard</option>
+                            <option value="Bank Transfer" ${booking.paymentMethod === 'Bank Transfer' ? 'selected' : ''}>Bank Transfer</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Currency</label>
+                        <select id="editCurrency">
+                            <option value="EUR" ${booking.currency === 'EUR' ? 'selected' : ''}>EUR</option>
+                            <option value="USD" ${booking.currency === 'USD' ? 'selected' : ''}>USD</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Tour Price</label>
+                    <input type="number" id="editPrice" value="${booking.price || ''}" placeholder="Enter price">
+                </div>
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea id="editNotes" rows="3">${booking.notes || ''}</textarea>
+                </div>
+            </form>
+            <style>
+                .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+            </style>
+        `;
+        modalFooter.innerHTML = `
+            <button class="btn-secondary modal-cancel">Cancel</button>
+            <button class="btn-primary" onclick="saveBookingEdit(${id})">Save Changes</button>
+        `;
+
+        modal.classList.add('active');
+    };
+
+    window.saveBookingEdit = function(id) {
+        const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+        const index = bookings.findIndex(b => b.id === id);
+        if (index === -1) return;
+
+        bookings[index].status = document.getElementById('editStatus').value;
+        bookings[index].travelDate = document.getElementById('editTravelDate').value;
+        bookings[index].travelers = document.getElementById('editTravelers').value;
+        bookings[index].paymentMethod = document.getElementById('editPaymentMethod').value;
+        bookings[index].currency = document.getElementById('editCurrency').value;
+        bookings[index].price = document.getElementById('editPrice').value;
+        bookings[index].notes = document.getElementById('editNotes').value;
+
+        localStorage.setItem('bookings', JSON.stringify(bookings));
+        modal.classList.remove('active');
+        loadBookings();
+        loadRecentBookings();
+        loadOverviewStats();
+    };
+
+    // ========== Payment Functions ==========
+
+    // Generate payment URL
+    function generatePaymentUrl(bookingId) {
+        const baseUrl = window.location.origin;
+        return `${baseUrl}/payment.html?id=${bookingId}`;
+    }
+
+    window.sendPaymentRequest = function(id) {
+        const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+        const booking = bookings.find(b => b.id === id);
+        if (!booking) return;
+
+        const paymentUrl = generatePaymentUrl(id);
+
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+        const modalFooter = document.getElementById('modalFooter');
+
+        modalTitle.textContent = 'Send Payment Request';
+        modalBody.innerHTML = `
+            <div class="payment-request-form">
+                <div class="customer-info">
+                    <h4><i class="fas fa-user"></i> ${booking.fullName}</h4>
+                    <p><i class="fas fa-envelope"></i> ${booking.email}</p>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Tour Price *</label>
+                        <input type="number" id="paymentPrice" value="${booking.price || ''}" placeholder="Enter price" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Currency</label>
+                        <select id="paymentCurrency">
+                            <option value="EUR">EUR</option>
+                            <option value="USD">USD</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="payment-url-box">
+                    <label><i class="fas fa-link"></i> Payment Link (auto-generated)</label>
+                    <div class="url-container">
+                        <input type="text" id="paymentUrl" value="${paymentUrl}" readonly>
+                        <button type="button" class="copy-url-btn" onclick="copyPaymentUrl()"><i class="fas fa-copy"></i></button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> Email Message (will be sent to customer)</label>
+                    <textarea id="paymentMessage" rows="10">Dear ${booking.fullName},
+
+Thank you for choosing Samanid Travel for your ${getTourName(booking.tourType)} tour!
+
+We are pleased to confirm your booking. Please complete your payment using the secure link below:
+
+🔗 PAYMENT LINK: ${paymentUrl}
+
+📋 BOOKING DETAILS:
+• Tour: ${getTourName(booking.tourType)}
+• Travel Date: ${formatDate(booking.travelDate)}
+• Travelers: ${booking.travelers || '1'}
+• Amount: [PRICE] [CURRENCY]
+
+💳 PAYMENT OPTIONS:
+• Credit/Debit Card (Visa, Mastercard)
+• Bank Transfer
+
+If you have any questions, please don't hesitate to contact us.
+
+Best regards,
+Samanid Travel Team
+
+📧 ${companySettings.email}
+📞 ${companySettings.phone1}
+📍 ${companySettings.address}</textarea>
+                </div>
+            </div>
+            <style>
+                .customer-info { background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+                .customer-info h4 { margin: 0 0 5px 0; color: #1a5f7a; }
+                .customer-info p { margin: 0; color: #666; }
+                .customer-info i { margin-right: 8px; }
+                .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+                .payment-url-box { margin-bottom: 20px; }
+                .payment-url-box label { display: block; margin-bottom: 8px; font-weight: 600; color: #1a5f7a; }
+                .url-container { display: flex; gap: 5px; }
+                .url-container input { flex: 1; padding: 12px; border: 2px solid #1a5f7a; border-radius: 8px; font-size: 13px; background: #e8f4f8; }
+                .copy-url-btn { padding: 12px 15px; background: #1a5f7a; color: white; border: none; border-radius: 8px; cursor: pointer; }
+                .copy-url-btn:hover { background: #145068; }
+            </style>
+        `;
+        modalFooter.innerHTML = `
+            <button class="btn-secondary modal-cancel">Cancel</button>
+            <button class="btn-primary" onclick="confirmPaymentRequest(${id})"><i class="fas fa-paper-plane"></i> Send Email & Update Status</button>
+        `;
+
+        modal.classList.add('active');
+
+        // Update message with price when price changes
+        document.getElementById('paymentPrice').addEventListener('input', updateEmailMessage);
+        document.getElementById('paymentCurrency').addEventListener('change', updateEmailMessage);
+    };
+
+    function updateEmailMessage() {
+        const price = document.getElementById('paymentPrice').value || '[PRICE]';
+        const currency = document.getElementById('paymentCurrency').value;
+        const message = document.getElementById('paymentMessage');
+        message.value = message.value.replace(/Amount: .+/g, `Amount: ${currency} ${price}`);
+    }
+
+    window.copyPaymentUrl = function() {
+        const urlInput = document.getElementById('paymentUrl');
+        urlInput.select();
+        document.execCommand('copy');
+        showNotification('Payment URL copied to clipboard!', 'success');
+    };
+
+    window.confirmPaymentRequest = function(id) {
+        const price = document.getElementById('paymentPrice').value;
+        const currency = document.getElementById('paymentCurrency').value;
+        const message = document.getElementById('paymentMessage').value;
+        const paymentUrl = document.getElementById('paymentUrl').value;
+
+        if (!price) {
+            alert('Please enter a price');
+            return;
+        }
+
+        let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+        const index = bookings.findIndex(b => b.id === id);
+
+        if (index !== -1) {
+            bookings[index].status = 'payment_pending';
+            bookings[index].price = price;
+            bookings[index].currency = currency;
+            bookings[index].paymentUrl = paymentUrl;
+            bookings[index].paymentRequestDate = new Date().toISOString();
+            bookings[index].paymentMessage = message;
+            localStorage.setItem('bookings', JSON.stringify(bookings));
+
+            // Open email client with pre-filled message
+            const subject = encodeURIComponent(`Samanid Travel - Payment Request for Your ${getTourName(bookings[index].tourType)} Tour`);
+            const body = encodeURIComponent(message.replace('[PRICE]', price).replace('[CURRENCY]', currency));
+            const mailtoLink = `mailto:${bookings[index].email}?subject=${subject}&body=${body}`;
+
+            window.open(mailtoLink, '_blank');
+        }
+
+        modal.classList.remove('active');
+
+        // Show success message
+        showNotification(`Payment request sent! Email client opened for ${bookings[index].email}`, 'success');
+
+        loadBookings();
+        loadRecentBookings();
+        loadOverviewStats();
+    };
+
+    window.markAsPaid = function(id) {
+        const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+        const booking = bookings.find(b => b.id === id);
+        if (!booking) return;
+
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+        const modalFooter = document.getElementById('modalFooter');
+
+        modalTitle.textContent = 'Confirm Payment Received';
+        modalBody.innerHTML = `
+            <div class="payment-confirm">
+                <div class="payment-summary">
+                    <div class="summary-icon"><i class="fas fa-check-circle"></i></div>
+                    <h3>Mark as Paid</h3>
+                    <p>Confirm that payment has been received from:</p>
+                </div>
+                <div class="payment-details">
+                    <div class="detail-item">
+                        <span class="label">Customer:</span>
+                        <span class="value">${booking.fullName}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Tour:</span>
+                        <span class="value">${getTourName(booking.tourType)}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Amount:</span>
+                        <span class="value price">${booking.currency || 'EUR'} ${booking.price || 'N/A'}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Method:</span>
+                        <span class="value">${booking.paymentMethod || 'N/A'}</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Payment Date</label>
+                    <input type="date" id="paymentDate" value="${new Date().toISOString().split('T')[0]}">
+                </div>
+                <div class="form-group">
+                    <label>Payment Reference/Notes</label>
+                    <input type="text" id="paymentReference" placeholder="e.g., Transaction ID, Bank Reference">
+                </div>
+            </div>
+            <style>
+                .payment-confirm { text-align: center; }
+                .payment-summary .summary-icon { font-size: 48px; color: #27ae60; margin-bottom: 15px; }
+                .payment-summary h3 { margin: 0 0 10px 0; color: #1a5f7a; }
+                .payment-summary p { color: #666; }
+                .payment-details { background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px 0; text-align: left; }
+                .detail-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; }
+                .detail-item:last-child { border-bottom: none; }
+                .detail-item .label { color: #666; }
+                .detail-item .value { font-weight: 600; }
+                .detail-item .value.price { color: #27ae60; font-size: 18px; }
+                .form-group { text-align: left; margin-top: 15px; }
+            </style>
+        `;
+        modalFooter.innerHTML = `
+            <button class="btn-secondary modal-cancel">Cancel</button>
+            <button class="btn-primary" onclick="confirmPaymentReceived(${id})"><i class="fas fa-check"></i> Confirm Payment</button>
+        `;
+
+        modal.classList.add('active');
+    };
+
+    window.confirmPaymentReceived = function(id) {
+        const paymentDate = document.getElementById('paymentDate').value;
+        const paymentReference = document.getElementById('paymentReference').value;
+
+        let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+        const index = bookings.findIndex(b => b.id === id);
+        if (index !== -1) {
+            bookings[index].status = 'paid';
+            bookings[index].paymentDate = paymentDate;
+            bookings[index].paymentReference = paymentReference;
+            localStorage.setItem('bookings', JSON.stringify(bookings));
+        }
+
+        modal.classList.remove('active');
+        showNotification(`Payment confirmed for ${bookings[index].fullName}`, 'success');
+
+        loadBookings();
+        loadRecentBookings();
+        loadOverviewStats();
+    };
+
+    // ========== Customer Functions ==========
+    window.viewCustomer = function(email) {
+        const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+        const customerBookings = bookings.filter(b => b.email === email);
+
+        if (customerBookings.length === 0) return;
+
+        const customer = customerBookings[0];
+        const totalSpent = customerBookings.reduce((sum, b) => sum + (parseFloat(b.price) || 0), 0);
+
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+        const modalFooter = document.getElementById('modalFooter');
+
+        modalTitle.textContent = 'Customer Details';
+        modalBody.innerHTML = `
+            <div class="customer-view">
+                <div class="customer-header">
+                    <div class="customer-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="customer-info">
+                        <h3>${customer.fullName}</h3>
+                        <p><i class="fas fa-envelope"></i> ${customer.email}</p>
+                        <p><i class="fas fa-phone"></i> ${customer.phone || 'Not provided'}</p>
+                        <p><i class="fas fa-globe"></i> ${getCountryName(customer.country)}</p>
+                    </div>
+                </div>
+
+                <div class="customer-stats">
+                    <div class="stat-box">
+                        <span class="stat-number">${customerBookings.length}</span>
+                        <span class="stat-label">Total Bookings</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-number">${totalSpent > 0 ? '€' + totalSpent.toLocaleString() : '-'}</span>
+                        <span class="stat-label">Total Spent</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-number">${formatDate(customer.date)}</span>
+                        <span class="stat-label">First Booking</span>
+                    </div>
+                </div>
+
+                <div class="customer-bookings">
+                    <h4><i class="fas fa-calendar-check"></i> Booking History</h4>
+                    <div class="bookings-list">
+                        ${customerBookings.map(b => `
+                            <div class="booking-item">
+                                <div class="booking-main">
+                                    <strong>${getTourName(b.tourType)}</strong>
+                                    <span class="status-badge ${b.status}">${capitalizeFirst(b.status)}</span>
+                                </div>
+                                <div class="booking-details-mini">
+                                    <span><i class="fas fa-calendar"></i> ${formatDate(b.travelDate)}</span>
+                                    <span><i class="fas fa-users"></i> ${b.travelers} travelers</span>
+                                    ${b.price ? `<span><i class="fas fa-euro-sign"></i> ${b.price}</span>` : ''}
+                                </div>
+                                ${b.message ? `<p class="booking-message"><i class="fas fa-comment"></i> "${b.message.substring(0, 80)}${b.message.length > 80 ? '...' : ''}"</p>` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+            <style>
+                .customer-view { }
+                .customer-header { display: flex; gap: 20px; align-items: center; padding: 20px; background: linear-gradient(135deg, #1a5f7a, #2980b9); border-radius: 12px; color: white; margin-bottom: 20px; }
+                .customer-avatar { width: 70px; height: 70px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; }
+                .customer-info h3 { margin: 0 0 10px 0; }
+                .customer-info p { margin: 5px 0; opacity: 0.9; font-size: 14px; }
+                .customer-info i { margin-right: 8px; width: 16px; }
+                .customer-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px; }
+                .stat-box { text-align: center; padding: 20px; background: #f8f9fa; border-radius: 10px; }
+                .stat-number { display: block; font-size: 24px; font-weight: 700; color: #1a5f7a; }
+                .stat-label { font-size: 12px; color: #666; text-transform: uppercase; }
+                .customer-bookings h4 { margin: 0 0 15px 0; color: #1a5f7a; }
+                .customer-bookings h4 i { margin-right: 8px; }
+                .bookings-list { max-height: 250px; overflow-y: auto; }
+                .booking-item { padding: 15px; background: #f8f9fa; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid #1a5f7a; }
+                .booking-main { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+                .booking-details-mini { display: flex; gap: 15px; font-size: 13px; color: #666; }
+                .booking-details-mini i { margin-right: 5px; }
+                .booking-message { margin: 10px 0 0 0; font-size: 13px; color: #666; font-style: italic; }
+                .booking-message i { margin-right: 5px; }
+            </style>
+        `;
+        modalFooter.innerHTML = `
+            <button class="btn-secondary modal-cancel">Close</button>
+            <button class="btn-primary" onclick="emailCustomer('${customer.email}', '${customer.fullName.replace(/'/g, "\\'")}')"><i class="fas fa-envelope"></i> Send Email</button>
+        `;
+
+        modal.classList.add('active');
+    };
+
+    window.emailCustomer = function(email, name) {
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+        const modalFooter = document.getElementById('modalFooter');
+
+        modalTitle.textContent = 'Send Email to Customer';
+        modalBody.innerHTML = `
+            <div class="email-form">
+                <div class="recipient-info">
+                    <div class="recipient-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="recipient-details">
+                        <h4>${name}</h4>
+                        <span><i class="fas fa-envelope"></i> ${email}</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-heading"></i> Subject</label>
+                    <input type="text" id="customerEmailSubject" placeholder="Email subject" value="Samanid Travel - ">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-pen"></i> Message</label>
+                    <textarea id="customerEmailMessage" rows="10" placeholder="Write your message here...">Dear ${name},
+
+
+
+Best regards,
+Samanid Travel Team
+
+📧 ${companySettings.email}
+📞 ${companySettings.phone1}
+📍 ${companySettings.address}</textarea>
+                </div>
+            </div>
+            <style>
+                .email-form { }
+                .recipient-info { display: flex; align-items: center; gap: 15px; padding: 15px; background: #e8f4f8; border-radius: 10px; margin-bottom: 20px; }
+                .recipient-avatar { width: 50px; height: 50px; background: #1a5f7a; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px; }
+                .recipient-details h4 { margin: 0 0 5px 0; color: #1a5f7a; }
+                .recipient-details span { color: #666; font-size: 14px; }
+                .recipient-details i { margin-right: 5px; }
+            </style>
+        `;
+        modalFooter.innerHTML = `
+            <button class="btn-secondary modal-cancel">Cancel</button>
+            <button class="btn-primary" onclick="sendCustomerEmail('${email}')"><i class="fas fa-paper-plane"></i> Send Email</button>
+        `;
+
+        modal.classList.add('active');
+    };
+
+    window.sendCustomerEmail = function(email) {
+        const subject = document.getElementById('customerEmailSubject').value;
+        const message = document.getElementById('customerEmailMessage').value;
+
+        if (!subject.trim() || !message.trim()) {
+            alert('Please fill in subject and message');
+            return;
+        }
+
+        const encodedSubject = encodeURIComponent(subject);
+        const encodedBody = encodeURIComponent(message);
+        const mailtoLink = `mailto:${email}?subject=${encodedSubject}&body=${encodedBody}`;
+
+        window.open(mailtoLink, '_blank');
+
+        modal.classList.remove('active');
+        showNotification(`Email client opened for ${email}`, 'success');
+    };
+
+    // Notification function
+    function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.innerHTML = `
+            <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+            <span>${message}</span>
+        `;
+        notification.style.cssText = `
+            position: fixed; top: 20px; right: 20px; padding: 15px 25px; border-radius: 8px;
+            background: ${type === 'success' ? '#27ae60' : type === 'error' ? '#e74c3c' : '#3498db'};
+            color: white; display: flex; align-items: center; gap: 10px; z-index: 10000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); animation: slideIn 0.3s ease;
+        `;
+        document.body.appendChild(notification);
+        setTimeout(() => notification.remove(), 3000);
+    }
+
+    window.updateBookingStatus = function(id, status) {
+        const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+        const index = bookings.findIndex(b => b.id === id);
+        if (index !== -1) {
+            bookings[index].status = status;
+            localStorage.setItem('bookings', JSON.stringify(bookings));
+            modal.classList.remove('active');
+            loadBookings();
+            loadRecentBookings();
+        }
+    };
+
+    window.deleteBooking = function(id) {
+        if (confirm('Are you sure you want to delete this booking?')) {
+            let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+            bookings = bookings.filter(b => b.id !== id);
+            localStorage.setItem('bookings', JSON.stringify(bookings));
+            loadBookings();
+            loadRecentBookings();
+            loadOverviewStats();
+        }
+    };
+
+    window.unsubscribe = function(email) {
+        if (confirm('Are you sure you want to remove this subscriber?')) {
+            let subscribers = JSON.parse(localStorage.getItem('subscribers')) || [];
+            subscribers = subscribers.filter(s => s !== email);
+            localStorage.setItem('subscribers', JSON.stringify(subscribers));
+            loadSubscribers();
+        }
+    };
+
+    // ========== View Tour ==========
+    window.viewTour = function(id) {
+        const tour = toursData.find(t => t.id === id);
+        if (!tour) return;
+
+        const inquiries = JSON.parse(localStorage.getItem('inquiries')) || [];
+        const tourInquiries = inquiries.filter(i => i.tour && i.tour.includes(tour.name.toLowerCase().replace(/\s+/g, '-')));
+        const imageUrl = getAdminImageUrl(tour.image);
+
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+        const modalFooter = document.getElementById('modalFooter');
+
+        modalTitle.textContent = tour.name;
+        modalBody.innerHTML = `
+            <div class="tour-view">
+                <img src="${imageUrl}" alt="${tour.name}" style="width:100%; border-radius:10px; margin-bottom:20px;">
+                <div class="tour-info-grid">
+                    <div class="info-item">
+                        <i class="fas fa-clock"></i>
+                        <span><strong>Duration:</strong> ${tour.duration}</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-tag"></i>
+                        <span><strong>Category:</strong> ${capitalizeFirst(tour.category)}</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-envelope"></i>
+                        <span><strong>Inquiries:</strong> ${tourInquiries.length}</span>
+                    </div>
+                </div>
+                <p style="margin-top:15px; line-height:1.6;">${tour.description}</p>
+                ${tourInquiries.length > 0 ? `
+                    <h4 style="margin-top:20px; margin-bottom:10px;">Recent Inquiries</h4>
+                    <div class="inquiries-list">
+                        ${tourInquiries.slice(0, 5).map(i => `
+                            <div class="inquiry-item">
+                                <strong>${i.name || i.fullName}</strong> - ${i.email}
+                                <span class="status-badge ${i.status}">${capitalizeFirst(i.status)}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : ''}
+            </div>
+            <style>
+                .tour-info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+                .info-item { display: flex; align-items: center; gap: 10px; padding: 10px; background: #f5f5f5; border-radius: 8px; }
+                .info-item i { color: #1a5f7a; }
+                .inquiries-list { max-height: 200px; overflow-y: auto; }
+                .inquiry-item { padding: 10px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+            </style>
+        `;
+        modalFooter.innerHTML = `
+            <button class="btn-secondary modal-cancel">Close</button>
+            <a href="../index.html#tours" target="_blank" class="btn-primary"><i class="fas fa-external-link-alt"></i> View on Website</a>
+        `;
+
+        modal.classList.add('active');
+    };
+
+    // ========== Edit Tour ==========
+    window.editTour = function(id) {
+        toursData = getToursData();
+        const tour = toursData.find(t => t.id === id);
+        if (!tour) return;
+
+        // Find default image for this tour
+        const defaultTour = defaultToursData.find(t => t.id === id);
+        const defaultImagePath = defaultTour ? defaultTour.image : 'images/destinations/samarkand-registan.jpg';
+        const defaultImage = getAdminImageUrl(defaultImagePath);
+        const currentImage = getAdminImageUrl(tour.image);
+
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+        const modalFooter = document.getElementById('modalFooter');
+
+        modalTitle.textContent = `Edit: ${tour.name}`;
+        modalBody.innerHTML = `
+            <form id="editTourForm">
+                <div class="form-group">
+                    <label>Tour Name *</label>
+                    <input type="text" id="tourName" value="${tour.name}" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Duration *</label>
+                        <input type="text" id="tourDuration" value="${tour.duration}" placeholder="e.g., 8 Days">
+                    </div>
+                    <div class="form-group">
+                        <label>Category *</label>
+                        <select id="tourCategory">
+                            <option value="classic" ${tour.category === 'classic' ? 'selected' : ''}>Classic</option>
+                            <option value="cultural" ${tour.category === 'cultural' ? 'selected' : ''}>Cultural</option>
+                            <option value="adventure" ${tour.category === 'adventure' ? 'selected' : ''}>Adventure</option>
+                            <option value="short" ${tour.category === 'short' ? 'selected' : ''}>Short Trip</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Description *</label>
+                    <textarea id="tourDescription" rows="4">${tour.description}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-image"></i> Tour Image</label>
+                    <div class="image-preview-container">
+                        <img id="tourImagePreview" src="${currentImage}" alt="Tour Image" style="width:100%; max-height:200px; object-fit:cover; border-radius:10px; margin-bottom:10px;" onerror="this.src='${defaultImage}'">
+                    </div>
+                    <div class="image-upload-options">
+                        <label class="upload-btn">
+                            <i class="fas fa-upload"></i> Upload Image
+                            <input type="file" id="tourImageFile" accept="image/*" style="display:none;">
+                        </label>
+                        <button type="button" class="reset-btn" onclick="resetTourImage(${id}, '${defaultImage}')">
+                            <i class="fas fa-undo"></i> Reset to Default
+                        </button>
+                    </div>
+                    <input type="hidden" id="tourImage" value="${tour.image}">
+                    <small style="color:#666; display:block; margin-top:5px;">Upload an image or reset to default. Images are stored in browser.</small>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Badge Text</label>
+                        <input type="text" id="tourBadge" value="${tour.badge || ''}" placeholder="e.g., Best Seller, Popular">
+                    </div>
+                    <div class="form-group">
+                        <label>Badge Style</label>
+                        <select id="tourBadgeType">
+                            <option value="" ${!tour.badgeType ? 'selected' : ''}>None</option>
+                            <option value="best" ${tour.badgeType === 'best' ? 'selected' : ''}>Best Seller (Gold)</option>
+                            <option value="cultural" ${tour.badgeType === 'cultural' ? 'selected' : ''}>Cultural (Blue)</option>
+                            <option value="adventure" ${tour.badgeType === 'adventure' ? 'selected' : ''}>Adventure (Green)</option>
+                            <option value="short" ${tour.badgeType === 'short' ? 'selected' : ''}>Short Trip (Purple)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Highlights (comma separated)</label>
+                    <input type="text" id="tourHighlights" value="${(tour.highlights || []).join(', ')}" placeholder="e.g., 4 Cities, Meals Included, All Transfers">
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-tag"></i> Price Display</label>
+                    <div class="price-input-group" style="display:flex; gap:10px; align-items:center;">
+                        <select id="tourPriceType" style="padding:10px; border-radius:8px; border:1px solid #ddd; min-width:120px;" onchange="document.getElementById('tourPriceInput').style.display = this.value === 'custom' ? 'flex' : 'none'">
+                            <option value="none" ${!tour.price || tour.price === 'none' ? 'selected' : ''}>None (Hide price)</option>
+                            <option value="custom" ${tour.price && tour.price !== 'none' ? 'selected' : ''}>Set Price</option>
+                        </select>
+                        <div id="tourPriceInput" style="display:${tour.price && tour.price !== 'none' ? 'flex' : 'none'}; gap:10px; align-items:center;">
+                            <input type="number" id="tourPrice" value="${tour.price && tour.price !== 'none' ? tour.price : ''}" placeholder="e.g., 1200" min="1" step="1" style="width:120px; padding:10px; border-radius:8px; border:1px solid #ddd;">
+                            <select id="tourCurrency" style="padding:10px; border-radius:8px; border:1px solid #ddd;">
+                                <option value="EUR" ${tour.currency === 'EUR' || !tour.currency ? 'selected' : ''}>EUR (€)</option>
+                                <option value="USD" ${tour.currency === 'USD' ? 'selected' : ''}>USD ($)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <small style="color:#666; display:block; margin-top:8px;">Select "None" to hide price on website, or "Set Price" to display a price</small>
+                </div>
+            </form>
+            <style>
+                .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+                .image-preview-container { background: #f5f5f5; padding: 10px; border-radius: 10px; margin-bottom: 10px; }
+                .image-upload-options { display: flex; gap: 10px; margin-bottom: 10px; }
+                .upload-btn, .reset-btn {
+                    padding: 10px 15px;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    font-size: 14px;
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 8px;
+                    border: none;
+                }
+                .upload-btn { background: #1a5f7a; color: white; }
+                .upload-btn:hover { background: #15536b; }
+                .reset-btn { background: #e74c3c; color: white; }
+                .reset-btn:hover { background: #c0392b; }
+            </style>
+        `;
+        modalFooter.innerHTML = `
+            <button class="btn-secondary modal-cancel">Cancel</button>
+            <button class="btn-primary" onclick="saveTour(${id})"><i class="fas fa-save"></i> Save Changes</button>
+        `;
+
+        modal.classList.add('active');
+
+        // Handle image file upload
+        document.getElementById('tourImageFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('Image size should be less than 2MB');
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const base64 = event.target.result;
+                    document.getElementById('tourImagePreview').src = base64;
+                    document.getElementById('tourImage').value = base64;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    };
+
+    // Reset tour image to default
+    window.resetTourImage = function(id, defaultImage) {
+        document.getElementById('tourImagePreview').src = defaultImage;
+        document.getElementById('tourImage').value = defaultImage;
+        showNotification('Image reset to default', 'success');
+    };
+
+    window.saveTour = function(id) {
+        const name = document.getElementById('tourName').value.trim();
+        const duration = document.getElementById('tourDuration').value.trim();
+        const category = document.getElementById('tourCategory').value;
+        const description = document.getElementById('tourDescription').value.trim();
+        const image = document.getElementById('tourImage').value.trim();
+        const badge = document.getElementById('tourBadge').value.trim();
+        const badgeType = document.getElementById('tourBadgeType').value;
+        const highlights = document.getElementById('tourHighlights').value.split(',').map(h => h.trim()).filter(h => h);
+        const priceType = document.getElementById('tourPriceType').value;
+        const price = priceType === 'none' ? '' : document.getElementById('tourPrice').value.trim();
+        const currency = document.getElementById('tourCurrency').value;
+
+        if (!name || !duration || !description) {
+            alert('Please fill all required fields');
+            return;
+        }
+
+        // Get current tours
+        let tours = getToursData();
+        const index = tours.findIndex(t => t.id === id);
+
+        if (index !== -1) {
+            tours[index] = {
+                ...tours[index],
+                name,
+                duration,
+                category,
+                description,
+                image: image || tours[index].image,
+                badge,
+                badgeType,
+                highlights,
+                price,
+                currency
+            };
+
+            saveToursData(tours);
+            toursData = tours;
+
+            modal.classList.remove('active');
+            showNotification('Tour updated successfully! Changes will appear on the main website.', 'success');
+            loadTours();
+        }
+    };
+
+    // ========== Delete Tour ==========
+    window.deleteTour = function(id) {
+        if (!confirm('Are you sure you want to delete this tour? This cannot be undone.')) return;
+
+        let tours = getToursData();
+        tours = tours.filter(t => t.id !== id);
+        saveToursData(tours);
+        toursData = tours;
+
+        showNotification('Tour deleted successfully!', 'success');
+        loadTours();
+    };
+
+    // ========== Add New Tour ==========
+    window.addNewTour = function() {
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+        const modalFooter = document.getElementById('modalFooter');
+
+        modalTitle.textContent = 'Add New Tour';
+        modalBody.innerHTML = `
+            <form id="addTourForm">
+                <div class="form-group">
+                    <label>Tour Name *</label>
+                    <input type="text" id="newTourName" placeholder="Enter tour name" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Duration *</label>
+                        <input type="text" id="newTourDuration" placeholder="e.g., 8 Days">
+                    </div>
+                    <div class="form-group">
+                        <label>Category *</label>
+                        <select id="newTourCategory">
+                            <option value="classic">Classic</option>
+                            <option value="cultural">Cultural</option>
+                            <option value="adventure">Adventure</option>
+                            <option value="short">Short Trip</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Description *</label>
+                    <textarea id="newTourDescription" rows="4" placeholder="Describe the tour..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-image"></i> Tour Image *</label>
+                    <div class="image-preview-container" id="newTourImageContainer">
+                        <div id="newTourImagePlaceholder" style="width:100%; height:200px; background:#f0f0f0; border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#999; border:2px dashed #ccc;">
+                            <i class="fas fa-cloud-upload-alt" style="font-size:48px; margin-bottom:10px;"></i>
+                            <span>Click "Upload Image" to add tour photo</span>
+                        </div>
+                        <img id="newTourImagePreview" src="" alt="Tour Image" style="width:100%; max-height:200px; object-fit:cover; border-radius:10px; display:none;">
+                    </div>
+                    <div class="image-upload-options" style="margin-top:10px;">
+                        <label class="upload-btn" style="flex:1; justify-content:center;">
+                            <i class="fas fa-upload"></i> Upload Tour Image
+                            <input type="file" id="newTourImageFile" accept="image/*" style="display:none;">
+                        </label>
+                    </div>
+                    <input type="hidden" id="newTourImage" value="">
+                    <small style="color:#666; display:block; margin-top:8px;"><i class="fas fa-info-circle"></i> Recommended: 800x600px, max 2MB (JPG, PNG)</small>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Badge Text</label>
+                        <input type="text" id="newTourBadge" placeholder="e.g., Best Seller">
+                    </div>
+                    <div class="form-group">
+                        <label>Badge Style</label>
+                        <select id="newTourBadgeType">
+                            <option value="">None</option>
+                            <option value="best">Best Seller (Gold)</option>
+                            <option value="cultural">Cultural (Blue)</option>
+                            <option value="adventure">Adventure (Green)</option>
+                            <option value="short">Short Trip (Purple)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Highlights (comma separated)</label>
+                    <input type="text" id="newTourHighlights" placeholder="e.g., 4 Cities, Meals Included, All Transfers">
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-tag"></i> Price Display</label>
+                    <div class="price-input-group" style="display:flex; gap:10px; align-items:center;">
+                        <select id="newTourPriceType" style="padding:10px; border-radius:8px; border:1px solid #ddd; min-width:120px;" onchange="document.getElementById('newTourPriceInput').style.display = this.value === 'custom' ? 'flex' : 'none'">
+                            <option value="none" selected>None (Hide price)</option>
+                            <option value="custom">Set Price</option>
+                        </select>
+                        <div id="newTourPriceInput" style="display:none; gap:10px; align-items:center;">
+                            <input type="number" id="newTourPrice" placeholder="e.g., 1200" min="1" step="1" style="width:120px; padding:10px; border-radius:8px; border:1px solid #ddd;">
+                            <select id="newTourCurrency" style="padding:10px; border-radius:8px; border:1px solid #ddd;">
+                                <option value="EUR" selected>EUR (€)</option>
+                                <option value="USD">USD ($)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <small style="color:#666; display:block; margin-top:8px;">Select "None" to hide price on website, or "Set Price" to display a price</small>
+                </div>
+            </form>
+            <style>
+                .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+                .image-preview-container { background: #f5f5f5; padding: 10px; border-radius: 10px; margin-bottom: 10px; }
+                .image-upload-options { display: flex; gap: 10px; margin-bottom: 10px; }
+                .upload-btn {
+                    padding: 10px 15px;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    font-size: 14px;
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 8px;
+                    border: none;
+                    background: #1a5f7a;
+                    color: white;
+                }
+                .upload-btn:hover { background: #15536b; }
+            </style>
+        `;
+        modalFooter.innerHTML = `
+            <button class="btn-secondary modal-cancel">Cancel</button>
+            <button class="btn-primary" onclick="saveNewTour()"><i class="fas fa-plus"></i> Add Tour</button>
+        `;
+
+        modal.classList.add('active');
+
+        // Handle image file upload for new tour
+        document.getElementById('newTourImageFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('Image size should be less than 2MB');
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const base64 = event.target.result;
+                    document.getElementById('newTourImagePreview').src = base64;
+                    document.getElementById('newTourImagePreview').style.display = 'block';
+                    document.getElementById('newTourImagePlaceholder').style.display = 'none';
+                    document.getElementById('newTourImage').value = base64;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    };
+
+    window.saveNewTour = function() {
+        const name = document.getElementById('newTourName').value.trim();
+        const duration = document.getElementById('newTourDuration').value.trim();
+        const category = document.getElementById('newTourCategory').value;
+        const description = document.getElementById('newTourDescription').value.trim();
+        const image = document.getElementById('newTourImage').value.trim();
+        const badge = document.getElementById('newTourBadge').value.trim();
+        const badgeType = document.getElementById('newTourBadgeType').value;
+        const highlights = document.getElementById('newTourHighlights').value.split(',').map(h => h.trim()).filter(h => h);
+        const priceType = document.getElementById('newTourPriceType').value;
+        const price = priceType === 'none' ? '' : document.getElementById('newTourPrice').value.trim();
+        const currency = document.getElementById('newTourCurrency').value;
+
+        if (!name || !duration || !description) {
+            alert('Please fill all required fields (Name, Duration, Description)');
+            return;
+        }
+
+        if (!image) {
+            alert('Please upload a tour image');
+            return;
+        }
+
+        let tours = getToursData();
+        const newId = Math.max(...tours.map(t => t.id), 0) + 1;
+
+        const newTour = {
+            id: newId,
+            name,
+            duration,
+            category,
+            description,
+            image: image,
+            badge,
+            badgeType,
+            highlights: highlights.length > 0 ? highlights : ['Guide Included', 'Transfers'],
+            price,
+            currency
+        };
+
+        tours.push(newTour);
+        saveToursData(tours);
+        toursData = tours;
+
+        modal.classList.remove('active');
+        showNotification('New tour added successfully! It will appear on the main website.', 'success');
+        loadTours();
+    };
+
+    // ========== Add New Destination ==========
+    function addNewDestination() {
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+        const modalFooter = document.getElementById('modalFooter');
+
+        modalTitle.textContent = 'Add New Destination';
+        modalBody.innerHTML = `
+            <form id="addDestForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-map-marker-alt"></i> Destination Name *</label>
+                        <input type="text" id="newDestName" placeholder="e.g., Termez" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-quote-left"></i> Subtitle *</label>
+                        <input type="text" id="newDestSubtitle" placeholder="e.g., The Southern Gateway">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-align-left"></i> Description *</label>
+                    <textarea id="newDestDescription" rows="3" placeholder="Enter destination description..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-image"></i> Destination Image *</label>
+                    <div class="image-preview-container" id="newDestImageContainer">
+                        <div id="newDestImagePlaceholder" style="width:100%; height:200px; background:#f0f0f0; border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#999; border:2px dashed #ccc;">
+                            <i class="fas fa-cloud-upload-alt" style="font-size:48px; margin-bottom:10px;"></i>
+                            <span>Click "Upload Image" to add destination photo</span>
+                        </div>
+                        <img id="newDestImagePreview" src="" alt="Destination Image" style="width:100%; max-height:200px; object-fit:cover; border-radius:10px; display:none;">
+                    </div>
+                    <div class="image-upload-options" style="margin-top:10px;">
+                        <label class="upload-btn" style="flex:1; justify-content:center;">
+                            <i class="fas fa-upload"></i> Upload Destination Image
+                            <input type="file" id="newDestImageFile" accept="image/*" style="display:none;">
+                        </label>
+                    </div>
+                    <input type="hidden" id="newDestImage" value="">
+                    <small style="color:#666; display:block; margin-top:8px;"><i class="fas fa-info-circle"></i> Recommended: 800x600px, max 2MB (JPG, PNG)</small>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-route"></i> Number of Tours</label>
+                        <input type="number" id="newDestTours" value="1" min="0">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-landmark"></i> Attractions (one per line) *</label>
+                    <textarea id="newDestAttractions" rows="5" placeholder="Enter attractions, one per line...&#10;Example:&#10;Al-Hakim at-Termizi Mausoleum&#10;Fayaz-Tepa Buddhist Monastery&#10;Kara-Tepa Archaeological Site"></textarea>
+                </div>
+            </form>
+            <style>
+                .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+                .upload-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: #1a5f7a; color: white; border-radius: 8px; cursor: pointer; transition: all 0.3s; }
+                .upload-btn:hover { background: #c9a227; }
+                .upload-btn i { font-size: 16px; }
+            </style>
+        `;
+        modalFooter.innerHTML = `
+            <button class="btn-secondary modal-cancel">Cancel</button>
+            <button class="btn-primary" onclick="saveNewDestination()"><i class="fas fa-plus"></i> Add Destination</button>
+        `;
+
+        modal.classList.add('active');
+
+        // Add image upload handler
+        setTimeout(() => {
+            const imageFileInput = document.getElementById('newDestImageFile');
+            if (imageFileInput) {
+                imageFileInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        if (file.size > 2 * 1024 * 1024) {
+                            alert('Image size must be less than 2MB');
+                            return;
+                        }
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            const preview = document.getElementById('newDestImagePreview');
+                            const placeholder = document.getElementById('newDestImagePlaceholder');
+                            preview.src = event.target.result;
+                            preview.style.display = 'block';
+                            placeholder.style.display = 'none';
+                            document.getElementById('newDestImage').value = event.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+        }, 100);
+    }
+
+    // ========== Save New Destination ==========
+    window.saveNewDestination = function() {
+        const name = document.getElementById('newDestName').value.trim();
+        const subtitle = document.getElementById('newDestSubtitle').value.trim();
+        const description = document.getElementById('newDestDescription').value.trim();
+        const image = document.getElementById('newDestImage').value;
+        const tours = parseInt(document.getElementById('newDestTours').value) || 1;
+        const attractionsText = document.getElementById('newDestAttractions').value.trim();
+
+        // Validation
+        if (!name) {
+            alert('Please enter destination name');
+            return;
+        }
+        if (!subtitle) {
+            alert('Please enter destination subtitle');
+            return;
+        }
+        if (!description) {
+            alert('Please enter destination description');
+            return;
+        }
+        if (!image) {
+            alert('Please upload a destination image');
+            return;
+        }
+        if (!attractionsText) {
+            alert('Please enter at least one attraction');
+            return;
+        }
+
+        // Parse attractions
+        const attractions = attractionsText.split('\n').map(a => a.trim()).filter(a => a.length > 0);
+
+        // Generate unique ID from name
+        const id = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') + '-' + Date.now();
+
+        // Create new destination object
+        const newDestination = {
+            id: id,
+            name: name,
+            subtitle: subtitle,
+            description: description,
+            image: image,
+            tours: tours,
+            attractions: attractions
+        };
+
+        // Add to destinations
+        const destinations = getDestinationsData();
+        destinations.push(newDestination);
+        saveDestinationsData(destinations);
+
+        modal.classList.remove('active');
+        showNotification('New destination added successfully! It will appear on the main website.', 'success');
+        loadDestinations();
+    };
+
+    // ========== View Destination ==========
+    window.viewDestination = function(id) {
+        const destinations = getDestinationsData();
+        const dest = destinations.find(d => d.id === id);
+        if (!dest) return;
+
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+        const modalFooter = document.getElementById('modalFooter');
+
+        modalTitle.textContent = dest.name;
+        modalBody.innerHTML = `
+            <div class="dest-view">
+                <img src="${dest.image}" alt="${dest.name}" style="width:100%; border-radius:10px; margin-bottom:20px;" onerror="this.src='https://via.placeholder.com/400x250?text=${dest.name}'">
+                <h4 style="color:#c9a227; margin-bottom:10px;">${dest.subtitle}</h4>
+                <p style="line-height:1.6; margin-bottom:20px;">${dest.description}</p>
+                <h4 style="margin-bottom:15px;"><i class="fas fa-landmark"></i> Main Attractions</h4>
+                <div class="attractions-grid">
+                    ${dest.attractions.map(a => `<span class="attraction-item"><i class="fas fa-check"></i> ${a}</span>`).join('')}
+                </div>
+                <div class="dest-stats" style="margin-top:20px; display:flex; gap:20px;">
+                    <div style="text-align:center; padding:15px; background:#f5f5f5; border-radius:8px; flex:1;">
+                        <strong style="font-size:24px; color:#1a5f7a;">${dest.tours}</strong>
+                        <p style="margin:0; color:#666;">Tours Available</p>
+                    </div>
+                </div>
+            </div>
+            <style>
+                .attractions-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+                .attraction-item { padding: 8px 12px; background: #e8f4f8; border-radius: 6px; font-size: 14px; }
+                .attraction-item i { color: #27ae60; margin-right: 8px; }
+            </style>
+        `;
+        modalFooter.innerHTML = `
+            <button class="btn-secondary modal-cancel">Close</button>
+            <a href="../index.html#destinations" target="_blank" class="btn-primary"><i class="fas fa-external-link-alt"></i> View on Website</a>
+        `;
+
+        modal.classList.add('active');
+    };
+
+    // ========== Edit Destination ==========
+    window.editDestination = function(id) {
+        const destinations = getDestinationsData();
+        const dest = destinations.find(d => d.id === id);
+        if (!dest) return;
+
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+        const modalFooter = document.getElementById('modalFooter');
+
+        modalTitle.textContent = `Edit: ${dest.name}`;
+        modalBody.innerHTML = `
+            <form id="editDestForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-map-marker-alt"></i> Name</label>
+                        <input type="text" id="destName" value="${dest.name}">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-quote-left"></i> Subtitle</label>
+                        <input type="text" id="destSubtitle" value="${dest.subtitle}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-align-left"></i> Description</label>
+                    <textarea id="destDescription" rows="3">${dest.description}</textarea>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-image"></i> Current Image</label>
+                    <div class="image-preview-container">
+                        <img id="editDestImagePreview" src="${dest.image}" alt="${dest.name}" style="width:100%; max-height:200px; object-fit:cover; border-radius:10px;" onerror="this.src='https://via.placeholder.com/400x250?text=${dest.name}'">
+                    </div>
+                    <div class="image-upload-options" style="margin-top:10px;">
+                        <label class="upload-btn">
+                            <i class="fas fa-upload"></i> Change Image
+                            <input type="file" id="editDestImageFile" accept="image/*" style="display:none;">
+                        </label>
+                    </div>
+                    <input type="hidden" id="editDestImage" value="${dest.image}">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-route"></i> Number of Tours</label>
+                        <input type="number" id="destTours" value="${dest.tours}" min="0">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-landmark"></i> Attractions (one per line)</label>
+                    <textarea id="destAttractions" rows="5">${dest.attractions.join('\n')}</textarea>
+                </div>
+            </form>
+            <style>
+                .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+                .upload-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: #1a5f7a; color: white; border-radius: 8px; cursor: pointer; transition: all 0.3s; }
+                .upload-btn:hover { background: #c9a227; }
+            </style>
+        `;
+        modalFooter.innerHTML = `
+            <button class="btn-secondary modal-cancel">Cancel</button>
+            <button class="btn-primary" onclick="saveDestination('${id}')"><i class="fas fa-save"></i> Save Changes</button>
+        `;
+
+        modal.classList.add('active');
+
+        // Add image upload handler for edit
+        setTimeout(() => {
+            const imageFileInput = document.getElementById('editDestImageFile');
+            if (imageFileInput) {
+                imageFileInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        if (file.size > 2 * 1024 * 1024) {
+                            alert('Image size must be less than 2MB');
+                            return;
+                        }
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            document.getElementById('editDestImagePreview').src = event.target.result;
+                            document.getElementById('editDestImage').value = event.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+        }, 100);
+    };
+
+    // ========== Save Destination ==========
+    window.saveDestination = function(id) {
+        const name = document.getElementById('destName').value.trim();
+        const subtitle = document.getElementById('destSubtitle').value.trim();
+        const description = document.getElementById('destDescription').value.trim();
+        const image = document.getElementById('editDestImage').value;
+        const tours = parseInt(document.getElementById('destTours').value) || 0;
+        const attractionsText = document.getElementById('destAttractions').value.trim();
+        const attractions = attractionsText.split('\n').map(a => a.trim()).filter(a => a.length > 0);
+
+        if (!name || !subtitle || !description) {
+            alert('Please fill in all required fields');
+            return;
+        }
+
+        let destinations = getDestinationsData();
+        const index = destinations.findIndex(d => d.id === id);
+        if (index !== -1) {
+            destinations[index] = {
+                ...destinations[index],
+                name: name,
+                subtitle: subtitle,
+                description: description,
+                image: image,
+                tours: tours,
+                attractions: attractions
+            };
+            saveDestinationsData(destinations);
+            modal.classList.remove('active');
+            showNotification('Destination updated successfully!', 'success');
+            loadDestinations();
+        }
+    };
+
+    // ========== Delete Destination ==========
+    window.deleteDestination = function(id) {
+        if (!confirm('Are you sure you want to delete this destination? This action cannot be undone.')) {
+            return;
+        }
+
+        let destinations = getDestinationsData();
+        destinations = destinations.filter(d => d.id !== id);
+        saveDestinationsData(destinations);
+        showNotification('Destination deleted successfully!', 'success');
+        loadDestinations();
+    };
+
+    // ========== View Inquiry (from website contact form) ==========
+    window.viewInquiry = function(id) {
+        const inquiries = JSON.parse(localStorage.getItem('inquiries')) || [];
+        const inquiry = inquiries.find(i => i.id === id);
+        if (!inquiry) return;
+
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+        const modalFooter = document.getElementById('modalFooter');
+
+        modalTitle.textContent = `Inquiry #${inquiry.id}`;
+        modalBody.innerHTML = `
+            <div class="booking-details">
+                <div class="inquiry-source">
+                    <i class="fas fa-globe"></i> Received from Website Contact Form
+                </div>
+                <div class="detail-row">
+                    <span class="label">Customer:</span>
+                    <span class="value">${inquiry.name || inquiry.fullName}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Email:</span>
+                    <span class="value">${inquiry.email}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Phone:</span>
+                    <span class="value">${inquiry.phone || 'N/A'}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Tour Interest:</span>
+                    <span class="value">${getTourName(inquiry.tour)}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Travel Date:</span>
+                    <span class="value">${formatDate(inquiry.travelDate)}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Travelers:</span>
+                    <span class="value">${inquiry.travelers || 'N/A'}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Status:</span>
+                    <span class="status-badge ${inquiry.status}">${capitalizeFirst(inquiry.status)}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Submitted:</span>
+                    <span class="value">${formatDateTime(inquiry.date)}</span>
+                </div>
+                <div class="detail-row full">
+                    <span class="label">Message:</span>
+                    <span class="value">${inquiry.message || 'No message'}</span>
+                </div>
+            </div>
+            <style>
+                .inquiry-source { background: #e8f4f8; padding: 12px; border-radius: 8px; margin-bottom: 15px; color: #1a5f7a; }
+                .inquiry-source i { margin-right: 10px; }
+                .booking-details { padding: 10px 0; }
+                .detail-row { display: flex; padding: 12px 0; border-bottom: 1px solid #eee; }
+                .detail-row.full { flex-direction: column; gap: 10px; }
+                .detail-row .label { width: 120px; font-weight: 600; color: #666; }
+                .detail-row .value { flex: 1; }
+            </style>
+        `;
+        modalFooter.innerHTML = `
+            <button class="btn-secondary modal-cancel">Close</button>
+            <button class="btn-primary" onclick="updateInquiryStatus(${id}, 'confirmed')">Mark as Confirmed</button>
+        `;
+
+        modal.classList.add('active');
+    };
+
+    window.updateInquiryStatus = function(id, status) {
+        let inquiries = JSON.parse(localStorage.getItem('inquiries')) || [];
+        const index = inquiries.findIndex(i => i.id === id);
+        if (index !== -1) {
+            inquiries[index].status = status;
+            localStorage.setItem('inquiries', JSON.stringify(inquiries));
+            modal.classList.remove('active');
+            loadBookings();
+            loadRecentBookings();
+            loadOverviewStats();
+            updateMessageBadge();
+        }
+    };
+
+    window.editInquiry = function(id) {
+        const inquiries = JSON.parse(localStorage.getItem('inquiries')) || [];
+        const inquiry = inquiries.find(i => i.id === id);
+        if (!inquiry) return;
+
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+        const modalFooter = document.getElementById('modalFooter');
+
+        modalTitle.textContent = `Edit Inquiry #${inquiry.id}`;
+        modalBody.innerHTML = `
+            <form id="editInquiryForm">
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="editInquiryStatus">
+                        <option value="new" ${inquiry.status === 'new' ? 'selected' : ''}>New</option>
+                        <option value="confirmed" ${inquiry.status === 'confirmed' ? 'selected' : ''}>Confirmed</option>
+                        <option value="pending" ${inquiry.status === 'pending' ? 'selected' : ''}>Pending</option>
+                        <option value="completed" ${inquiry.status === 'completed' ? 'selected' : ''}>Completed</option>
+                        <option value="cancelled" ${inquiry.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea id="editInquiryNotes" rows="3">${inquiry.notes || ''}</textarea>
+                </div>
+            </form>
+        `;
+        modalFooter.innerHTML = `
+            <button class="btn-secondary modal-cancel">Cancel</button>
+            <button class="btn-primary" onclick="saveInquiryEdit(${id})">Save Changes</button>
+        `;
+
+        modal.classList.add('active');
+    };
+
+    window.saveInquiryEdit = function(id) {
+        let inquiries = JSON.parse(localStorage.getItem('inquiries')) || [];
+        const index = inquiries.findIndex(i => i.id === id);
+        if (index !== -1) {
+            inquiries[index].status = document.getElementById('editInquiryStatus').value;
+            inquiries[index].notes = document.getElementById('editInquiryNotes').value;
+            localStorage.setItem('inquiries', JSON.stringify(inquiries));
+            modal.classList.remove('active');
+            loadBookings();
+            loadRecentBookings();
+        }
+    };
+
+    window.deleteInquiry = function(id) {
+        if (confirm('Are you sure you want to delete this inquiry?')) {
+            let inquiries = JSON.parse(localStorage.getItem('inquiries')) || [];
+            inquiries = inquiries.filter(i => i.id !== id);
+            localStorage.setItem('inquiries', JSON.stringify(inquiries));
+            loadBookings();
+            loadRecentBookings();
+            loadOverviewStats();
+        }
+    };
+
+    // Modal close handlers - using event delegation for dynamically created buttons
+    modal.addEventListener('click', (e) => {
+        // Close on backdrop click
+        if (e.target === modal) {
+            modal.classList.remove('active');
+        }
+        // Close on .modal-close or .modal-cancel button click
+        if (e.target.closest('.modal-close') || e.target.closest('.modal-cancel')) {
+            modal.classList.remove('active');
+        }
+    });
+
+    // Export functions
+    document.getElementById('exportCustomers')?.addEventListener('click', function() {
+        const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+        let csv = 'Name,Email,Country,Phone\n';
+        bookings.forEach(b => {
+            csv += `"${b.fullName}","${b.email}","${getCountryName(b.country)}","${b.phone || ''}"\n`;
+        });
+        downloadCSV(csv, 'customers.csv');
+    });
+
+    document.getElementById('exportSubscribers')?.addEventListener('click', function() {
+        const subscribers = JSON.parse(localStorage.getItem('subscribers')) || [];
+        let csv = 'Email\n';
+        subscribers.forEach(s => {
+            csv += `"${s}"\n`;
+        });
+        downloadCSV(csv, 'subscribers.csv');
+    });
+
+    function downloadCSV(csv, filename) {
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.click();
+        window.URL.revokeObjectURL(url);
+    }
+
+    // Filter functionality
+    document.getElementById('statusFilter')?.addEventListener('change', filterBookings);
+    document.getElementById('tourFilter')?.addEventListener('change', filterBookings);
+    document.getElementById('bookingSearch')?.addEventListener('input', filterBookings);
+
+    function filterBookings() {
+        const status = document.getElementById('statusFilter').value;
+        const tour = document.getElementById('tourFilter').value;
+        const search = document.getElementById('bookingSearch').value.toLowerCase();
+
+        let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+
+        if (status) {
+            bookings = bookings.filter(b => b.status === status);
+        }
+        if (tour) {
+            bookings = bookings.filter(b => b.tourType === tour);
+        }
+        if (search) {
+            bookings = bookings.filter(b =>
+                b.fullName.toLowerCase().includes(search) ||
+                b.email.toLowerCase().includes(search)
+            );
+        }
+
+        const tbody = document.getElementById('bookingsTable');
+        tbody.innerHTML = '';
+
+        bookings.forEach(booking => {
+            const tourName = getTourName(booking.tourType);
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><input type="checkbox" data-id="${booking.id}"></td>
+                <td>#${booking.id}</td>
+                <td>${booking.fullName}</td>
+                <td>${booking.email}</td>
+                <td>${tourName}</td>
+                <td>${formatDate(booking.travelDate)}</td>
+                <td>${booking.travelers}</td>
+                <td><span class="status-badge ${booking.status}">${capitalizeFirst(booking.status)}</span></td>
+                <td>
+                    <div class="action-btns">
+                        <button class="action-btn view" onclick="viewBooking(${booking.id})"><i class="fas fa-eye"></i></button>
+                        <button class="action-btn edit" onclick="editBooking(${booking.id})"><i class="fas fa-edit"></i></button>
+                        <button class="action-btn delete" onclick="deleteBooking(${booking.id})"><i class="fas fa-trash"></i></button>
+                    </div>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        document.getElementById('showingCount').textContent = bookings.length;
+    }
+
+    // ========== Message Reply Functions ==========
+    window.openReplyModal = function(email, name, originalMessage) {
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+        const modalFooter = document.getElementById('modalFooter');
+
+        modalTitle.textContent = 'Reply to Message';
+        modalBody.innerHTML = `
+            <div class="reply-form">
+                <div class="recipient-info">
+                    <div class="recipient-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="recipient-details">
+                        <h4>${name}</h4>
+                        <span><i class="fas fa-envelope"></i> ${email}</span>
+                    </div>
+                </div>
+                ${originalMessage ? `
+                <div class="original-message">
+                    <label><i class="fas fa-quote-left"></i> Original Message</label>
+                    <p>"${originalMessage}${originalMessage.length >= 100 ? '...' : ''}"</p>
+                </div>
+                ` : ''}
+                <div class="form-group">
+                    <label><i class="fas fa-heading"></i> Subject</label>
+                    <input type="text" id="replySubject" value="Re: Your inquiry to Samanid Travel" placeholder="Email subject">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-pen"></i> Message</label>
+                    <textarea id="replyMessage" rows="10" placeholder="Write your reply here...">Dear ${name},
+
+Thank you for contacting Samanid Travel!
+
+[Your reply here]
+
+Best regards,
+Samanid Travel Team
+
+📧 ${companySettings.email}
+📞 ${companySettings.phone1}
+📍 ${companySettings.address}</textarea>
+                </div>
+            </div>
+            <style>
+                .reply-form { }
+                .recipient-info { display: flex; align-items: center; gap: 15px; padding: 15px; background: #e8f4f8; border-radius: 10px; margin-bottom: 20px; }
+                .recipient-avatar { width: 50px; height: 50px; background: #1a5f7a; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px; }
+                .recipient-details h4 { margin: 0 0 5px 0; color: #1a5f7a; }
+                .recipient-details span { color: #666; font-size: 14px; }
+                .recipient-details i { margin-right: 5px; }
+                .original-message { background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #c9a227; }
+                .original-message label { display: block; font-weight: 600; color: #1a5f7a; margin-bottom: 8px; }
+                .original-message p { margin: 0; color: #666; font-style: italic; line-height: 1.6; }
+            </style>
+        `;
+        modalFooter.innerHTML = `
+            <button class="btn-secondary modal-cancel">Cancel</button>
+            <button class="btn-primary" onclick="sendReplyEmail('${email}')"><i class="fas fa-paper-plane"></i> Send Reply</button>
+        `;
+
+        modal.classList.add('active');
+    };
+
+    window.sendReplyEmail = function(email) {
+        const subject = document.getElementById('replySubject').value;
+        const message = document.getElementById('replyMessage').value;
+
+        if (!message.trim()) {
+            alert('Please write a message');
+            return;
+        }
+
+        // Open email client with pre-filled message
+        const encodedSubject = encodeURIComponent(subject);
+        const encodedBody = encodeURIComponent(message);
+        const mailtoLink = `mailto:${email}?subject=${encodedSubject}&body=${encodedBody}`;
+
+        window.open(mailtoLink, '_blank');
+
+        modal.classList.remove('active');
+        showNotification(`Email client opened for ${email}`, 'success');
+    };
+
+    window.archiveMessage = function(bookingId) {
+        const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+        const index = bookings.findIndex(b => b.id === parseInt(bookingId));
+
+        if (index !== -1) {
+            bookings[index].archived = true;
+            bookings[index].status = 'archived';
+            localStorage.setItem('bookings', JSON.stringify(bookings));
+
+            loadMessages();
+            showNotification('Message archived successfully', 'success');
+        }
+    };
+
+    console.log('Admin Dashboard loaded successfully!');
+});

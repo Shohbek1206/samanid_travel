@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Samanid Tour Agency</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <!-- Login Screen -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-card">
+            <div class="login-header">
+                <img src="../images/logo.png" alt="Samanid Tour Agency" class="login-logo">
+                <h1>Admin Panel</h1>
+                <p>Samanid Travel Management</p>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <div class="input-icon">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="username" placeholder="Enter username" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="password" placeholder="Enter password" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn-login">
+                    <span>Login</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+                <p class="login-hint">Demo: admin / admin123</p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="dashboard" id="dashboard" style="display: none;">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <img src="../images/logo.png" alt="Samanid" class="sidebar-logo">
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="active" data-page="overview">
+                        <a href="#"><i class="fas fa-th-large"></i> Dashboard</a>
+                    </li>
+                    <li data-page="bookings">
+                        <a href="#"><i class="fas fa-calendar-check"></i> Bookings</a>
+                    </li>
+                    <li data-page="tours">
+                        <a href="#"><i class="fas fa-route"></i> Tours</a>
+                    </li>
+                    <li data-page="destinations">
+                        <a href="#"><i class="fas fa-map-marked-alt"></i> Destinations</a>
+                    </li>
+                    <li data-page="customers">
+                        <a href="#"><i class="fas fa-users"></i> Customers</a>
+                    </li>
+                    <li data-page="messages">
+                        <a href="#"><i class="fas fa-envelope"></i> Messages <span class="badge" id="messageBadge">0</span></a>
+                    </li>
+                    <li data-page="subscribers">
+                        <a href="#"><i class="fas fa-mail-bulk"></i> Subscribers</a>
+                    </li>
+                    <li data-page="reviews">
+                        <a href="#"><i class="fas fa-star"></i> Reviews</a>
+                    </li>
+                    <li data-page="analytics">
+                        <a href="#"><i class="fas fa-chart-line"></i> Analytics</a>
+                    </li>
+                    <li data-page="settings">
+                        <a href="#"><i class="fas fa-cog"></i> Settings</a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="../index.html" target="_blank"><i class="fas fa-external-link-alt"></i> View Website</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="main-header">
+                <div class="header-left">
+                    <button class="menu-toggle" id="menuToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search...">
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="header-notifications">
+                        <button class="notification-btn">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-dot"></span>
+                        </button>
+                    </div>
+                    <div class="header-user">
+                        <img src="https://randomuser.me/api/portraits/men/1.jpg" alt="Admin">
+                        <div class="user-info">
+                            <span class="user-name">Admin User</span>
+                            <span class="user-role">Administrator</span>
+                        </div>
+                        <button class="logout-btn" id="logoutBtn">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Overview Page -->
+                <div class="page active" id="page-overview">
+                    <div class="page-header">
+                        <h1>Dashboard Overview</h1>
+                        <p>Welcome back! Here's what's happening with your travel business.</p>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon blue">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="totalBookings">0</h3>
+                                <p>Total Bookings</p>
+                            </div>
+                            <div class="stat-trend up">
+                                <i class="fas fa-arrow-up"></i> 12%
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon green">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="totalRevenue">$0</h3>
+                                <p>Total Revenue</p>
+                            </div>
+                            <div class="stat-trend up">
+                                <i class="fas fa-arrow-up"></i> 8%
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon orange">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="totalCustomers">0</h3>
+                                <p>Customers</p>
+                            </div>
+                            <div class="stat-trend up">
+                                <i class="fas fa-arrow-up"></i> 15%
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon purple">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>4.9</h3>
+                                <p>Average Rating</p>
+                            </div>
+                            <div class="stat-trend up">
+                                <i class="fas fa-arrow-up"></i> 2%
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Row -->
+                    <div class="charts-row">
+                        <div class="chart-card large">
+                            <div class="chart-header">
+                                <h3>Booking Analytics</h3>
+                                <select class="chart-filter">
+                                    <option>Last 7 Days</option>
+                                    <option>Last 30 Days</option>
+                                    <option>Last 3 Months</option>
+                                </select>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="bookingChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h3>Tour Categories</h3>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="categoryChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Bookings & Popular Tours -->
+                    <div class="content-row">
+                        <div class="table-card">
+                            <div class="table-header">
+                                <h3>Recent Bookings</h3>
+                                <a href="#" class="view-all" data-page="bookings">View All</a>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Customer</th>
+                                            <th>Tour</th>
+                                            <th>Date</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="recentBookingsTable">
+                                        <!-- Dynamic content -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="popular-tours-card">
+                            <div class="card-header">
+                                <h3>Popular Tours</h3>
+                            </div>
+                            <div class="popular-tours-list">
+                                <div class="popular-tour-item">
+                                    <img src="https://images.unsplash.com/photo-1596484552834-6a58f850e0a1?w=100" alt="">
+                                    <div class="tour-info">
+                                        <h4>Classic Silk Road</h4>
+                                        <p>245 bookings</p>
+                                    </div>
+                                    <span class="tour-rating"><i class="fas fa-star"></i> 4.9</span>
+                                </div>
+                                <div class="popular-tour-item">
+                                    <img src="https://images.unsplash.com/photo-1565008576549-57569a49371d?w=100" alt="">
+                                    <div class="tour-info">
+                                        <h4>Luxury Heritage</h4>
+                                        <p>189 bookings</p>
+                                    </div>
+                                    <span class="tour-rating"><i class="fas fa-star"></i> 5.0</span>
+                                </div>
+                                <div class="popular-tour-item">
+                                    <img src="https://images.unsplash.com/photo-1558005137-d9619a5c539f?w=100" alt="">
+                                    <div class="tour-info">
+                                        <h4>Photography Expedition</h4>
+                                        <p>156 bookings</p>
+                                    </div>
+                                    <span class="tour-rating"><i class="fas fa-star"></i> 4.8</span>
+                                </div>
+                                <div class="popular-tour-item">
+                                    <img src="https://images.unsplash.com/photo-1580309237429-661ea7cd1d66?w=100" alt="">
+                                    <div class="tour-info">
+                                        <h4>Culinary Discovery</h4>
+                                        <p>134 bookings</p>
+                                    </div>
+                                    <span class="tour-rating"><i class="fas fa-star"></i> 4.7</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bookings Page -->
+                <div class="page" id="page-bookings">
+                    <div class="page-header">
+                        <h1>Booking Management</h1>
+                        <button class="btn-primary" id="addBookingBtn">
+                            <i class="fas fa-plus"></i> Add Booking
+                        </button>
+                    </div>
+
+                    <div class="filter-bar">
+                        <div class="filter-group">
+                            <select id="statusFilter">
+                                <option value="">All Status</option>
+                                <option value="new">New</option>
+                                <option value="confirmed">Confirmed</option>
+                                <option value="pending">Pending</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                            <select id="tourFilter">
+                                <option value="">All Tours</option>
+                                <option value="classic">Classic Silk Road</option>
+                                <option value="luxury">Luxury Heritage</option>
+                                <option value="adventure">Mountain Adventure</option>
+                                <option value="photography">Photography Expedition</option>
+                                <option value="culinary">Culinary Discovery</option>
+                            </select>
+                            <input type="date" id="dateFilter">
+                        </div>
+                        <div class="search-filter">
+                            <i class="fas fa-search"></i>
+                            <input type="text" placeholder="Search bookings..." id="bookingSearch">
+                        </div>
+                    </div>
+
+                    <div class="table-card full">
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th><input type="checkbox" id="selectAll"></th>
+                                        <th>ID</th>
+                                        <th>Customer</th>
+                                        <th>Email</th>
+                                        <th>Tour</th>
+                                        <th>Travel Date</th>
+                                        <th>Travelers</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="bookingsTable">
+                                    <!-- Dynamic content -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="table-footer">
+                            <div class="table-info">Showing <span id="showingCount">0</span> of <span id="totalCount">0</span> entries</div>
+                            <div class="pagination" id="pagination">
+                                <!-- Dynamic pagination -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tours Page -->
+                <div class="page" id="page-tours">
+                    <div class="page-header">
+                        <h1>Tour Management</h1>
+                        <button class="btn-primary" id="addTourBtn">
+                            <i class="fas fa-plus"></i> Add Tour
+                        </button>
+                    </div>
+
+                    <div class="tours-grid" id="toursGrid">
+                        <!-- Dynamic content -->
+                    </div>
+                </div>
+
+                <!-- Destinations Page -->
+                <div class="page" id="page-destinations">
+                    <div class="page-header">
+                        <h1>Destination Management</h1>
+                        <button class="btn-primary" id="addDestBtn">
+                            <i class="fas fa-plus"></i> Add Destination
+                        </button>
+                    </div>
+
+                    <div class="destinations-grid" id="destinationsGrid">
+                        <!-- Dynamic content -->
+                    </div>
+                </div>
+
+                <!-- Customers Page -->
+                <div class="page" id="page-customers">
+                    <div class="page-header">
+                        <h1>Customer Management</h1>
+                        <button class="btn-primary" id="exportCustomers">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                    </div>
+
+                    <div class="table-card full">
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Customer</th>
+                                        <th>Email</th>
+                                        <th>Country</th>
+                                        <th>Total Bookings</th>
+                                        <th>Total Spent</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="customersTable">
+                                    <!-- Dynamic content -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Messages Page -->
+                <div class="page" id="page-messages">
+                    <div class="page-header">
+                        <h1>Messages</h1>
+                    </div>
+
+                    <div class="messages-container">
+                        <div class="messages-list" id="messagesList">
+                            <!-- Dynamic content -->
+                        </div>
+                        <div class="message-view" id="messageView">
+                            <div class="no-message-selected">
+                                <i class="fas fa-envelope-open-text"></i>
+                                <p>Select a message to view</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Subscribers Page -->
+                <div class="page" id="page-subscribers">
+                    <div class="page-header">
+                        <h1>Newsletter Subscribers</h1>
+                        <div class="header-actions">
+                            <button class="btn-secondary" id="exportSubscribers">
+                                <i class="fas fa-download"></i> Export CSV
+                            </button>
+                            <button class="btn-primary" id="sendNewsletter">
+                                <i class="fas fa-paper-plane"></i> Send Newsletter
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="subscribers-stats">
+                        <div class="stat-mini">
+                            <span class="stat-value" id="totalSubscribers">0</span>
+                            <span class="stat-label">Total Subscribers</span>
+                        </div>
+                        <div class="stat-mini">
+                            <span class="stat-value" id="newSubscribers">0</span>
+                            <span class="stat-label">This Month</span>
+                        </div>
+                    </div>
+
+                    <div class="table-card full">
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th><input type="checkbox" id="selectAllSubs"></th>
+                                        <th>Email</th>
+                                        <th>Subscribed Date</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="subscribersTable">
+                                    <!-- Dynamic content -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reviews Page -->
+                <div class="page" id="page-reviews">
+                    <div class="page-header">
+                        <h1>Customer Reviews</h1>
+                    </div>
+
+                    <div class="reviews-overview">
+                        <div class="overall-rating">
+                            <div class="rating-big">4.9</div>
+                            <div class="rating-stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <p>Based on 2,340 reviews</p>
+                        </div>
+                        <div class="rating-breakdown">
+                            <div class="rating-bar">
+                                <span>5 stars</span>
+                                <div class="bar"><div class="fill" style="width: 85%"></div></div>
+                                <span>85%</span>
+                            </div>
+                            <div class="rating-bar">
+                                <span>4 stars</span>
+                                <div class="bar"><div class="fill" style="width: 10%"></div></div>
+                                <span>10%</span>
+                            </div>
+                            <div class="rating-bar">
+                                <span>3 stars</span>
+                                <div class="bar"><div class="fill" style="width: 3%"></div></div>
+                                <span>3%</span>
+                            </div>
+                            <div class="rating-bar">
+                                <span>2 stars</span>
+                                <div class="bar"><div class="fill" style="width: 1%"></div></div>
+                                <span>1%</span>
+                            </div>
+                            <div class="rating-bar">
+                                <span>1 star</span>
+                                <div class="bar"><div class="fill" style="width: 1%"></div></div>
+                                <span>1%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="reviews-list" id="reviewsList">
+                        <!-- Dynamic content -->
+                    </div>
+                </div>
+
+                <!-- Analytics Page -->
+                <div class="page" id="page-analytics">
+                    <div class="page-header">
+                        <h1>Analytics</h1>
+                        <select class="date-range-select">
+                            <option>Last 7 Days</option>
+                            <option>Last 30 Days</option>
+                            <option>Last 3 Months</option>
+                            <option>Last Year</option>
+                        </select>
+                    </div>
+
+                    <div class="analytics-grid">
+                        <div class="analytics-card">
+                            <h3>Website Traffic</h3>
+                            <canvas id="trafficChart"></canvas>
+                        </div>
+                        <div class="analytics-card">
+                            <h3>Visitor Countries</h3>
+                            <canvas id="countriesChart"></canvas>
+                        </div>
+                        <div class="analytics-card">
+                            <h3>Revenue by Tour</h3>
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                        <div class="analytics-card">
+                            <h3>Booking Sources</h3>
+                            <canvas id="sourcesChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Page -->
+                <div class="page" id="page-settings">
+                    <div class="page-header">
+                        <h1>Settings</h1>
+                    </div>
+
+                    <div class="settings-container">
+                        <div class="settings-sidebar">
+                            <ul>
+                                <li class="active" data-tab="general"><i class="fas fa-cog"></i> General</li>
+                                <li data-tab="profile"><i class="fas fa-user"></i> Profile</li>
+                                <li data-tab="security"><i class="fas fa-shield-alt"></i> Security</li>
+                                <li data-tab="notifications"><i class="fas fa-bell"></i> Notifications</li>
+                                <li data-tab="email"><i class="fas fa-envelope"></i> Email Templates</li>
+                                <li data-tab="payment"><i class="fas fa-credit-card"></i> Payment</li>
+                            </ul>
+                        </div>
+                        <div class="settings-content">
+                            <div class="settings-tab active" id="tab-general">
+                                <h2>General Settings</h2>
+                                <form class="settings-form">
+                                    <div class="form-group">
+                                        <label>Site Name</label>
+                                        <input type="text" value="Samanid Travel">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Site Description</label>
+                                        <textarea rows="3">Discover the ancient wonders of the Silk Road with Samanid Travel - Your trusted tour agency in Bukhara, Uzbekistan</textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Contact Email</label>
+                                        <input type="email" value="bexruz@samanidtraveluz.com">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Contact Phone 1</label>
+                                        <input type="tel" value="+998 91 404 44 59">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Contact Phone 2</label>
+                                        <input type="tel" value="+998 90 715 51 95">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Address</label>
+                                        <textarea rows="2">Mustakillik st 56/1, Bukhara, Uzbekistan</textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Currency</label>
+                                        <select>
+                                            <option selected>EUR (€)</option>
+                                            <option>USD ($)</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn-primary">Save Changes</button>
+                                </form>
+                            </div>
+                            <div class="settings-tab" id="tab-profile">
+                                <h2>Profile Settings</h2>
+                                <form class="settings-form">
+                                    <div class="profile-avatar">
+                                        <div style="width:80px;height:80px;border-radius:50%;background:#1a5f7a;color:white;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:bold;">B</div>
+                                        <button type="button" class="btn-secondary">Change Photo</button>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Full Name</label>
+                                        <input type="text" value="Bexruz">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Email</label>
+                                        <input type="email" value="bexruz@samanidtraveluz.com">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Role</label>
+                                        <input type="text" value="Administrator" readonly>
+                                    </div>
+                                    <button type="submit" class="btn-primary">Update Profile</button>
+                                </form>
+                            </div>
+                            <div class="settings-tab" id="tab-security">
+                                <h2>Security Settings</h2>
+                                <form class="settings-form">
+                                    <div class="form-group">
+                                        <label>Current Password</label>
+                                        <input type="password" placeholder="Enter current password">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>New Password</label>
+                                        <input type="password" placeholder="Enter new password">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Confirm New Password</label>
+                                        <input type="password" placeholder="Confirm new password">
+                                    </div>
+                                    <div class="form-group checkbox-group">
+                                        <label>
+                                            <input type="checkbox" checked> Enable Two-Factor Authentication
+                                        </label>
+                                    </div>
+                                    <button type="submit" class="btn-primary">Update Password</button>
+                                </form>
+                            </div>
+                            <div class="settings-tab" id="tab-notifications">
+                                <h2>Notification Settings</h2>
+                                <form class="settings-form">
+                                    <div class="form-group checkbox-group">
+                                        <label>
+                                            <input type="checkbox" checked> Email notifications for new bookings
+                                        </label>
+                                    </div>
+                                    <div class="form-group checkbox-group">
+                                        <label>
+                                            <input type="checkbox" checked> Email notifications for new messages
+                                        </label>
+                                    </div>
+                                    <div class="form-group checkbox-group">
+                                        <label>
+                                            <input type="checkbox" checked> Email notifications for new reviews
+                                        </label>
+                                    </div>
+                                    <div class="form-group checkbox-group">
+                                        <label>
+                                            <input type="checkbox"> Daily summary report
+                                        </label>
+                                    </div>
+                                    <div class="form-group checkbox-group">
+                                        <label>
+                                            <input type="checkbox" checked> Weekly analytics report
+                                        </label>
+                                    </div>
+                                    <button type="submit" class="btn-primary">Save Preferences</button>
+                                </form>
+                            </div>
+                            <div class="settings-tab" id="tab-email">
+                                <h2>Email Templates</h2>
+                                <div class="email-templates">
+                                    <div class="template-item">
+                                        <span>Booking Confirmation</span>
+                                        <button class="btn-secondary">Edit</button>
+                                    </div>
+                                    <div class="template-item">
+                                        <span>Booking Reminder</span>
+                                        <button class="btn-secondary">Edit</button>
+                                    </div>
+                                    <div class="template-item">
+                                        <span>Welcome Email</span>
+                                        <button class="btn-secondary">Edit</button>
+                                    </div>
+                                    <div class="template-item">
+                                        <span>Newsletter Template</span>
+                                        <button class="btn-secondary">Edit</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="settings-tab" id="tab-payment">
+                                <h2>Payment Settings</h2>
+                                <form class="settings-form">
+                                    <div class="form-group">
+                                        <label>Payment Methods</label>
+                                        <div class="checkbox-group">
+                                            <label><input type="checkbox" checked> Credit Card</label>
+                                            <label><input type="checkbox" checked> PayPal</label>
+                                            <label><input type="checkbox"> Bank Transfer</label>
+                                            <label><input type="checkbox"> Cryptocurrency</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Stripe API Key</label>
+                                        <input type="password" placeholder="sk_live_...">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>PayPal Client ID</label>
+                                        <input type="password" placeholder="Enter PayPal Client ID">
+                                    </div>
+                                    <button type="submit" class="btn-primary">Save Settings</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Modal Title</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Dynamic content -->
+            </div>
+            <div class="modal-footer" id="modalFooter">
+                <button class="btn-secondary modal-cancel">Cancel</button>
+                <button class="btn-primary modal-confirm">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>

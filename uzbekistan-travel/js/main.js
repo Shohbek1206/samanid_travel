@@ -1,0 +1,1049 @@
+// ========================================
+// SAMANID TRAVEL - MAIN JAVASCRIPT
+// ========================================
+
+document.addEventListener('DOMContentLoaded', function() {
+
+    // ========== Default Tours Data (fallback if no localStorage) ==========
+    const defaultToursData = [
+        { id: 1, name: 'Grand Uzbekistan Discovery', duration: '8 Days', category: 'classic', image: 'images/destinations/samarkand-registan.jpg', badge: 'Best Seller', badgeType: 'best', highlights: ['4 Cities', 'Meals Included', 'All Transfers'], description: 'Explore all major Silk Road cities - Tashkent, Samarkand, Bukhara, and Khiva in one comprehensive journey.', price: '', currency: 'EUR' },
+        { id: 2, name: 'Samarkand & Bukhara Treasures', duration: '5 Days', category: 'cultural', image: 'images/destinations/bukhara-kalon.jpg', badge: 'Popular', badgeType: 'cultural', highlights: ['2 Cities', 'Private Guide', '4★ Hotels'], description: 'Deep dive into the two most magnificent cities of Central Asia with expert local guides.', price: '', currency: 'EUR' },
+        { id: 3, name: 'Aral Sea Expedition', duration: '6 Days', category: 'adventure', image: 'images/destinations/nukus-aral.jpg', badge: 'Unique', badgeType: 'adventure', highlights: ['Yurt Stay', 'Photo Tour', '4x4 Safari'], description: 'Journey to the mysterious Aral Sea, explore Karakalpakstan and witness the ship graveyard.', price: '', currency: 'EUR' },
+        { id: 4, name: 'Complete Silk Road Journey', duration: '10 Days', category: 'classic', image: 'images/destinations/khiva-ichankala.jpg', badge: '', badgeType: '', highlights: ['6 Cities', 'Speed Train', 'All Inclusive'], description: 'The ultimate Central Asian adventure covering all UNESCO sites and hidden gems of Uzbekistan.', price: '', currency: 'EUR' },
+        { id: 5, name: 'Crafts & Traditions Tour', duration: '7 Days', category: 'cultural', image: 'images/destinations/fergana-crafts.jpg', badge: '', badgeType: '', highlights: ['Workshops', 'Homestay', 'Cooking Class'], description: 'Experience traditional silk weaving, ceramics, and paper making in the Fergana Valley workshops.', price: '', currency: 'EUR' },
+        { id: 6, name: 'Samarkand Express', duration: '3 Days', category: 'short', image: 'images/destinations/tashkent-minor.jpg', badge: 'Weekend', badgeType: 'short', highlights: ['Speed Train', 'VIP Service', 'Flexible'], description: 'Perfect weekend getaway to explore the highlights of Samarkand - ideal for business travelers.', price: '', currency: 'EUR' }
+    ];
+
+    // Initialize tours in localStorage if not exists
+    if (!localStorage.getItem('tours')) {
+        localStorage.setItem('tours', JSON.stringify(defaultToursData));
+    }
+
+    // Get tours from localStorage
+    function getToursData() {
+        return JSON.parse(localStorage.getItem('tours')) || defaultToursData;
+    }
+
+    // ========== Default Destinations Data ==========
+    const defaultDestinationsData = [
+        {
+            id: 'samarkand',
+            name: 'Samarkand',
+            subtitle: 'The Pearl of the East',
+            description: 'The jewel of the Silk Road featuring the iconic Registan Square, Gur-e-Amir mausoleum, and Bibi-Khanym mosque.',
+            image: 'images/destinations/samarkand-registan.jpg',
+            tours: 4,
+            tag: 'must_see',
+            tagText: 'Must See',
+            featured: true,
+            attractions: ['Registan Square', 'Gur-e-Amir Mausoleum', 'Shah-i-Zinda', 'Bibi-Khanym Mosque', 'Ulugh Beg Observatory']
+        },
+        {
+            id: 'bukhara',
+            name: 'Bukhara',
+            subtitle: 'The Noble City',
+            description: 'A living museum with 140+ architectural monuments, ancient trading domes, and the majestic Kalyan Minaret.',
+            image: 'images/destinations/bukhara-kalon.jpg',
+            tours: 3,
+            tag: 'unesco',
+            tagText: 'UNESCO Site',
+            featured: false,
+            attractions: ['Poi Kalyan Complex', 'Ark Fortress', 'Lyab-i-Hauz', 'Chor-Minor', 'Ismail Samani Mausoleum']
+        },
+        {
+            id: 'khiva',
+            name: 'Khiva',
+            subtitle: 'The Museum City',
+            description: 'Step into a fairy tale in Ichan-Kala, the perfectly preserved inner city that transports you back in time.',
+            image: 'images/destinations/khiva-ichankala.jpg',
+            tours: 2,
+            tag: 'unesco',
+            tagText: 'UNESCO Site',
+            featured: false,
+            attractions: ['Ichan-Kala', 'Kalta Minor Minaret', 'Islam Khoja Complex', 'Tash-Khauli Palace', 'Juma Mosque']
+        },
+        {
+            id: 'tashkent',
+            name: 'Tashkent',
+            subtitle: 'The Capital of the Sun',
+            description: 'The modern capital blending Soviet architecture, Islamic heritage, and contemporary culture.',
+            image: 'images/destinations/tashkent-minor.jpg',
+            tours: 3,
+            tag: 'capital',
+            tagText: 'Capital City',
+            featured: false,
+            attractions: ['Hazrati Imam Complex', 'Minor Mosque', 'Chorsu Bazaar', 'Tashkent Metro', 'Amir Timur Square']
+        },
+        {
+            id: 'fergana',
+            name: 'Fergana Valley',
+            subtitle: 'The Garden of Central Asia',
+            description: 'The cradle of Uzbek craftsmanship - silk weaving, ceramics, and traditional artistry.',
+            image: 'images/destinations/fergana-crafts.jpg',
+            tours: 2,
+            tag: 'crafts',
+            tagText: 'Crafts & Nature',
+            featured: false,
+            attractions: ['Rishtan Ceramics', 'Margilan Silk', 'Kokand Palace', 'Andijan', 'Chust Knives']
+        },
+        {
+            id: 'nukus',
+            name: 'Nukus & Aral Sea',
+            subtitle: 'Art & Desert',
+            description: 'Home to the famous Savitsky Museum and gateway to the mysterious Aral Sea.',
+            image: 'images/destinations/nukus-aral.jpg',
+            tours: 1,
+            tag: 'art',
+            tagText: 'Art & Desert',
+            featured: false,
+            attractions: ['Savitsky Museum', 'Aral Sea Ship Graveyard', 'Mizdakhan Necropolis', 'Ayaz-Kala Fortress']
+        }
+    ];
+
+    // Initialize destinations in localStorage if not exists
+    if (!localStorage.getItem('destinations')) {
+        localStorage.setItem('destinations', JSON.stringify(defaultDestinationsData));
+    }
+
+    // Get destinations from localStorage
+    function getDestinationsData() {
+        return JSON.parse(localStorage.getItem('destinations')) || defaultDestinationsData;
+    }
+
+    // ========== Load Destinations Dynamically ==========
+    function loadDestinationsToPage() {
+        const destinationsGrid = document.querySelector('.destinations-grid');
+        if (!destinationsGrid) return;
+
+        const destinations = getDestinationsData();
+        destinationsGrid.innerHTML = '';
+
+        destinations.forEach((dest, index) => {
+            const card = document.createElement('div');
+            card.className = 'destination-card' + (dest.featured || index === 0 ? ' featured' : '');
+            card.setAttribute('data-dest', dest.id);
+            card.style.cursor = 'pointer';
+
+            // Get first 2 attractions for highlights
+            const highlights = (dest.attractions || []).slice(0, 2);
+
+            card.innerHTML = `
+                <div class="destination-img">
+                    <img src="${dest.image}" alt="${dest.name}" onerror="this.src='https://via.placeholder.com/400x300?text=${encodeURIComponent(dest.name)}'">
+                    <div class="destination-overlay">
+                        <span class="destination-tag">${dest.tagText || dest.tag || 'Destination'}</span>
+                    </div>
+                </div>
+                <div class="destination-content">
+                    <h3>${dest.name}</h3>
+                    <p>${dest.description}</p>
+                    ${(dest.featured || index === 0) && highlights.length > 0 ? `
+                        <div class="destination-highlights">
+                            ${highlights.map(h => `<span><i class="fas fa-landmark"></i> ${h}</span>`).join('')}
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+
+            // Add click event to open modal
+            card.addEventListener('click', () => {
+                openDestinationModal(dest.id);
+            });
+
+            destinationsGrid.appendChild(card);
+        });
+    }
+
+    // ========== Open Destination Modal ==========
+    function openDestinationModal(destId) {
+        const destinations = getDestinationsData();
+        const dest = destinations.find(d => d.id === destId);
+        if (!dest) return;
+
+        const modal = document.getElementById('destinationModal');
+        if (!modal) return;
+
+        // Set modal content
+        document.getElementById('modalImage').src = dest.image;
+        document.getElementById('modalImage').alt = dest.name;
+        document.getElementById('modalTitle').textContent = dest.name;
+        document.getElementById('modalSubtitle').textContent = dest.subtitle || '';
+
+        // Set history/description
+        const historyEl = document.getElementById('modalHistory');
+        if (historyEl) {
+            historyEl.textContent = dest.description || '';
+        }
+
+        // Set attractions
+        const attractionsEl = document.getElementById('modalAttractions');
+        if (attractionsEl && dest.attractions) {
+            attractionsEl.innerHTML = dest.attractions.map(a => `<li>${a}</li>`).join('');
+        }
+
+        // Set facts (use attractions as facts for dynamic destinations)
+        const factsEl = document.getElementById('modalFacts');
+        if (factsEl) {
+            const facts = [
+                `${dest.tours || 0} tours available`,
+                `Popular destination in Uzbekistan`,
+                dest.subtitle || 'Unique cultural heritage'
+            ];
+            factsEl.innerHTML = facts.map(f => `<li>${f}</li>`).join('');
+        }
+
+        // Show modal
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    // Category names mapping
+    const categoryNames = {
+        'classic': 'Classic Tour',
+        'cultural': 'Cultural Tour',
+        'adventure': 'Adventure Tour',
+        'short': 'Short Trip'
+    };
+
+    // ========== Load Tours Dynamically ==========
+    function loadToursToPage() {
+        const toursGrid = document.getElementById('toursGrid');
+        if (!toursGrid) return;
+
+        const tours = getToursData();
+        toursGrid.innerHTML = '';
+
+        tours.forEach(tour => {
+            const tourSlug = tour.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+            const durationNum = tour.duration.match(/\d+/)?.[0] || tour.duration;
+
+            // Price display - show price if set, hide if "none" or empty
+            const currencySymbol = tour.currency === 'USD' ? '$' : '€';
+            let priceDisplay = '';
+            if (tour.price && tour.price !== 'none' && tour.price !== '0') {
+                priceDisplay = `<div class="tour-price"><span class="price-from" data-i18n="from">From</span> <span class="price-amount">${currencySymbol}${tour.price}</span> <span class="price-person">/ person</span></div>`;
+            }
+
+            const card = document.createElement('div');
+            card.className = 'tour-card';
+            card.setAttribute('data-category', tour.category);
+
+            card.innerHTML = `
+                <div class="tour-image" style="background-image: url('${tour.image}');">
+                    <div class="tour-overlay"></div>
+                    ${tour.badge ? `<div class="tour-badge ${tour.badgeType || ''}">${tour.badge}</div>` : ''}
+                    <div class="tour-duration"><i class="fas fa-clock"></i> ${durationNum} <span data-i18n="days">Days</span></div>
+                </div>
+                <div class="tour-content">
+                    <div class="tour-category">${categoryNames[tour.category] || 'Tour'}</div>
+                    <h3 class="tour-title">${tour.name}</h3>
+                    <p class="tour-desc">${tour.description}</p>
+                    <div class="tour-highlights">
+                        ${(tour.highlights || []).slice(0, 3).map(h => `<span><i class="fas fa-check-circle"></i> ${h}</span>`).join('')}
+                    </div>
+                    ${priceDisplay}
+                    <div class="tour-footer">
+                        <a href="#contact" class="btn btn-primary inquire-btn" data-tour="${tourSlug}">Inquire Now</a>
+                    </div>
+                </div>
+            `;
+
+            toursGrid.appendChild(card);
+        });
+
+        // Re-initialize filters and inquire buttons after loading tours
+        initTourFilters();
+        initInquireButtons();
+    }
+
+    // ========== Initialize Tour Filters ==========
+    function initTourFilters() {
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const tourCards = document.querySelectorAll('.tour-card');
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                const filter = btn.getAttribute('data-filter');
+
+                tourCards.forEach(card => {
+                    const category = card.getAttribute('data-category') || '';
+
+                    if (filter === 'all' || category.includes(filter)) {
+                        card.style.display = 'block';
+                        setTimeout(() => {
+                            card.style.opacity = '1';
+                            card.style.transform = 'translateY(0)';
+                        }, 10);
+                    } else {
+                        card.style.opacity = '0';
+                        card.style.transform = 'translateY(20px)';
+                        setTimeout(() => {
+                            card.style.display = 'none';
+                        }, 300);
+                    }
+                });
+            });
+        });
+    }
+
+    // ========== Initialize Inquire Buttons ==========
+    function initInquireButtons() {
+        const inquireButtons = document.querySelectorAll('.inquire-btn');
+        const tourSelect = document.getElementById('tour');
+
+        inquireButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const selectedTour = btn.getAttribute('data-tour');
+                if (selectedTour && tourSelect) {
+                    tourSelect.value = selectedTour;
+                }
+            });
+        });
+    }
+
+    // Load tours and destinations on page load
+    loadToursToPage();
+    loadDestinationsToPage();
+
+    // ========== Preloader ==========
+    const preloader = document.getElementById('preloader');
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            preloader.classList.add('hidden');
+        }, 1500);
+    });
+
+    // ========== Header Scroll Effect ==========
+    const header = document.getElementById('header');
+    const topBar = document.querySelector('.top-bar');
+
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 100) {
+            header.classList.add('scrolled');
+            if (topBar) topBar.style.transform = 'translateY(-100%)';
+        } else {
+            header.classList.remove('scrolled');
+            if (topBar) topBar.style.transform = 'translateY(0)';
+        }
+    });
+
+    // ========== Mobile Navigation ==========
+    const hamburger = document.getElementById('hamburger');
+    const nav = document.getElementById('nav');
+    const navLinks = document.querySelectorAll('.nav-link');
+
+    if (hamburger && nav) {
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            nav.classList.toggle('active');
+            document.body.style.overflow = nav.classList.contains('active') ? 'hidden' : '';
+        });
+
+        // Close menu on link click
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                nav.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        });
+    }
+
+    // ========== Active Nav Link on Scroll ==========
+    const sections = document.querySelectorAll('section[id]');
+
+    function updateActiveLink() {
+        let current = '';
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop - 150;
+            const sectionHeight = section.offsetHeight;
+            if (scrollY >= sectionTop && scrollY < sectionTop + sectionHeight) {
+                current = section.getAttribute('id');
+            }
+        });
+
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === '#' + current) {
+                link.classList.add('active');
+            }
+        });
+    }
+
+    window.addEventListener('scroll', updateActiveLink);
+
+    // ========== Hero Slider ==========
+    const heroSlides = document.querySelectorAll('.hero-slide');
+    const heroDots = document.querySelector('.hero-dots');
+    const prevBtn = document.querySelector('.hero-nav-btn.prev');
+    const nextBtn = document.querySelector('.hero-nav-btn.next');
+    let currentSlide = 0;
+    let slideInterval;
+
+    if (heroSlides.length > 0 && heroDots) {
+        // Create dots
+        heroSlides.forEach((_, index) => {
+            const dot = document.createElement('div');
+            dot.classList.add('dot');
+            if (index === 0) dot.classList.add('active');
+            dot.addEventListener('click', () => goToSlide(index));
+            heroDots.appendChild(dot);
+        });
+
+        const dots = document.querySelectorAll('.hero-dots .dot');
+
+        function goToSlide(index) {
+            heroSlides[currentSlide].classList.remove('active');
+            dots[currentSlide].classList.remove('active');
+            currentSlide = index;
+            if (currentSlide >= heroSlides.length) currentSlide = 0;
+            if (currentSlide < 0) currentSlide = heroSlides.length - 1;
+            heroSlides[currentSlide].classList.add('active');
+            dots[currentSlide].classList.add('active');
+        }
+
+        function nextSlide() {
+            goToSlide(currentSlide + 1);
+        }
+
+        function prevSlide() {
+            goToSlide(currentSlide - 1);
+        }
+
+        function startSlider() {
+            slideInterval = setInterval(nextSlide, 6000);
+        }
+
+        function stopSlider() {
+            clearInterval(slideInterval);
+        }
+
+        if (prevBtn) {
+            prevBtn.addEventListener('click', () => {
+                prevSlide();
+                stopSlider();
+                startSlider();
+            });
+        }
+
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => {
+                nextSlide();
+                stopSlider();
+                startSlider();
+            });
+        }
+
+        startSlider();
+    }
+
+    // ========== Stats Counter Animation ==========
+    const statNumbers = document.querySelectorAll('.stat-number');
+    let statsAnimated = false;
+
+    function animateStats() {
+        statNumbers.forEach(stat => {
+            const target = parseInt(stat.getAttribute('data-count'));
+            const duration = 2000;
+            const step = target / (duration / 16);
+            let current = 0;
+
+            const updateCount = () => {
+                current += step;
+                if (current < target) {
+                    stat.textContent = Math.floor(current).toLocaleString();
+                    requestAnimationFrame(updateCount);
+                } else {
+                    stat.textContent = target.toLocaleString();
+                    // Add suffix for specific stats
+                    if (stat.closest('.stat-item')) {
+                        const label = stat.closest('.stat-item').querySelector('.stat-label');
+                        if (label && label.textContent.includes('%')) {
+                            stat.textContent = target + '%';
+                        } else if (target >= 1000) {
+                            stat.textContent = target.toLocaleString() + '+';
+                        }
+                    }
+                }
+            };
+            updateCount();
+        });
+    }
+
+    // Intersection Observer for stats
+    const statsSection = document.querySelector('.stats');
+    if (statsSection) {
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !statsAnimated) {
+                    animateStats();
+                    statsAnimated = true;
+                }
+            });
+        }, { threshold: 0.3 });
+
+        statsObserver.observe(statsSection);
+    }
+
+    // ========== Reviews Slider ==========
+    const reviewsTrack = document.querySelector('.reviews-track');
+    const reviewCards = document.querySelectorAll('.review-card');
+    const reviewsPrev = document.querySelector('.reviews-btn.prev');
+    const reviewsNext = document.querySelector('.reviews-btn.next');
+    let currentReview = 0;
+
+    function updateReviewsSlider() {
+        if (reviewsTrack && reviewCards.length > 0) {
+            const cardWidth = reviewCards[0].offsetWidth + 30; // including gap
+            const maxSlide = Math.max(0, reviewCards.length - getVisibleCards());
+            currentReview = Math.min(currentReview, maxSlide);
+            reviewsTrack.style.transform = `translateX(-${currentReview * cardWidth}px)`;
+        }
+    }
+
+    function getVisibleCards() {
+        if (window.innerWidth < 768) return 1;
+        if (window.innerWidth < 992) return 2;
+        return 3;
+    }
+
+    if (reviewsPrev && reviewsNext) {
+        reviewsPrev.addEventListener('click', () => {
+            if (currentReview > 0) {
+                currentReview--;
+                updateReviewsSlider();
+            }
+        });
+
+        reviewsNext.addEventListener('click', () => {
+            const maxSlide = reviewCards.length - getVisibleCards();
+            if (currentReview < maxSlide) {
+                currentReview++;
+                updateReviewsSlider();
+            }
+        });
+    }
+
+    window.addEventListener('resize', () => {
+        currentReview = 0;
+        updateReviewsSlider();
+    });
+
+    // ========== Back to Top ==========
+    const backToTop = document.getElementById('backToTop');
+
+    if (backToTop) {
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 500) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    }
+
+    // ========== Smooth Scroll for Anchor Links ==========
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            const targetId = this.getAttribute('href');
+            if (targetId === '#') return;
+
+            const target = document.querySelector(targetId);
+            if (target) {
+                e.preventDefault();
+                const headerOffset = 80;
+                const elementPosition = target.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+
+    // ========== Contact Form ==========
+    const contactForm = document.getElementById('contactForm');
+
+    if (contactForm) {
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            // Get form data
+            const formData = new FormData(contactForm);
+            const data = Object.fromEntries(formData.entries());
+
+            // Store in localStorage for admin panel
+            let inquiries = JSON.parse(localStorage.getItem('inquiries')) || [];
+            data.id = Date.now();
+            data.date = new Date().toISOString();
+            data.status = 'new';
+            inquiries.push(data);
+            localStorage.setItem('inquiries', JSON.stringify(inquiries));
+
+            // Show success message
+            showNotification(getTranslation('form_success', 'Thank you! Your inquiry has been submitted. We will contact you soon.'), 'success');
+            contactForm.reset();
+        });
+    }
+
+    // ========== Notification System ==========
+    function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.innerHTML = `
+            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'times-circle' : 'info-circle'}"></i>
+            <span>${message}</span>
+        `;
+        notification.style.cssText = `
+            position: fixed;
+            top: 100px;
+            right: 30px;
+            background: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#17a2b8'};
+            color: white;
+            padding: 18px 28px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            z-index: 9999;
+            animation: slideIn 0.5s ease;
+            font-size: 15px;
+        `;
+
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+            notification.style.animation = 'slideOut 0.5s ease';
+            setTimeout(() => notification.remove(), 500);
+        }, 4000);
+    }
+
+    // Add notification animations
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+    `;
+    document.head.appendChild(style);
+
+    // ========== Get Translation Helper ==========
+    function getTranslation(key, fallback) {
+        if (typeof translations !== 'undefined' && typeof currentLang !== 'undefined') {
+            return translations[currentLang] && translations[currentLang][key] ? translations[currentLang][key] : fallback;
+        }
+        return fallback;
+    }
+
+    // ========== Scroll Reveal Animation ==========
+    const revealElements = document.querySelectorAll('.destination-card, .tour-card, .why-card, .review-card, .about-feature');
+
+    const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry, index) => {
+            if (entry.isIntersecting) {
+                setTimeout(() => {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }, index * 100);
+                revealObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1 });
+
+    revealElements.forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(30px)';
+        el.style.transition = 'all 0.6s ease';
+        revealObserver.observe(el);
+    });
+
+    // ========== Set Minimum Date for Travel Date ==========
+    const travelDateInput = document.getElementById('travelDate');
+    if (travelDateInput) {
+        const today = new Date().toISOString().split('T')[0];
+        travelDateInput.setAttribute('min', today);
+    }
+
+    // ========== Parallax Effect for Backgrounds ==========
+    const parallaxSections = document.querySelectorAll('.stats, .why-us');
+
+    window.addEventListener('scroll', () => {
+        parallaxSections.forEach(section => {
+            const speed = 0.5;
+            const rect = section.getBoundingClientRect();
+            if (rect.top < window.innerHeight && rect.bottom > 0) {
+                const yPos = -(rect.top * speed);
+                section.style.backgroundPositionY = `${yPos}px`;
+            }
+        });
+    });
+
+    // ========== Destination Modal ==========
+    const destinationData = {
+        samarkand: {
+            title: 'Samarkand',
+            subtitle: 'The Pearl of the East',
+            image: 'images/destinations/samarkand-registan.jpg',
+            history: `Samarkand is one of the oldest continuously inhabited cities in Central Asia, with a history spanning over 2,750 years. Founded as Marakanda, it served as the capital of the Sogdian satrapy and later became one of the most important cities on the Silk Road. In the 14th century, the great conqueror Amir Timur (Tamerlane) made Samarkand his capital and transformed it into one of the most magnificent cities in the world. Under his rule and that of his descendants, the Timurids, Samarkand became a center of arts, science, and architecture, earning it the title "The Pearl of the East."`,
+            attractions: [
+                'Registan Square - The heart of ancient Samarkand with three stunning madrasahs',
+                'Gur-e-Amir Mausoleum - The final resting place of Amir Timur',
+                'Shah-i-Zinda Necropolis - Avenue of mausoleums with the finest tilework in Central Asia',
+                'Bibi-Khanym Mosque - Once the largest mosque in the Islamic world',
+                'Ulugh Beg Observatory - 15th century astronomical observatory',
+                'Afrosiab Museum - Ancient settlement and museum of Sogdian murals'
+            ],
+            facts: [
+                'UNESCO World Heritage Site since 2001',
+                'Alexander the Great conquered the city in 329 BC',
+                'Home to Ulugh Beg, the astronomer king who cataloged 1,018 stars',
+                'The blue domes use a special glaze technique lost for centuries',
+                'Timur brought artisans from every conquered land to beautify the city'
+            ]
+        },
+        bukhara: {
+            title: 'Bukhara',
+            subtitle: 'The Noble City',
+            image: 'images/destinations/bukhara-kalon.jpg',
+            history: `Bukhara, known as "Bukhoro-i-Sharif" (Noble Bukhara), is one of the holiest cities in Central Asia and a major center of Islamic learning for over a thousand years. Founded more than 2,500 years ago, the city became a major cultural and religious center under the Samanid dynasty in the 9th-10th centuries. During the Islamic Golden Age, Bukhara produced great scholars including Imam al-Bukhari and the philosopher-physician Ibn Sina (Avicenna). The historic center contains over 140 architectural monuments, making it one of the best-preserved medieval cities in the world.`,
+            attractions: [
+                'Poi Kalyan Complex - The iconic Kalyan Minaret and mosque',
+                'Ark Fortress - Ancient citadel of the Bukhara emirs',
+                'Lyab-i-Hauz - Historic pool surrounded by 16th-17th century buildings',
+                'Chor-Minor - Unique four-minaret madrasah',
+                'Ismail Samani Mausoleum - Masterpiece of 10th century architecture',
+                'Trading Domes - Ancient covered bazaars still in use today'
+            ],
+            facts: [
+                'UNESCO World Heritage Site since 1993',
+                'Known as "The Pillar of Islam" for its 360 mosques and 100+ madrasahs',
+                'Imam al-Bukhari compiled the most authentic hadith collection here',
+                'The Kalyan Minaret was so beautiful that Genghis Khan spared it',
+                'Home to some of the oldest surviving Islamic architecture'
+            ]
+        },
+        khiva: {
+            title: 'Khiva',
+            subtitle: 'The Museum City',
+            image: 'images/destinations/khiva-ichankala.jpg',
+            history: `Khiva is an ancient oasis city that appears frozen in time, with its inner walled city (Ichan-Kala) preserved almost exactly as it was centuries ago. According to legend, the city was founded by Shem, the son of Noah, who discovered a well here. Khiva was a major stop on the Silk Road and from the 17th century served as the capital of the Khanate of Khiva. The city was known as a major slave trading center and one of the last bastions of the ancient caravan trade. Today, Ichan-Kala is often called an "open-air museum" for its remarkably preserved medieval architecture.`,
+            attractions: [
+                'Ichan-Kala - The fully preserved inner city with walls dating to the 10th century',
+                'Kalta Minor Minaret - The famous unfinished turquoise-tiled minaret',
+                'Islam Khoja Complex - The tallest minaret in Khiva at 57 meters',
+                'Tash-Khauli Palace - Stunning 19th century harem palace',
+                'Juma Mosque - Features 218 wooden columns, some over 1,000 years old',
+                'Kunya-Ark Fortress - The old citadel with watchtower views'
+            ],
+            facts: [
+                'First UNESCO World Heritage Site in Central Asia (1990)',
+                'The entire inner city is a living museum with about 2,500 residents',
+                'Muhammad al-Khwarizmi, father of algebra, was born near Khiva',
+                'The city walls stretch over 2 kilometers around Ichan-Kala',
+                'Khiva remained independent until Russian conquest in 1873'
+            ]
+        },
+        tashkent: {
+            title: 'Tashkent',
+            subtitle: 'The Capital of the Sun',
+            image: 'images/destinations/tashkent-minor.jpg',
+            history: `Tashkent, whose name means "Stone City," is one of the oldest cities in Central Asia with over 2,200 years of history. Located on the crossroads of the Silk Road, the city has been conquered by Arabs, Mongols, and Timurids. In 1966, a massive earthquake destroyed much of the city, leading to a complete reconstruction that created the modern metropolis we see today. As the capital of Uzbekistan, Tashkent is the largest city in Central Asia, blending Soviet-era architecture, Islamic heritage, and modern development in a unique urban landscape.`,
+            attractions: [
+                'Hazrati Imam Complex - Religious center with Othman Quran manuscript',
+                'Minor Mosque - Beautiful modern mosque in white marble',
+                'Chorsu Bazaar - Massive traditional market under blue domes',
+                'Tashkent Metro - Soviet-era stations like underground palaces',
+                'Amir Timur Square - Heart of modern Tashkent',
+                'Museum of Applied Arts - Showcase of Uzbek craftsmanship'
+            ],
+            facts: [
+                'Largest city in Central Asia with over 2.5 million residents',
+                'The 1966 earthquake measured 7.5 on the Richter scale',
+                'Home to one of the oldest Quran manuscripts in the world',
+                'The metro was built as an earthquake-proof shelter',
+                'Temperatures can reach 45°C in summer, earning its nickname'
+            ]
+        },
+        fergana: {
+            title: 'Fergana Valley',
+            subtitle: 'The Garden of Central Asia',
+            image: 'images/destinations/fergana-crafts.jpg',
+            history: `The Fergana Valley, nestled between the Tian Shan and Pamir-Alay mountain ranges, has been called the "Golden Valley" for millennia due to its extraordinary fertility. This lush oasis has been a crossroads of civilizations for over 2,000 years and was described by Chinese travelers as a paradise on earth. The valley was famous for its "heavenly horses" sought by Chinese emperors, and its silk production dates back to ancient times. Today, the Fergana Valley remains Uzbekistan's cultural heartland, preserving traditional crafts including silk weaving, ceramics, and woodcarving that have been passed down for generations.`,
+            attractions: [
+                'Rishtan - Center of the famous blue ceramics tradition',
+                'Margilan - Silk capital with traditional atlas ikat weaving',
+                'Kokand - Historic khanate with the stunning Khudayar Khan Palace',
+                'Andijan - Birthplace of Babur, founder of the Mughal Empire',
+                'Chust - Famous for traditional knives and doppi (skullcaps)',
+                'Silk Factories - Watch the entire silk production process'
+            ],
+            facts: [
+                'The valley produces 70% of Uzbekistan\'s fruit and vegetables',
+                'Rishtan ceramics tradition is over 1,000 years old',
+                'The famous "heavenly horses" were sought by Emperor Wu of Han',
+                'Babur, who conquered India, was born in Andijan in 1483',
+                'Traditional atlas silk uses resist-dyeing techniques unchanged for centuries'
+            ]
+        }
+    };
+
+    const modal = document.getElementById('destinationModal');
+    const modalClose = document.getElementById('modalClose');
+    const modalOverlay = document.querySelector('.modal-overlay');
+    const destLinks = document.querySelectorAll('.dest-link');
+
+    function openModal(destination) {
+        const data = destinationData[destination];
+        if (!data) return;
+
+        document.getElementById('modalImage').src = data.image;
+        document.getElementById('modalImage').alt = data.title;
+        document.getElementById('modalTitle').textContent = data.title;
+        document.getElementById('modalSubtitle').textContent = data.subtitle;
+        document.getElementById('modalHistory').textContent = data.history;
+
+        const attractionsList = document.getElementById('modalAttractions');
+        attractionsList.innerHTML = data.attractions.map(a => `<li>${a}</li>`).join('');
+
+        const factsList = document.getElementById('modalFacts');
+        factsList.innerHTML = data.facts.map(f => `<li>${f}</li>`).join('');
+
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    destLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const dest = link.getAttribute('data-dest');
+            openModal(dest);
+        });
+    });
+
+    if (modalClose) {
+        modalClose.addEventListener('click', closeModal);
+    }
+
+    if (modalOverlay) {
+        modalOverlay.addEventListener('click', closeModal);
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeModal();
+        }
+    });
+
+    // Close modal when clicking "Plan Your Trip" button
+    const modalCta = document.getElementById('modalCta');
+    if (modalCta) {
+        modalCta.addEventListener('click', () => {
+            closeModal();
+        });
+    }
+
+    // ========== Modern Mouse Tracking Effects ==========
+
+    // Only enable on desktop
+    if (window.innerWidth > 1024) {
+
+        // Create custom cursor elements
+        const cursorDot = document.createElement('div');
+        cursorDot.className = 'cursor-dot';
+        document.body.appendChild(cursorDot);
+
+        const cursorRing = document.createElement('div');
+        cursorRing.className = 'cursor-ring';
+        document.body.appendChild(cursorRing);
+
+        let mouseX = 0, mouseY = 0;
+        let ringX = 0, ringY = 0;
+
+        // Track mouse position
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+
+            // Update cursor dot instantly
+            cursorDot.style.left = mouseX - 4 + 'px';
+            cursorDot.style.top = mouseY - 4 + 'px';
+        });
+
+        // Smooth ring follow animation
+        function animateCursor() {
+            ringX += (mouseX - ringX) * 0.15;
+            ringY += (mouseY - ringY) * 0.15;
+
+            cursorRing.style.left = ringX - 20 + 'px';
+            cursorRing.style.top = ringY - 20 + 'px';
+
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        // Hover effect on interactive elements
+        const interactiveElements = document.querySelectorAll('a, button, .btn, .tour-card, .destination-card, .filter-btn, input, textarea, select');
+
+        interactiveElements.forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursorRing.classList.add('hover');
+                cursorDot.style.transform = 'scale(1.5)';
+            });
+
+            el.addEventListener('mouseleave', () => {
+                cursorRing.classList.remove('hover');
+                cursorDot.style.transform = 'scale(1)';
+            });
+        });
+
+        // Click effect
+        document.addEventListener('mousedown', () => {
+            cursorRing.classList.add('click');
+        });
+
+        document.addEventListener('mouseup', () => {
+            cursorRing.classList.remove('click');
+        });
+
+        // Hide cursor when leaving window
+        document.addEventListener('mouseleave', () => {
+            cursorDot.style.opacity = '0';
+            cursorRing.style.opacity = '0';
+        });
+
+        document.addEventListener('mouseenter', () => {
+            cursorDot.style.opacity = '1';
+            cursorRing.style.opacity = '0.6';
+        });
+
+        // ========== Card Tilt Effect ==========
+        const tiltCards = document.querySelectorAll('.tour-card, .destination-card, .why-card');
+
+        tiltCards.forEach(card => {
+            // Add spotlight div
+            const spotlight = document.createElement('div');
+            spotlight.className = 'card-spotlight';
+            card.style.position = 'relative';
+            card.insertBefore(spotlight, card.firstChild);
+
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+
+                const rotateX = (y - centerY) / 20;
+                const rotateY = (centerX - x) / 20;
+
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+
+                // Update spotlight position
+                card.style.setProperty('--mouse-x', x + 'px');
+                card.style.setProperty('--mouse-y', y + 'px');
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale(1)';
+            });
+        });
+
+        // ========== Magnetic Button Effect ==========
+        const magneticButtons = document.querySelectorAll('.btn, .filter-btn');
+
+        magneticButtons.forEach(btn => {
+            btn.addEventListener('mousemove', (e) => {
+                const rect = btn.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+
+                btn.style.transform = `translate(${x * 0.2}px, ${y * 0.2}px)`;
+            });
+
+            btn.addEventListener('mouseleave', () => {
+                btn.style.transform = 'translate(0, 0)';
+            });
+        });
+
+        // ========== Ripple Effect on Buttons ==========
+        const rippleButtons = document.querySelectorAll('.btn');
+
+        rippleButtons.forEach(btn => {
+            btn.style.position = 'relative';
+            btn.style.overflow = 'hidden';
+
+            btn.addEventListener('click', function(e) {
+                const rect = btn.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                const ripple = document.createElement('span');
+                ripple.className = 'ripple';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+
+                btn.appendChild(ripple);
+
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+
+        // ========== Hero Section Mouse Parallax ==========
+        const heroSection = document.querySelector('.hero');
+        const heroContent = document.querySelector('.hero-content');
+
+        if (heroSection && heroContent) {
+            heroSection.addEventListener('mousemove', (e) => {
+                const rect = heroSection.getBoundingClientRect();
+                const x = (e.clientX - rect.left) / rect.width - 0.5;
+                const y = (e.clientY - rect.top) / rect.height - 0.5;
+
+                heroContent.style.transform = `translate(${x * 20}px, ${y * 20}px)`;
+            });
+
+            heroSection.addEventListener('mouseleave', () => {
+                heroContent.style.transform = 'translate(0, 0)';
+            });
+        }
+
+        // ========== Interactive Background on Sections ==========
+        const interactiveSections = document.querySelectorAll('.about, .contact');
+
+        interactiveSections.forEach(section => {
+            section.addEventListener('mousemove', (e) => {
+                const rect = section.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+
+                section.style.setProperty('--mouse-x', x + '%');
+                section.style.setProperty('--mouse-y', y + '%');
+            });
+        });
+    }
+
+    console.log('SamanidTravel website loaded successfully!');
+});

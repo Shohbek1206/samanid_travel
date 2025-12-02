@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment - Samanid Travel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a5f7a;
+            --secondary: #c9a227;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+            --white: #ffffff;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1a5f7a 0%, #0d3d4d 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .payment-container {
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .payment-header {
+            background: var(--primary);
+            color: var(--white);
+            padding: 30px;
+            text-align: center;
+        }
+
+        .payment-header img {
+            height: 50px;
+            margin-bottom: 15px;
+        }
+
+        .payment-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .payment-header p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+
+        .payment-body {
+            padding: 30px;
+        }
+
+        .booking-summary {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .booking-summary h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .summary-item .label {
+            color: #666;
+        }
+
+        .summary-item .value {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .summary-item.total {
+            margin-top: 10px;
+            padding-top: 15px;
+            border-top: 2px solid var(--primary);
+        }
+
+        .summary-item.total .value {
+            font-size: 1.4rem;
+            color: var(--success);
+        }
+
+        .payment-methods {
+            margin-bottom: 25px;
+        }
+
+        .payment-methods h3 {
+            color: var(--dark);
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+
+        .method-options {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .method-option {
+            flex: 1;
+            min-width: 120px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .method-option:hover {
+            border-color: var(--primary);
+        }
+
+        .method-option.selected {
+            border-color: var(--primary);
+            background: rgba(26, 95, 122, 0.05);
+        }
+
+        .method-option i {
+            font-size: 28px;
+            color: var(--primary);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .method-option span {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .card-form {
+            display: none;
+            margin-bottom: 25px;
+        }
+
+        .card-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .bank-info {
+            display: none;
+            background: #fffbeb;
+            border: 2px solid var(--secondary);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .bank-info.active {
+            display: block;
+        }
+
+        .bank-info h4 {
+            color: var(--dark);
+            margin-bottom: 15px;
+        }
+
+        .bank-info p {
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .bank-info strong {
+            color: var(--primary);
+        }
+
+        .copy-btn {
+            background: var(--secondary);
+            color: var(--dark);
+            border: none;
+            padding: 5px 12px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .btn-pay {
+            width: 100%;
+            padding: 16px;
+            background: var(--success);
+            color: var(--white);
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-pay:hover {
+            background: #219a52;
+            transform: translateY(-2px);
+        }
+
+        .btn-pay:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .secure-badge {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            font-size: 0.85rem;
+        }
+
+        .secure-badge i {
+            color: var(--success);
+            margin-right: 5px;
+        }
+
+        /* Success State */
+        .payment-success {
+            display: none;
+            text-align: center;
+            padding: 40px 30px;
+        }
+
+        .payment-success.active {
+            display: block;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--success);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            animation: scaleIn 0.5s ease;
+        }
+
+        .success-icon i {
+            font-size: 40px;
+            color: var(--white);
+        }
+
+        @keyframes scaleIn {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .payment-success h2 {
+            color: var(--success);
+            margin-bottom: 10px;
+        }
+
+        .payment-success p {
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        .btn-home {
+            display: inline-block;
+            padding: 14px 30px;
+            background: var(--primary);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-home:hover {
+            background: #145068;
+        }
+
+        /* Error State */
+        .error-message {
+            display: none;
+            background: #fef2f2;
+            border: 1px solid var(--danger);
+            color: var(--danger);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .error-message.active {
+            display: block;
+        }
+
+        /* Invalid Booking */
+        .invalid-booking {
+            display: none;
+            text-align: center;
+            padding: 40px 30px;
+        }
+
+        .invalid-booking.active {
+            display: block;
+        }
+
+        .invalid-booking i {
+            font-size: 60px;
+            color: var(--warning);
+            margin-bottom: 20px;
+        }
+
+        /* Loading */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #ddd;
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 480px) {
+            .payment-body {
+                padding: 20px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .method-option {
+                min-width: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="payment-container">
+        <div class="payment-header">
+            <img src="images/logo.png" alt="Samanid Travel" onerror="this.style.display='none'">
+            <h1>Secure Payment</h1>
+            <p>Complete your tour booking</p>
+        </div>
+
+        <!-- Loading State -->
+        <div class="loading" id="loadingState">
+            <div class="spinner"></div>
+            <p>Loading booking details...</p>
+        </div>
+
+        <!-- Invalid Booking -->
+        <div class="invalid-booking" id="invalidBooking">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h2>Invalid Payment Link</h2>
+            <p>This payment link is invalid or has expired. Please contact Samanid Travel for assistance.</p>
+            <a href="index.html" class="btn-home">Return to Homepage</a>
+        </div>
+
+        <!-- Payment Form -->
+        <div class="payment-body" id="paymentForm" style="display: none;">
+            <div class="booking-summary">
+                <h3><i class="fas fa-ticket-alt"></i> Booking Summary</h3>
+                <div class="summary-item">
+                    <span class="label">Customer</span>
+                    <span class="value" id="customerName">-</span>
+                </div>
+                <div class="summary-item">
+                    <span class="label">Tour</span>
+                    <span class="value" id="tourName">-</span>
+                </div>
+                <div class="summary-item">
+                    <span class="label">Travel Date</span>
+                    <span class="value" id="travelDate">-</span>
+                </div>
+                <div class="summary-item">
+                    <span class="label">Travelers</span>
+                    <span class="value" id="travelers">-</span>
+                </div>
+                <div class="summary-item total">
+                    <span class="label">Total Amount</span>
+                    <span class="value" id="totalAmount">-</span>
+                </div>
+            </div>
+
+            <div class="payment-methods">
+                <h3><i class="fas fa-credit-card"></i> Select Payment Method</h3>
+                <div class="method-options">
+                    <div class="method-option selected" data-method="card">
+                        <i class="fab fa-cc-visa"></i>
+                        <span>Card</span>
+                    </div>
+                    <div class="method-option" data-method="bank">
+                        <i class="fas fa-university"></i>
+                        <span>Bank Transfer</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card Form -->
+            <div class="card-form active" id="cardForm">
+                <div class="error-message" id="cardError"></div>
+                <div class="form-group">
+                    <label>Card Number</label>
+                    <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
+                </div>
+                <div class="form-group">
+                    <label>Cardholder Name</label>
+                    <input type="text" id="cardName" placeholder="JOHN DOE">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Expiry Date</label>
+                        <input type="text" id="cardExpiry" placeholder="MM/YY" maxlength="5">
+                    </div>
+                    <div class="form-group">
+                        <label>CVV</label>
+                        <input type="text" id="cardCvv" placeholder="123" maxlength="4">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bank Transfer Info -->
+            <div class="bank-info" id="bankInfo">
+                <h4><i class="fas fa-info-circle"></i> Bank Transfer Details</h4>
+                <p><strong>Bank:</strong> National Bank of Uzbekistan</p>
+                <p><strong>Account Name:</strong> Samanid Travel LLC</p>
+                <p>
+                    <strong>IBAN:</strong> UZ12 3456 7890 1234 5678 90
+                    <button class="copy-btn" onclick="copyToClipboard('UZ12345678901234567890')">Copy</button>
+                </p>
+                <p>
+                    <strong>SWIFT:</strong> NBUZUZ2X
+                    <button class="copy-btn" onclick="copyToClipboard('NBUZUZ2X')">Copy</button>
+                </p>
+                <p style="margin-top: 15px; color: #666; font-size: 0.85rem;">
+                    <i class="fas fa-clock"></i> Please include your booking ID in the payment reference.
+                    Payment confirmation may take 1-2 business days.
+                </p>
+            </div>
+
+            <button class="btn-pay" id="payButton" onclick="processPayment()">
+                <i class="fas fa-lock"></i>
+                <span>Pay Now</span>
+            </button>
+
+            <div class="secure-badge">
+                <i class="fas fa-shield-alt"></i>
+                Your payment is secured with SSL encryption
+            </div>
+        </div>
+
+        <!-- Success State -->
+        <div class="payment-success" id="successState">
+            <div class="success-icon">
+                <i class="fas fa-check"></i>
+            </div>
+            <h2>Payment Successful!</h2>
+            <p>Thank you for your payment. Your booking has been confirmed and you will receive a confirmation email shortly.</p>
+            <p style="font-weight: 600; color: var(--primary);">Booking ID: <span id="successBookingId"></span></p>
+            <a href="index.html" class="btn-home">Return to Homepage</a>
+        </div>
+    </div>
+
+    <script>
+        let currentBooking = null;
+        let bookingId = null;
+
+        // Get booking ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        bookingId = urlParams.get('id');
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadBookingDetails();
+        });
+
+        function loadBookingDetails() {
+            const loadingState = document.getElementById('loadingState');
+            const invalidBooking = document.getElementById('invalidBooking');
+            const paymentForm = document.getElementById('paymentForm');
+
+            loadingState.classList.add('active');
+
+            setTimeout(() => {
+                loadingState.classList.remove('active');
+
+                if (!bookingId) {
+                    invalidBooking.classList.add('active');
+                    return;
+                }
+
+                // Check bookings in localStorage
+                const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+                const inquiries = JSON.parse(localStorage.getItem('inquiries')) || [];
+
+                currentBooking = bookings.find(b => b.id == bookingId) || inquiries.find(i => i.id == bookingId);
+
+                if (!currentBooking || currentBooking.status === 'paid' || currentBooking.status === 'completed') {
+                    invalidBooking.classList.add('active');
+                    return;
+                }
+
+                // Show payment form
+                paymentForm.style.display = 'block';
+
+                // Populate booking details
+                document.getElementById('customerName').textContent = currentBooking.fullName || currentBooking.name;
+                document.getElementById('tourName').textContent = getTourName(currentBooking.tourType || currentBooking.tour);
+                document.getElementById('travelDate').textContent = formatDate(currentBooking.travelDate);
+                document.getElementById('travelers').textContent = currentBooking.travelers || '1';
+                document.getElementById('totalAmount').textContent =
+                    `${currentBooking.currency || 'EUR'} ${currentBooking.price || '0'}`;
+
+            }, 1000);
+        }
+
+        function getTourName(type) {
+            const tours = {
+                'classic': 'Grand Uzbekistan Discovery',
+                'cultural': 'Samarkand & Bukhara Treasures',
+                'adventure': 'Aral Sea Expedition',
+                'short': 'Samarkand Express',
+                'grand-uzbekistan-discovery': 'Grand Uzbekistan Discovery',
+                'samarkand-bukhara-treasures': 'Samarkand & Bukhara Treasures',
+                'aral-sea-expedition': 'Aral Sea Expedition',
+                'complete-silk-road-journey': 'Complete Silk Road Journey',
+                'crafts-traditions-tour': 'Crafts & Traditions Tour',
+                'samarkand-express': 'Samarkand Express'
+            };
+            return tours[type] || type || 'Custom Tour';
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return 'TBD';
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+        }
+
+        // Payment method selection
+        document.querySelectorAll('.method-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.method-option').forEach(o => o.classList.remove('selected'));
+                this.classList.add('selected');
+
+                const method = this.dataset.method;
+                document.getElementById('cardForm').classList.toggle('active', method === 'card');
+                document.getElementById('bankInfo').classList.toggle('active', method === 'bank');
+
+                const payBtn = document.getElementById('payButton');
+                if (method === 'bank') {
+                    payBtn.innerHTML = '<i class="fas fa-check"></i> <span>Confirm Bank Transfer</span>';
+                } else {
+                    payBtn.innerHTML = '<i class="fas fa-lock"></i> <span>Pay Now</span>';
+                }
+            });
+        });
+
+        // Card number formatting
+        document.getElementById('cardNumber').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\s/g, '').replace(/\D/g, '');
+            let formatted = value.match(/.{1,4}/g)?.join(' ') || value;
+            e.target.value = formatted;
+        });
+
+        // Expiry date formatting
+        document.getElementById('cardExpiry').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2);
+            }
+            e.target.value = value;
+        });
+
+        function processPayment() {
+            const selectedMethod = document.querySelector('.method-option.selected').dataset.method;
+            const payButton = document.getElementById('payButton');
+            const errorDiv = document.getElementById('cardError');
+
+            if (selectedMethod === 'card') {
+                // Validate card
+                const cardNumber = document.getElementById('cardNumber').value.replace(/\s/g, '');
+                const cardName = document.getElementById('cardName').value;
+                const cardExpiry = document.getElementById('cardExpiry').value;
+                const cardCvv = document.getElementById('cardCvv').value;
+
+                if (cardNumber.length < 16) {
+                    showError('Please enter a valid card number');
+                    return;
+                }
+                if (!cardName) {
+                    showError('Please enter the cardholder name');
+                    return;
+                }
+                if (cardExpiry.length < 5) {
+                    showError('Please enter a valid expiry date');
+                    return;
+                }
+                if (cardCvv.length < 3) {
+                    showError('Please enter a valid CVV');
+                    return;
+                }
+
+                errorDiv.classList.remove('active');
+            }
+
+            // Show loading
+            payButton.disabled = true;
+            payButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Processing...</span>';
+
+            // Simulate payment processing
+            setTimeout(() => {
+                // Update booking status to paid
+                updateBookingStatus('paid');
+
+                // Show success
+                document.getElementById('paymentForm').style.display = 'none';
+                document.getElementById('successState').classList.add('active');
+                document.getElementById('successBookingId').textContent = '#' + bookingId;
+
+                // Send confirmation (in real app, this would send email)
+                console.log('Payment successful for booking:', bookingId);
+
+            }, 2000);
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('cardError');
+            errorDiv.textContent = message;
+            errorDiv.classList.add('active');
+        }
+
+        function updateBookingStatus(status) {
+            // Update in bookings
+            let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+            let index = bookings.findIndex(b => b.id == bookingId);
+            if (index !== -1) {
+                bookings[index].status = status;
+                bookings[index].paymentDate = new Date().toISOString();
+                localStorage.setItem('bookings', JSON.stringify(bookings));
+                return;
+            }
+
+            // Update in inquiries
+            let inquiries = JSON.parse(localStorage.getItem('inquiries')) || [];
+            index = inquiries.findIndex(i => i.id == bookingId);
+            if (index !== -1) {
+                inquiries[index].status = status;
+                inquiries[index].paymentDate = new Date().toISOString();
+                localStorage.setItem('inquiries', JSON.stringify(inquiries));
+            }
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Copied to clipboard!');
+            });
+        }
+    </script>
+</body>
+</html>
