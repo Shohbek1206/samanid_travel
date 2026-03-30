@@ -3,7 +3,7 @@
 // ========================================
 
 // API Configuration
-const API_BASE_URL = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '';
+const API_BASE_URL = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://samanidtravel-production.up.railway.app';
 
 // ========== BOOKINGS API ==========
 const BookingsAPI = {
