@@ -172,11 +172,11 @@
                                 <i class="fas fa-star"></i>
                             </div>
                             <div class="stat-info">
-                                <h3>4.9</h3>
+                                <h3 id="avgRating">0.0</h3>
                                 <p>Average Rating</p>
                             </div>
                             <div class="stat-trend up">
-                                <i class="fas fa-arrow-up"></i> 2%
+                                <i class="fas fa-star" style="color: #f39c12;"></i>
                             </div>
                         </div>
                     </div>
@@ -234,39 +234,8 @@
                             <div class="card-header">
                                 <h3>Popular Tours</h3>
                             </div>
-                            <div class="popular-tours-list">
-                                <div class="popular-tour-item">
-                                    <img src="https://images.unsplash.com/photo-1596484552834-6a58f850e0a1?w=100" alt="">
-                                    <div class="tour-info">
-                                        <h4>Classic Silk Road</h4>
-                                        <p>245 bookings</p>
-                                    </div>
-                                    <span class="tour-rating"><i class="fas fa-star"></i> 4.9</span>
-                                </div>
-                                <div class="popular-tour-item">
-                                    <img src="https://images.unsplash.com/photo-1565008576549-57569a49371d?w=100" alt="">
-                                    <div class="tour-info">
-                                        <h4>Luxury Heritage</h4>
-                                        <p>189 bookings</p>
-                                    </div>
-                                    <span class="tour-rating"><i class="fas fa-star"></i> 5.0</span>
-                                </div>
-                                <div class="popular-tour-item">
-                                    <img src="https://images.unsplash.com/photo-1558005137-d9619a5c539f?w=100" alt="">
-                                    <div class="tour-info">
-                                        <h4>Photography Expedition</h4>
-                                        <p>156 bookings</p>
-                                    </div>
-                                    <span class="tour-rating"><i class="fas fa-star"></i> 4.8</span>
-                                </div>
-                                <div class="popular-tour-item">
-                                    <img src="https://images.unsplash.com/photo-1580309237429-661ea7cd1d66?w=100" alt="">
-                                    <div class="tour-info">
-                                        <h4>Culinary Discovery</h4>
-                                        <p>134 bookings</p>
-                                    </div>
-                                    <span class="tour-rating"><i class="fas fa-star"></i> 4.7</span>
-                                </div>
+                            <div class="popular-tours-list" id="popularToursList">
+                                <!-- Dynamically loaded -->
                             </div>
                         </div>
                     </div>
@@ -463,51 +432,94 @@
                 <div class="page" id="page-reviews">
                     <div class="page-header">
                         <h1>Customer Reviews</h1>
+                        <button class="btn-add" onclick="openAddReviewModal()">
+                            <i class="fas fa-plus"></i> Add Review
+                        </button>
                     </div>
 
-                    <div class="reviews-overview">
-                        <div class="overall-rating">
-                            <div class="rating-big">4.9</div>
-                            <div class="rating-stars">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star-half-alt"></i>
-                            </div>
-                            <p>Based on 2,340 reviews</p>
-                        </div>
-                        <div class="rating-breakdown">
-                            <div class="rating-bar">
-                                <span>5 stars</span>
-                                <div class="bar"><div class="fill" style="width: 85%"></div></div>
-                                <span>85%</span>
-                            </div>
-                            <div class="rating-bar">
-                                <span>4 stars</span>
-                                <div class="bar"><div class="fill" style="width: 10%"></div></div>
-                                <span>10%</span>
-                            </div>
-                            <div class="rating-bar">
-                                <span>3 stars</span>
-                                <div class="bar"><div class="fill" style="width: 3%"></div></div>
-                                <span>3%</span>
-                            </div>
-                            <div class="rating-bar">
-                                <span>2 stars</span>
-                                <div class="bar"><div class="fill" style="width: 1%"></div></div>
-                                <span>1%</span>
-                            </div>
-                            <div class="rating-bar">
-                                <span>1 star</span>
-                                <div class="bar"><div class="fill" style="width: 1%"></div></div>
-                                <span>1%</span>
+                    <div class="reviews-stats">
+                        <div class="stat-box">
+                            <div class="stat-icon pending"><i class="fas fa-clock"></i></div>
+                            <div class="stat-info">
+                                <h3 id="pendingReviewsCount">0</h3>
+                                <p>Pending</p>
                             </div>
                         </div>
+                        <div class="stat-box">
+                            <div class="stat-icon approved"><i class="fas fa-check-circle"></i></div>
+                            <div class="stat-info">
+                                <h3 id="approvedReviewsCount">0</h3>
+                                <p>Approved</p>
+                            </div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-icon total"><i class="fas fa-star"></i></div>
+                            <div class="stat-info">
+                                <h3 id="totalReviewsCount">0</h3>
+                                <p>Total</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="reviews-filter">
+                        <button class="filter-btn active" data-filter="all">All</button>
+                        <button class="filter-btn" data-filter="pending">Pending</button>
+                        <button class="filter-btn" data-filter="approved">Approved</button>
+                        <button class="filter-btn" data-filter="rejected">Rejected</button>
                     </div>
 
                     <div class="reviews-list" id="reviewsList">
                         <!-- Dynamic content -->
+                    </div>
+                </div>
+
+                <!-- Review Modal -->
+                <div class="modal" id="reviewModal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 id="reviewModalTitle">Add Review</h2>
+                            <button class="modal-close" onclick="closeReviewModal()">&times;</button>
+                        </div>
+                        <form id="reviewModalForm">
+                            <input type="hidden" id="reviewId">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Name *</label>
+                                    <input type="text" id="modalReviewName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Country</label>
+                                    <input type="text" id="modalReviewCountry">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Rating</label>
+                                <div class="star-rating-input" id="modalStarRating">
+                                    <i class="fas fa-star" data-rating="1"></i>
+                                    <i class="fas fa-star" data-rating="2"></i>
+                                    <i class="fas fa-star" data-rating="3"></i>
+                                    <i class="fas fa-star" data-rating="4"></i>
+                                    <i class="fas fa-star active" data-rating="5"></i>
+                                </div>
+                                <input type="hidden" id="modalReviewRating" value="5">
+                            </div>
+                            <div class="form-group">
+                                <label>Review Text *</label>
+                                <textarea id="modalReviewText" rows="4" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Status</label>
+                                <select id="modalReviewStatus">
+                                    <option value="pending">Pending</option>
+                                    <option value="approved">Approved</option>
+                                    <option value="rejected">Rejected</option>
+                                </select>
+                            </div>
+                            <div class="modal-actions">
+                                <button type="button" class="btn-cancel" onclick="closeReviewModal()">Cancel</button>
+                                <button type="submit" class="btn-save">Save Review</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
 
@@ -563,39 +575,39 @@
                         <div class="settings-content">
                             <div class="settings-tab active" id="tab-general">
                                 <h2>General Settings</h2>
-                                <form class="settings-form">
+                                <form class="settings-form" id="generalSettingsForm">
                                     <div class="form-group">
                                         <label>Site Name</label>
-                                        <input type="text" value="Samanid Travel">
+                                        <input type="text" id="settingSiteName" value="Samanid Travel">
                                     </div>
                                     <div class="form-group">
                                         <label>Site Description</label>
-                                        <textarea rows="3">Discover the ancient wonders of the Silk Road with Samanid Travel - Your trusted tour agency in Bukhara, Uzbekistan</textarea>
+                                        <textarea rows="3" id="settingSiteDesc">Discover the ancient wonders of the Silk Road with Samanid Travel - Your trusted tour agency in Bukhara, Uzbekistan</textarea>
                                     </div>
                                     <div class="form-group">
                                         <label>Contact Email</label>
-                                        <input type="email" value="bexruz@samanidtraveluz.com">
+                                        <input type="email" id="settingEmail" value="bexruz@samanidtraveluz.com">
                                     </div>
                                     <div class="form-group">
                                         <label>Contact Phone 1</label>
-                                        <input type="tel" value="+998 91 404 44 59">
+                                        <input type="tel" id="settingPhone1" value="+998 91 404 44 59">
                                     </div>
                                     <div class="form-group">
                                         <label>Contact Phone 2</label>
-                                        <input type="tel" value="+998 90 715 51 95">
+                                        <input type="tel" id="settingPhone2" value="+998 90 715 51 95">
                                     </div>
                                     <div class="form-group">
                                         <label>Address</label>
-                                        <textarea rows="2">Mustakillik st 56/1, Bukhara, Uzbekistan</textarea>
+                                        <textarea rows="2" id="settingAddress">Mustakillik st 56/1, Bukhara, Uzbekistan</textarea>
                                     </div>
                                     <div class="form-group">
                                         <label>Currency</label>
-                                        <select>
-                                            <option selected>EUR (€)</option>
-                                            <option>USD ($)</option>
+                                        <select id="settingCurrency">
+                                            <option value="EUR" selected>EUR (€)</option>
+                                            <option value="USD">USD ($)</option>
                                         </select>
                                     </div>
-                                    <button type="submit" class="btn-primary">Save Changes</button>
+                                    <button type="submit" class="btn-primary"><i class="fas fa-save"></i> Save Changes</button>
                                 </form>
                             </div>
                             <div class="settings-tab" id="tab-profile">
@@ -622,23 +634,18 @@
                             </div>
                             <div class="settings-tab" id="tab-security">
                                 <h2>Security Settings</h2>
-                                <form class="settings-form">
+                                <form class="settings-form" id="securityForm">
                                     <div class="form-group">
                                         <label>Current Password</label>
-                                        <input type="password" placeholder="Enter current password">
+                                        <input type="password" id="currentPassword" placeholder="Enter current password" required>
                                     </div>
                                     <div class="form-group">
                                         <label>New Password</label>
-                                        <input type="password" placeholder="Enter new password">
+                                        <input type="password" id="newPassword" placeholder="Enter new password" required>
                                     </div>
                                     <div class="form-group">
                                         <label>Confirm New Password</label>
-                                        <input type="password" placeholder="Confirm new password">
-                                    </div>
-                                    <div class="form-group checkbox-group">
-                                        <label>
-                                            <input type="checkbox" checked> Enable Two-Factor Authentication
-                                        </label>
+                                        <input type="password" id="confirmPassword" placeholder="Confirm new password" required>
                                     </div>
                                     <button type="submit" class="btn-primary">Update Password</button>
                                 </form>
@@ -743,6 +750,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="admin.js"></script>
+    <script src="api.js?v=20251220"></script>
+    <script src="admin.js?v=20251220"></script>
 </body>
 </html>

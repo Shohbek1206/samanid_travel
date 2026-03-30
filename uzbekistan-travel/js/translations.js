@@ -919,6 +919,15 @@ function setLanguage(lang) {
 
     // Update HTML lang attribute
     document.documentElement.lang = lang;
+
+    // Reload dynamic content (tours, destinations) with new language
+    // This triggers re-rendering with localized content
+    // Use setTimeout to ensure main.js has loaded
+    setTimeout(function() {
+        if (typeof window.reloadDynamicContent === 'function') {
+            window.reloadDynamicContent();
+        }
+    }, 10);
 }
 
 // Initialize language on page load

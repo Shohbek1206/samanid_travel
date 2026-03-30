@@ -95,71 +95,27 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.setItem('destinations', JSON.stringify(defaultDestinationsData));
     }
 
-    // Destinations data cache
-    let destinationsCache = null;
-
-    // Get destinations from API (with localStorage fallback)
+    // Get destinations from localStorage (editable)
     function getDestinationsData() {
-        // Return cache if available
-        if (destinationsCache) return destinationsCache;
-        // Fallback to localStorage
         return JSON.parse(localStorage.getItem('destinations')) || defaultDestinationsData;
     }
 
-    // Load destinations from API
-    async function loadDestinationsFromAPI() {
-        try {
-            if (window.DestinationsAPI) {
-                const data = await DestinationsAPI.getAll();
-                if (data && data.length > 0) {
-                    destinationsCache = data;
-                    localStorage.setItem('destinations', JSON.stringify(data));
-                    return data;
-                }
-            }
-        } catch (error) {
-            console.error('Failed to load destinations from API:', error);
-        }
-        return getDestinationsData();
-    }
-
-    // Save destinations - uses API and updates localStorage
+    // Save destinations to localStorage
     function saveDestinationsData(destinations) {
         localStorage.setItem('destinations', JSON.stringify(destinations));
-        destinationsCache = destinations;
     }
 
     // ========== Company Settings ==========
-    const defaultSettings = {
+    const companySettings = {
         name: 'Samanid Travel',
-        description: 'Discover the ancient wonders of the Silk Road with Samanid Travel - Your trusted tour agency in Bukhara, Uzbekistan',
         email: 'bexruz@samanidtraveluz.com',
         phone1: '+998 91 404 44 59',
         phone2: '+998 90 715 51 95',
         address: 'Mustakillik st 56/1, Bukhara, Uzbekistan',
         website: 'www.samanidtraveluz.com',
-        currency: 'EUR',
         currencies: ['EUR', 'USD'],
         paymentMethods: ['Visa', 'Mastercard', 'Bank Transfer']
     };
-
-    // Load settings from localStorage or use defaults
-    function getCompanySettings() {
-        const saved = localStorage.getItem('companySettings');
-        return saved ? JSON.parse(saved) : defaultSettings;
-    }
-
-    // Save settings to localStorage
-    function saveCompanySettings(settings) {
-        localStorage.setItem('companySettings', JSON.stringify(settings));
-    }
-
-    // Initialize settings
-    if (!localStorage.getItem('companySettings')) {
-        saveCompanySettings(defaultSettings);
-    }
-
-    const companySettings = getCompanySettings();
 
     // ========== Payment Status Flow ==========
     // new → payment_pending → paid → completed
@@ -200,50 +156,31 @@ document.addEventListener('DOMContentLoaded', function() {
     const addDestBtn = document.getElementById('addDestBtn');
 
     // ========== Authentication ==========
-    let currentAdmin = JSON.parse(localStorage.getItem('currentAdmin')) || null;
+    const ADMIN_CREDENTIALS = {
+        username: 'admin',
+        password: 'admin123'
+    };
 
     // Check if already logged in
-    if (localStorage.getItem('adminLoggedIn') === 'true' && currentAdmin) {
+    if (localStorage.getItem('adminLoggedIn') === 'true') {
         showDashboard();
     }
 
-    loginForm.addEventListener('submit', async function(e) {
+    loginForm.addEventListener('submit', function(e) {
         e.preventDefault();
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
 
-        try {
-            const response = await fetch('/api/auth/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password })
-            });
-            const data = await response.json();
-            if (data.success) {
-                currentAdmin = data.admin;
-                localStorage.setItem('adminLoggedIn', 'true');
-                localStorage.setItem('currentAdmin', JSON.stringify(currentAdmin));
-                showDashboard();
-            } else {
-                alert('Invalid credentials!');
-            }
-        } catch (error) {
-            // Fallback to hardcoded credentials if API fails
-            if (username === 'admin' && password === 'admin123') {
-                currentAdmin = { username: 'admin', name: 'Administrator' };
-                localStorage.setItem('adminLoggedIn', 'true');
-                localStorage.setItem('currentAdmin', JSON.stringify(currentAdmin));
-                showDashboard();
-            } else {
-                alert('Invalid credentials!');
-            }
+        if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
+            localStorage.setItem('adminLoggedIn', 'true');
+            showDashboard();
+        } else {
+            alert('Invalid credentials! Use admin / admin123');
         }
     });
 
     logoutBtn.addEventListener('click', function() {
         localStorage.removeItem('adminLoggedIn');
-        localStorage.removeItem('currentAdmin');
-        currentAdmin = null;
         loginScreen.style.display = 'flex';
         dashboard.style.display = 'none';
     });
@@ -321,7 +258,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 loadSubscribers();
                 break;
             case 'reviews':
-                if (window.loadReviews) window.loadReviews();
+                loadReviews();
                 break;
             case 'messages':
                 loadMessages();
@@ -341,155 +278,16 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // ========== General Settings Form ==========
-    const generalSettingsForm = document.getElementById('generalSettingsForm');
-    if (generalSettingsForm) {
-        // Load current settings into form
-        const settings = getCompanySettings();
-        document.getElementById('settingSiteName').value = settings.name || '';
-        document.getElementById('settingSiteDesc').value = settings.description || '';
-        document.getElementById('settingEmail').value = settings.email || '';
-        document.getElementById('settingPhone1').value = settings.phone1 || '';
-        document.getElementById('settingPhone2').value = settings.phone2 || '';
-        document.getElementById('settingAddress').value = settings.address || '';
-        document.getElementById('settingCurrency').value = settings.currency || 'EUR';
-
-        generalSettingsForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const newSettings = {
-                ...getCompanySettings(),
-                name: document.getElementById('settingSiteName').value.trim(),
-                description: document.getElementById('settingSiteDesc').value.trim(),
-                email: document.getElementById('settingEmail').value.trim(),
-                phone1: document.getElementById('settingPhone1').value.trim(),
-                phone2: document.getElementById('settingPhone2').value.trim(),
-                address: document.getElementById('settingAddress').value.trim(),
-                currency: document.getElementById('settingCurrency').value
-            };
-            saveCompanySettings(newSettings);
-            showNotification('Settings saved successfully!', 'success');
-        });
-    }
-
-    // ========== Security Form ==========
-    const securityForm = document.getElementById('securityForm');
-    if (securityForm) {
-        securityForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const currentPassword = document.getElementById('currentPassword').value;
-            const newPassword = document.getElementById('newPassword').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-
-            if (newPassword !== confirmPassword) {
-                showNotification('New passwords do not match!', 'error');
-                return;
-            }
-
-            if (newPassword.length < 6) {
-                showNotification('Password must be at least 6 characters!', 'error');
-                return;
-            }
-
-            try {
-                const response = await fetch('/api/auth/change-password', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        username: currentAdmin?.username || 'admin',
-                        currentPassword,
-                        newPassword
-                    })
-                });
-                const data = await response.json();
-                if (data.success) {
-                    showNotification('Password updated successfully!', 'success');
-                    securityForm.reset();
-                } else {
-                    showNotification(data.message || 'Failed to update password', 'error');
-                }
-            } catch (error) {
-                showNotification('Error updating password. Please try again.', 'error');
-            }
-        });
-    }
-
     // ========== Initialize Dashboard ==========
     function initDashboard() {
         loadOverviewStats();
         loadRecentBookings();
-        loadPopularTours();
         initCharts();
         updateMessageBadge();
     }
 
-    // ========== Load Popular Tours ==========
-    async function loadPopularTours() {
-        let bookings = [];
-        try {
-            const response = await fetch('/api/bookings');
-            if (response.ok) {
-                bookings = await response.json();
-            } else {
-                bookings = JSON.parse(localStorage.getItem('bookings')) || [];
-            }
-        } catch (e) {
-            bookings = JSON.parse(localStorage.getItem('bookings')) || [];
-        }
-
-        // Count bookings by tour type
-        const tourCounts = {};
-        bookings.forEach(b => {
-            const tour = b.tourType || 'custom';
-            tourCounts[tour] = (tourCounts[tour] || 0) + 1;
-        });
-
-        // Sort by count and get top 4
-        const sortedTours = Object.entries(tourCounts)
-            .sort((a, b) => b[1] - a[1])
-            .slice(0, 4);
-
-        // Tour images
-        const tourImages = {
-            'classic': 'https://images.unsplash.com/photo-1596484552834-6a58f850e0a1?w=100',
-            'luxury': 'https://images.unsplash.com/photo-1565008576549-57569a49371d?w=100',
-            'photography': 'https://images.unsplash.com/photo-1558005137-d9619a5c539f?w=100',
-            'culinary': 'https://images.unsplash.com/photo-1580309237429-661ea7cd1d66?w=100',
-            'adventure': 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=100',
-            'custom': 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=100'
-        };
-
-        const container = document.getElementById('popularToursList');
-        if (!container) return;
-
-        if (sortedTours.length === 0) {
-            container.innerHTML = '<p style="padding: 20px; color: #666;">No bookings yet</p>';
-            return;
-        }
-
-        container.innerHTML = sortedTours.map(([tour, count]) => `
-            <div class="popular-tour-item">
-                <img src="${tourImages[tour] || tourImages['custom']}" alt="${tour}">
-                <div class="tour-info">
-                    <h4>${getTourName(tour)}</h4>
-                    <p>${count} booking${count > 1 ? 's' : ''}</p>
-                </div>
-                <span class="tour-rating"><i class="fas fa-fire" style="color: #e74c3c;"></i></span>
-            </div>
-        `).join('');
-    }
-
-    async function loadOverviewStats() {
-        let bookings = [];
-        try {
-            const response = await fetch('/api/bookings');
-            if (response.ok) {
-                bookings = await response.json();
-            } else {
-                bookings = JSON.parse(localStorage.getItem('bookings')) || [];
-            }
-        } catch (e) {
-            bookings = JSON.parse(localStorage.getItem('bookings')) || [];
-        }
+    function loadOverviewStats() {
+        const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
         const inquiries = JSON.parse(localStorage.getItem('inquiries')) || [];
         const subscribers = JSON.parse(localStorage.getItem('subscribers')) || [];
 
@@ -505,38 +303,13 @@ document.addEventListener('DOMContentLoaded', function() {
             return sum + travelers;
         }, 0);
 
-        // Calculate total revenue from booking prices
-        const totalRevenue = bookings.reduce((sum, b) => {
-            const price = parseFloat(b.price) || 0;
-            return sum + price;
-        }, 0);
-
-        // Calculate average rating from reviews
-        const reviews = JSON.parse(localStorage.getItem('reviews')) || [];
-        let avgRating = 0;
-        if (reviews.length > 0) {
-            const totalRating = reviews.reduce((sum, r) => sum + (parseFloat(r.rating) || 0), 0);
-            avgRating = (totalRating / reviews.length).toFixed(1);
-        }
-
         document.getElementById('totalBookings').textContent = totalInquiries;
-        document.getElementById('totalRevenue').textContent = '€' + totalRevenue.toLocaleString();
+        document.getElementById('totalRevenue').textContent = '$' + (totalInquiries * 1500).toLocaleString();
         document.getElementById('totalCustomers').textContent = totalCustomers;
-        document.getElementById('avgRating').textContent = avgRating;
     }
 
-    async function loadRecentBookings() {
-        let bookings = [];
-        try {
-            const response = await fetch('/api/bookings');
-            if (response.ok) {
-                bookings = await response.json();
-            } else {
-                bookings = JSON.parse(localStorage.getItem('bookings')) || [];
-            }
-        } catch (e) {
-            bookings = JSON.parse(localStorage.getItem('bookings')) || [];
-        }
+    function loadRecentBookings() {
+        const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
         const inquiries = JSON.parse(localStorage.getItem('inquiries')) || [];
         const tbody = document.getElementById('recentBookingsTable');
         tbody.innerHTML = '';
@@ -575,18 +348,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ========== Charts ==========
-    async function initCharts() {
-        let bookings = [];
-        try {
-            const response = await fetch('/api/bookings');
-            if (response.ok) {
-                bookings = await response.json();
-            } else {
-                bookings = JSON.parse(localStorage.getItem('bookings')) || [];
-            }
-        } catch (e) {
-            bookings = JSON.parse(localStorage.getItem('bookings')) || [];
-        }
+    function initCharts() {
+        const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
         const inquiries = JSON.parse(localStorage.getItem('inquiries')) || [];
         const allData = [...bookings, ...inquiries];
 
@@ -686,18 +449,8 @@ document.addEventListener('DOMContentLoaded', function() {
         return tour.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ').substring(0, 20);
     }
 
-    async function initAnalyticsCharts() {
-        let bookings = [];
-        try {
-            const response = await fetch('/api/bookings');
-            if (response.ok) {
-                bookings = await response.json();
-            } else {
-                bookings = JSON.parse(localStorage.getItem('bookings')) || [];
-            }
-        } catch (e) {
-            bookings = JSON.parse(localStorage.getItem('bookings')) || [];
-        }
+    function initAnalyticsCharts() {
+        const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
         const inquiries = JSON.parse(localStorage.getItem('inquiries')) || [];
         const allData = [...bookings, ...inquiries];
 
@@ -862,40 +615,22 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ========== Load Bookings ==========
-    async function loadBookings() {
-        // Load from API directly
-        let bookings = [];
-        try {
-            const response = await fetch('/api/bookings');
-            if (response.ok) {
-                bookings = await response.json();
-                console.log('Loaded bookings from API:', bookings.length);
-            } else {
-                console.log('API failed, using localStorage');
-                bookings = JSON.parse(localStorage.getItem('bookings')) || [];
-            }
-        } catch (e) {
-            console.log('API error:', e, 'using localStorage');
-            bookings = JSON.parse(localStorage.getItem('bookings')) || [];
-        }
+    function loadBookings() {
+        const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
         const inquiries = JSON.parse(localStorage.getItem('inquiries')) || [];
         const tbody = document.getElementById('bookingsTable');
         tbody.innerHTML = '';
 
         // Combine bookings and inquiries
         const allBookings = [
-            ...bookings.map(b => ({
-                ...b,
-                source: 'booking',
-                date: b.date || b.createdAt // API uses createdAt
-            })),
+            ...bookings.map(b => ({ ...b, source: 'booking' })),
             ...inquiries.map(i => ({
                 ...i,
                 fullName: i.name || i.fullName,
                 tourType: i.tour || 'custom',
                 source: 'inquiry'
             }))
-        ].sort((a, b) => new Date(b.date || b.createdAt || 0) - new Date(a.date || a.createdAt || 0));
+        ].sort((a, b) => new Date(b.date) - new Date(a.date));
 
         allBookings.forEach(booking => {
             const tourName = getTourName(booking.tourType);
@@ -985,15 +720,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ========== Load Destinations ==========
-    async function loadDestinations() {
+    function loadDestinations() {
         const grid = document.getElementById('destinationsGrid');
-        grid.innerHTML = '<div style="padding:20px; text-align:center;"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
-
-        // Load from API first
-        const destinations = await loadDestinationsFromAPI();
         grid.innerHTML = '';
+
+        const destinations = getDestinationsData();
         destinations.forEach(dest => {
-            const attractions = dest.attractions || [];
             const card = document.createElement('div');
             card.className = 'dest-card-admin';
             card.innerHTML = `
@@ -1003,8 +735,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     <h3>${dest.name}</h3>
                     <p>${dest.description}</p>
                     <div class="dest-attractions">
-                        ${attractions.slice(0, 3).map(a => `<span class="attraction-tag"><i class="fas fa-landmark"></i> ${a}</span>`).join('')}
-                        ${attractions.length > 3 ? `<span class="more-tag">+${attractions.length - 3} more</span>` : ''}
+                        ${dest.attractions.slice(0, 3).map(a => `<span class="attraction-tag"><i class="fas fa-landmark"></i> ${a}</span>`).join('')}
+                        ${dest.attractions.length > 3 ? `<span class="more-tag">+${dest.attractions.length - 3} more</span>` : ''}
                     </div>
                     <div class="card-meta">
                         <span><i class="fas fa-route"></i> ${dest.tours} tours</span>
@@ -1021,19 +753,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ========== Load Customers ==========
-    async function loadCustomers() {
-        // Load from API
-        let bookings = [];
-        try {
-            const response = await fetch('/api/bookings');
-            if (response.ok) {
-                bookings = await response.json();
-            } else {
-                bookings = JSON.parse(localStorage.getItem('bookings')) || [];
-            }
-        } catch (e) {
-            bookings = JSON.parse(localStorage.getItem('bookings')) || [];
-        }
+    function loadCustomers() {
+        const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
         const tbody = document.getElementById('customersTable');
         tbody.innerHTML = '';
 
@@ -1101,19 +822,155 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // ========== Load Messages ==========
-    async function loadMessages() {
-        let bookings = [];
-        try {
-            const response = await fetch('/api/bookings');
-            if (response.ok) {
-                bookings = await response.json();
-            } else {
-                bookings = JSON.parse(localStorage.getItem('bookings')) || [];
-            }
-        } catch (e) {
-            bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+    // ========== Load Reviews ==========
+    function loadReviews() {
+        const container = document.getElementById('reviewsList');
+        container.innerHTML = '';
+
+        const reviews = JSON.parse(localStorage.getItem('reviews')) || [];
+
+        if (reviews.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-star"></i>
+                    <h3>No Reviews Yet</h3>
+                    <p>Customer reviews will appear here once added.</p>
+                    <button class="btn-primary" onclick="addNewReview()"><i class="fas fa-plus"></i> Add Review</button>
+                </div>
+                <style>
+                    .empty-state { text-align: center; padding: 60px 20px; color: #666; }
+                    .empty-state i { font-size: 48px; color: #ddd; margin-bottom: 20px; }
+                    .empty-state h3 { margin: 0 0 10px 0; color: #333; }
+                    .empty-state p { margin-bottom: 20px; }
+                </style>
+            `;
+            return;
         }
+
+        reviews.forEach(review => {
+            const card = document.createElement('div');
+            card.className = 'review-card';
+            card.innerHTML = `
+                <div class="review-header">
+                    <div class="review-author">
+                        <div class="author-avatar">${review.author.charAt(0).toUpperCase()}</div>
+                        <div>
+                            <h4>${review.author}</h4>
+                            <span>${review.country} | ${review.tour}</span>
+                        </div>
+                    </div>
+                    <div class="review-rating">
+                        ${'<i class="fas fa-star"></i>'.repeat(review.rating)}
+                    </div>
+                </div>
+                <p class="review-text">"${review.text}"</p>
+                <div class="review-actions">
+                    <button class="action-btn edit" onclick="editReview(${review.id})"><i class="fas fa-edit"></i></button>
+                    <button class="action-btn delete" onclick="deleteReview(${review.id})"><i class="fas fa-trash"></i></button>
+                </div>
+                <style>
+                    .author-avatar { width: 50px; height: 50px; border-radius: 50%; background: #1a5f7a; color: white; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; }
+                    .review-actions { margin-top: 15px; display: flex; gap: 10px; justify-content: flex-end; }
+                </style>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    // Add new review
+    window.addNewReview = function() {
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+        const modalFooter = document.getElementById('modalFooter');
+
+        modalTitle.textContent = 'Add New Review';
+        modalBody.innerHTML = `
+            <form id="addReviewForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Customer Name</label>
+                        <input type="text" id="reviewAuthor" placeholder="e.g., John Smith" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Country</label>
+                        <input type="text" id="reviewCountry" placeholder="e.g., Germany" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Tour</label>
+                        <select id="reviewTour">
+                            ${toursData.map(t => `<option value="${t.name}">${t.name}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Rating</label>
+                        <select id="reviewRating">
+                            <option value="5">5 Stars</option>
+                            <option value="4">4 Stars</option>
+                            <option value="3">3 Stars</option>
+                            <option value="2">2 Stars</option>
+                            <option value="1">1 Star</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Review Text</label>
+                    <textarea id="reviewText" rows="4" placeholder="Customer's review text..." required></textarea>
+                </div>
+            </form>
+            <style>.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }</style>
+        `;
+        modalFooter.innerHTML = `
+            <button class="btn-secondary modal-cancel">Cancel</button>
+            <button class="btn-primary" onclick="saveNewReview()"><i class="fas fa-save"></i> Save Review</button>
+        `;
+
+        modal.classList.add('active');
+    };
+
+    window.saveNewReview = function() {
+        const author = document.getElementById('reviewAuthor').value;
+        const country = document.getElementById('reviewCountry').value;
+        const tour = document.getElementById('reviewTour').value;
+        const rating = parseInt(document.getElementById('reviewRating').value);
+        const text = document.getElementById('reviewText').value;
+
+        if (!author || !country || !text) {
+            alert('Please fill all fields');
+            return;
+        }
+
+        let reviews = JSON.parse(localStorage.getItem('reviews')) || [];
+        const newReview = {
+            id: Date.now(),
+            author,
+            country,
+            tour,
+            rating,
+            text,
+            date: new Date().toISOString()
+        };
+        reviews.push(newReview);
+        localStorage.setItem('reviews', JSON.stringify(reviews));
+
+        modal.classList.remove('active');
+        showNotification('Review added successfully', 'success');
+        loadReviews();
+    };
+
+    window.deleteReview = function(id) {
+        if (confirm('Are you sure you want to delete this review?')) {
+            let reviews = JSON.parse(localStorage.getItem('reviews')) || [];
+            reviews = reviews.filter(r => r.id !== id);
+            localStorage.setItem('reviews', JSON.stringify(reviews));
+            loadReviews();
+        }
+    };
+
+    // ========== Load Messages ==========
+    function loadMessages() {
+        const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
         const container = document.getElementById('messagesList');
         container.innerHTML = '';
 
@@ -1158,18 +1015,8 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
     }
 
-    async function updateMessageBadge() {
-        let bookings = [];
-        try {
-            const response = await fetch('/api/bookings');
-            if (response.ok) {
-                bookings = await response.json();
-            } else {
-                bookings = JSON.parse(localStorage.getItem('bookings')) || [];
-            }
-        } catch (e) {
-            bookings = JSON.parse(localStorage.getItem('bookings')) || [];
-        }
+    function updateMessageBadge() {
+        const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
         const messagesCount = bookings.filter(b => b.message && b.message.length > 0 && b.status === 'new').length;
         document.getElementById('messageBadge').textContent = messagesCount;
     }
@@ -1220,20 +1067,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ========== Global Functions ==========
-    window.viewBooking = async function(id) {
-        // Load from API
-        let bookings = [];
-        try {
-            const response = await fetch('/api/bookings');
-            if (response.ok) {
-                bookings = await response.json();
-            } else {
-                bookings = JSON.parse(localStorage.getItem('bookings')) || [];
-            }
-        } catch (e) {
-            bookings = JSON.parse(localStorage.getItem('bookings')) || [];
-        }
-        const booking = bookings.find(b => b.id == id);
+    window.viewBooking = function(id) {
+        const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+        const booking = bookings.find(b => b.id === id);
         if (!booking) return;
 
         const modalTitle = document.getElementById('modalTitle');
@@ -1351,20 +1187,9 @@ document.addEventListener('DOMContentLoaded', function() {
         modal.classList.add('active');
     };
 
-    window.editBooking = async function(id) {
-        // Load from API
-        let bookings = [];
-        try {
-            const response = await fetch('/api/bookings');
-            if (response.ok) {
-                bookings = await response.json();
-            } else {
-                bookings = JSON.parse(localStorage.getItem('bookings')) || [];
-            }
-        } catch (e) {
-            bookings = JSON.parse(localStorage.getItem('bookings')) || [];
-        }
-        const booking = bookings.find(b => b.id == id);
+    window.editBooking = function(id) {
+        const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+        const booking = bookings.find(b => b.id === id);
         if (!booking) return;
 
         const modalTitle = document.getElementById('modalTitle');
@@ -1433,39 +1258,20 @@ document.addEventListener('DOMContentLoaded', function() {
         modal.classList.add('active');
     };
 
-    window.saveBookingEdit = async function(id) {
-        const updatedData = {
-            status: document.getElementById('editStatus').value,
-            travelDate: document.getElementById('editTravelDate').value,
-            travelers: document.getElementById('editTravelers').value,
-            paymentMethod: document.getElementById('editPaymentMethod').value,
-            currency: document.getElementById('editCurrency').value,
-            price: document.getElementById('editPrice').value,
-            notes: document.getElementById('editNotes').value
-        };
-
-        // Save to API
-        try {
-            const response = await fetch(`/api/bookings/${id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(updatedData)
-            });
-            if (response.ok) {
-                console.log('Booking updated via API');
-            }
-        } catch (e) {
-            console.log('API update failed:', e);
-        }
-
-        // Also update localStorage for backup
+    window.saveBookingEdit = function(id) {
         const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
-        const index = bookings.findIndex(b => b.id == id);
-        if (index !== -1) {
-            bookings[index] = { ...bookings[index], ...updatedData };
-            localStorage.setItem('bookings', JSON.stringify(bookings));
-        }
+        const index = bookings.findIndex(b => b.id === id);
+        if (index === -1) return;
 
+        bookings[index].status = document.getElementById('editStatus').value;
+        bookings[index].travelDate = document.getElementById('editTravelDate').value;
+        bookings[index].travelers = document.getElementById('editTravelers').value;
+        bookings[index].paymentMethod = document.getElementById('editPaymentMethod').value;
+        bookings[index].currency = document.getElementById('editCurrency').value;
+        bookings[index].price = document.getElementById('editPrice').value;
+        bookings[index].notes = document.getElementById('editNotes').value;
+
+        localStorage.setItem('bookings', JSON.stringify(bookings));
         modal.classList.remove('active');
         loadBookings();
         loadRecentBookings();
@@ -1719,18 +1525,8 @@ Samanid Travel Team
     };
 
     // ========== Customer Functions ==========
-    window.viewCustomer = async function(email) {
-        let bookings = [];
-        try {
-            const response = await fetch('/api/bookings');
-            if (response.ok) {
-                bookings = await response.json();
-            } else {
-                bookings = JSON.parse(localStorage.getItem('bookings')) || [];
-            }
-        } catch (e) {
-            bookings = JSON.parse(localStorage.getItem('bookings')) || [];
-        }
+    window.viewCustomer = function(email) {
+        const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
         const customerBookings = bookings.filter(b => b.email === email);
 
         if (customerBookings.length === 0) return;
@@ -2078,34 +1874,20 @@ Samanid Travel Team
                 </div>
 
                 <div class="form-group">
-                    <label><i class="fas fa-images"></i> Tour Gallery (Up to 3 images)</label>
-                    <div class="gallery-upload-grid" style="display:grid; grid-template-columns:repeat(3,1fr); gap:15px;">
-                        <div class="gallery-item">
-                            <label style="color:#666; font-size:12px; margin-bottom:5px; display:block;">Main Image *</label>
-                            <div class="image-box" id="editTourImage1Box" style="width:100%; height:120px; background:#f0f0f0; border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#999; border:2px dashed #ccc; cursor:pointer; position:relative; overflow:hidden;">
-                                ${tour.image ? `<img src="${currentImage}" style="width:100%; height:100%; object-fit:cover; position:absolute;">` : '<i class="fas fa-plus" style="font-size:24px;"></i><span style="font-size:11px; margin-top:5px;">Image 1</span>'}
-                            </div>
-                            <input type="file" id="editTourImage1File" accept="image/*" style="display:none;">
-                            <input type="hidden" id="editTourImage1" value="${tour.image || ''}">
-                        </div>
-                        <div class="gallery-item">
-                            <label style="color:#666; font-size:12px; margin-bottom:5px; display:block;">Image 2</label>
-                            <div class="image-box" id="editTourImage2Box" style="width:100%; height:120px; background:#f0f0f0; border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#999; border:2px dashed #ccc; cursor:pointer; position:relative; overflow:hidden;">
-                                ${tour.image2 ? `<img src="${getAdminImageUrl(tour.image2)}" style="width:100%; height:100%; object-fit:cover; position:absolute;">` : '<i class="fas fa-plus" style="font-size:24px;"></i><span style="font-size:11px; margin-top:5px;">Image 2</span>'}
-                            </div>
-                            <input type="file" id="editTourImage2File" accept="image/*" style="display:none;">
-                            <input type="hidden" id="editTourImage2" value="${tour.image2 || ''}">
-                        </div>
-                        <div class="gallery-item">
-                            <label style="color:#666; font-size:12px; margin-bottom:5px; display:block;">Image 3</label>
-                            <div class="image-box" id="editTourImage3Box" style="width:100%; height:120px; background:#f0f0f0; border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#999; border:2px dashed #ccc; cursor:pointer; position:relative; overflow:hidden;">
-                                ${tour.image3 ? `<img src="${getAdminImageUrl(tour.image3)}" style="width:100%; height:100%; object-fit:cover; position:absolute;">` : '<i class="fas fa-plus" style="font-size:24px;"></i><span style="font-size:11px; margin-top:5px;">Image 3</span>'}
-                            </div>
-                            <input type="file" id="editTourImage3File" accept="image/*" style="display:none;">
-                            <input type="hidden" id="editTourImage3" value="${tour.image3 || ''}">
-                        </div>
+                    <label><i class="fas fa-image"></i> Tour Image</label>
+                    <div class="image-preview-container">
+                        <img id="tourImagePreview" src="${currentImage}" alt="Tour Image" style="width:100%; max-height:200px; object-fit:cover; border-radius:10px; margin-bottom:10px;" onerror="this.src='${defaultImage}'">
                     </div>
-                    <p style="color:#888; font-size:11px; margin-top:10px;"><i class="fas fa-info-circle"></i> Click on image box to upload. Images will be shown in gallery slider.</p>
+                    <div class="image-upload-options">
+                        <label class="upload-btn">
+                            <i class="fas fa-upload"></i> Upload Image
+                            <input type="file" id="tourImageFile" accept="image/*" style="display:none;">
+                        </label>
+                        <button type="button" class="reset-btn" onclick="resetTourImage(${id}, '${defaultImage}')">
+                            <i class="fas fa-undo"></i> Reset to Default
+                        </button>
+                    </div>
+                    <input type="hidden" id="tourImage" value="${tour.image}">
                 </div>
 
                 <div class="form-row">
@@ -2163,47 +1945,21 @@ Samanid Travel Team
 
         modal.classList.add('active');
 
-        // Handle gallery image uploads
-        [1, 2, 3].forEach(num => {
-            const box = document.getElementById(`editTourImage${num}Box`);
-            const fileInput = document.getElementById(`editTourImage${num}File`);
-            const hiddenInput = document.getElementById(`editTourImage${num}`);
-
-            if (box && fileInput) {
-                box.addEventListener('click', () => fileInput.click());
-                fileInput.addEventListener('change', async function(e) {
-                    const file = e.target.files[0];
-                    if (file) {
-                        if (file.size > 10 * 1024 * 1024) {
-                            alert('Image size should be less than 10MB');
-                            return;
-                        }
-                        // Upload to server
-                        const formData = new FormData();
-                        formData.append('image', file);
-                        try {
-                            const response = await fetch(`${API_BASE_URL}/api/upload`, {
-                                method: 'POST',
-                                body: formData
-                            });
-                            const data = await response.json();
-                            if (data.url) {
-                                hiddenInput.value = data.url;
-                                box.innerHTML = `<img src="${API_BASE_URL}${data.url}" style="width:100%; height:100%; object-fit:cover; position:absolute;">`;
-                                showNotification(`Image ${num} uploaded successfully!`, 'success');
-                            }
-                        } catch (error) {
-                            console.error('Upload error:', error);
-                            // Fallback to base64
-                            const reader = new FileReader();
-                            reader.onload = function(event) {
-                                hiddenInput.value = event.target.result;
-                                box.innerHTML = `<img src="${event.target.result}" style="width:100%; height:100%; object-fit:cover; position:absolute;">`;
-                            };
-                            reader.readAsDataURL(file);
-                        }
-                    }
-                });
+        // Handle image file upload
+        document.getElementById('tourImageFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('Image size should be less than 2MB');
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const base64 = event.target.result;
+                    document.getElementById('tourImagePreview').src = base64;
+                    document.getElementById('tourImage').value = base64;
+                };
+                reader.readAsDataURL(file);
             }
         });
     };
@@ -2239,9 +1995,7 @@ Samanid Travel Team
         // Common fields
         const duration = document.getElementById('tourDuration').value.trim();
         const category = document.getElementById('tourCategory').value;
-        const image = document.getElementById('editTourImage1').value.trim();
-        const image2 = document.getElementById('editTourImage2').value.trim();
-        const image3 = document.getElementById('editTourImage3').value.trim();
+        const image = document.getElementById('tourImage').value.trim();
         const badge = document.getElementById('tourBadge').value.trim();
         const badgeType = document.getElementById('tourBadgeType').value;
         const priceType = document.getElementById('tourPriceType').value;
@@ -2271,8 +2025,6 @@ Samanid Travel Team
                 duration,
                 category,
                 image: image || tours[index].image,
-                image2: image2 || '',
-                image3: image3 || '',
                 badge,
                 badgeType,
                 price,
@@ -2335,40 +2087,22 @@ Samanid Travel Team
                 </div>
 
                 <div class="form-group">
-                    <label><i class="fas fa-images"></i> Tour Gallery (Up to 3 images)</label>
-                    <div class="gallery-upload-grid" style="display:grid; grid-template-columns:repeat(3,1fr); gap:15px;">
-                        <div class="gallery-item">
-                            <label style="color:#666; font-size:12px; margin-bottom:5px; display:block;">Main Image *</label>
-                            <div class="image-box" id="newTourImage1Box" style="width:100%; height:120px; background:#f0f0f0; border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#999; border:2px dashed #ccc; cursor:pointer; position:relative; overflow:hidden;">
-                                <i class="fas fa-plus" style="font-size:24px;"></i>
-                                <span style="font-size:11px; margin-top:5px;">Image 1</span>
-                                <img id="newTourImage1Preview" src="" style="position:absolute; width:100%; height:100%; object-fit:cover; display:none;">
-                            </div>
-                            <input type="file" id="newTourImage1File" accept="image/*" style="display:none;">
-                            <input type="hidden" id="newTourImage1" value="">
+                    <label><i class="fas fa-image"></i> Tour Image *</label>
+                    <div class="image-preview-container" id="newTourImageContainer">
+                        <div id="newTourImagePlaceholder" style="width:100%; height:200px; background:#f0f0f0; border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#999; border:2px dashed #ccc;">
+                            <i class="fas fa-cloud-upload-alt" style="font-size:48px; margin-bottom:10px;"></i>
+                            <span>Click "Upload Image" to add tour photo</span>
                         </div>
-                        <div class="gallery-item">
-                            <label style="color:#666; font-size:12px; margin-bottom:5px; display:block;">Image 2</label>
-                            <div class="image-box" id="newTourImage2Box" style="width:100%; height:120px; background:#f0f0f0; border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#999; border:2px dashed #ccc; cursor:pointer; position:relative; overflow:hidden;">
-                                <i class="fas fa-plus" style="font-size:24px;"></i>
-                                <span style="font-size:11px; margin-top:5px;">Image 2</span>
-                                <img id="newTourImage2Preview" src="" style="position:absolute; width:100%; height:100%; object-fit:cover; display:none;">
-                            </div>
-                            <input type="file" id="newTourImage2File" accept="image/*" style="display:none;">
-                            <input type="hidden" id="newTourImage2" value="">
-                        </div>
-                        <div class="gallery-item">
-                            <label style="color:#666; font-size:12px; margin-bottom:5px; display:block;">Image 3</label>
-                            <div class="image-box" id="newTourImage3Box" style="width:100%; height:120px; background:#f0f0f0; border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#999; border:2px dashed #ccc; cursor:pointer; position:relative; overflow:hidden;">
-                                <i class="fas fa-plus" style="font-size:24px;"></i>
-                                <span style="font-size:11px; margin-top:5px;">Image 3</span>
-                                <img id="newTourImage3Preview" src="" style="position:absolute; width:100%; height:100%; object-fit:cover; display:none;">
-                            </div>
-                            <input type="file" id="newTourImage3File" accept="image/*" style="display:none;">
-                            <input type="hidden" id="newTourImage3" value="">
-                        </div>
+                        <img id="newTourImagePreview" src="" alt="Tour Image" style="width:100%; max-height:200px; object-fit:cover; border-radius:10px; display:none;">
                     </div>
-                    <small style="color:#666; display:block; margin-top:8px;"><i class="fas fa-info-circle"></i> Click boxes to upload. Max 5MB each. Main image required.</small>
+                    <div class="image-upload-options" style="margin-top:10px;">
+                        <label class="upload-btn" style="flex:1; justify-content:center;">
+                            <i class="fas fa-upload"></i> Upload Tour Image
+                            <input type="file" id="newTourImageFile" accept="image/*" style="display:none;">
+                        </label>
+                    </div>
+                    <input type="hidden" id="newTourImage" value="">
+                    <small style="color:#666; display:block; margin-top:8px;"><i class="fas fa-info-circle"></i> Recommended: 800x600px, max 2MB (JPG, PNG)</small>
                 </div>
 
                 <div class="form-row">
@@ -2437,56 +2171,24 @@ Samanid Travel Team
 
         modal.classList.add('active');
 
-        // Handle image uploads for all 3 images
-        [1, 2, 3].forEach(num => {
-            const box = document.getElementById(`newTourImage${num}Box`);
-            const fileInput = document.getElementById(`newTourImage${num}File`);
-            const preview = document.getElementById(`newTourImage${num}Preview`);
-            const hiddenInput = document.getElementById(`newTourImage${num}`);
-
-            box.addEventListener('click', () => fileInput.click());
-
-            fileInput.addEventListener('change', async function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    if (file.size > 5 * 1024 * 1024) {
-                        alert('Image size should be less than 5MB');
-                        return;
-                    }
-
-                    // Upload to server
-                    const formData = new FormData();
-                    formData.append('image', file);
-
-                    try {
-                        box.innerHTML = '<i class="fas fa-spinner fa-spin" style="font-size:24px;"></i>';
-                        const response = await fetch('/api/upload', {
-                            method: 'POST',
-                            body: formData
-                        });
-                        const data = await response.json();
-                        if (data.url) {
-                            hiddenInput.value = data.url;
-                            preview.src = data.url;
-                            preview.style.display = 'block';
-                            box.innerHTML = '';
-                            box.appendChild(preview);
-                        }
-                    } catch (error) {
-                        console.error('Upload error:', error);
-                        // Fallback to base64
-                        const reader = new FileReader();
-                        reader.onload = function(event) {
-                            hiddenInput.value = event.target.result;
-                            preview.src = event.target.result;
-                            preview.style.display = 'block';
-                            box.innerHTML = '';
-                            box.appendChild(preview);
-                        };
-                        reader.readAsDataURL(file);
-                    }
+        // Handle image file upload for new tour
+        document.getElementById('newTourImageFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('Image size should be less than 2MB');
+                    return;
                 }
-            });
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const base64 = event.target.result;
+                    document.getElementById('newTourImagePreview').src = base64;
+                    document.getElementById('newTourImagePreview').style.display = 'block';
+                    document.getElementById('newTourImagePlaceholder').style.display = 'none';
+                    document.getElementById('newTourImage').value = base64;
+                };
+                reader.readAsDataURL(file);
+            }
         });
     };
 
@@ -2495,9 +2197,7 @@ Samanid Travel Team
         const duration = document.getElementById('newTourDuration').value.trim();
         const category = document.getElementById('newTourCategory').value;
         const description = document.getElementById('newTourDescription').value.trim();
-        const image = document.getElementById('newTourImage1').value.trim();
-        const image2 = document.getElementById('newTourImage2').value.trim();
-        const image3 = document.getElementById('newTourImage3').value.trim();
+        const image = document.getElementById('newTourImage').value.trim();
         const badge = document.getElementById('newTourBadge').value.trim();
         const badgeType = document.getElementById('newTourBadgeType').value;
         const highlights = document.getElementById('newTourHighlights').value.split(',').map(h => h.trim()).filter(h => h);
@@ -2511,7 +2211,7 @@ Samanid Travel Team
         }
 
         if (!image) {
-            alert('Please upload at least the main tour image');
+            alert('Please upload a tour image');
             return;
         }
 
@@ -2524,9 +2224,7 @@ Samanid Travel Team
             duration,
             category,
             description,
-            image,
-            image2,
-            image3,
+            image: image,
             badge,
             badgeType,
             highlights: highlights.length > 0 ? highlights : ['Guide Included', 'Transfers'],
@@ -2735,11 +2433,7 @@ Samanid Travel Team
         modal.classList.add('active');
     };
 
-    // ========== Edit Destination (Multilingual) ==========
-    // Same languages as main page: en, de, es, ru, zh
-    const DEST_LANGS = ['en', 'de', 'es', 'ru', 'zh'];
-    const DEST_LANG_NAMES = { en: 'English', de: 'Deutsch', es: 'Español', ru: 'Русский', zh: '中文' };
-
+    // ========== Edit Destination ==========
     window.editDestination = function(id) {
         const destinations = getDestinationsData();
         const dest = destinations.find(d => d.id === id);
@@ -2749,54 +2443,23 @@ Samanid Travel Team
         const modalBody = document.getElementById('modalBody');
         const modalFooter = document.getElementById('modalFooter');
 
-        // Get multilingual values or fallback to default
-        const getName = (lang) => lang === 'en' ? (dest.name || '') : (dest[`name_${lang}`] || '');
-        const getSubtitle = (lang) => lang === 'en' ? (dest.subtitle || '') : (dest[`subtitle_${lang}`] || '');
-        const getDesc = (lang) => lang === 'en' ? (dest.description || '') : (dest[`description_${lang}`] || '');
-        const getAttractions = (lang) => {
-            if (lang === 'en') return dest.attractions || [];
-            return dest[`attractions_${lang}`] || [];
-        };
-
         modalTitle.textContent = `Edit: ${dest.name}`;
         modalBody.innerHTML = `
             <form id="editDestForm">
-                <!-- Language Tabs -->
-                <div class="lang-tabs">
-                    ${DEST_LANGS.map((lang, i) => `
-                        <button type="button" class="lang-tab ${i === 0 ? 'active' : ''}" data-lang="${lang}" onclick="switchDestLangTab('${lang}')">
-                            ${DEST_LANG_NAMES[lang]}
-                        </button>
-                    `).join('')}
-                </div>
-
-                <!-- Language Content Panels -->
-                ${DEST_LANGS.map((lang, i) => `
-                    <div class="lang-panel ${i === 0 ? 'active' : ''}" id="destLangPanel_${lang}">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label><i class="fas fa-map-marker-alt"></i> Name (${DEST_LANG_NAMES[lang]}) ${lang === 'en' ? '*' : ''}</label>
-                                <input type="text" id="destName_${lang}" value="${getName(lang).replace(/"/g, '&quot;')}" placeholder="Destination name in ${DEST_LANG_NAMES[lang]}" ${lang === 'en' ? 'required' : ''}>
-                            </div>
-                            <div class="form-group">
-                                <label><i class="fas fa-quote-left"></i> Subtitle (${DEST_LANG_NAMES[lang]})</label>
-                                <input type="text" id="destSubtitle_${lang}" value="${getSubtitle(lang).replace(/"/g, '&quot;')}" placeholder="Short tagline in ${DEST_LANG_NAMES[lang]}">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label><i class="fas fa-align-left"></i> Description (${DEST_LANG_NAMES[lang]})</label>
-                            <textarea id="destDescription_${lang}" rows="3" placeholder="Description in ${DEST_LANG_NAMES[lang]}">${getDesc(lang)}</textarea>
-                        </div>
-                        <div class="form-group">
-                            <label><i class="fas fa-landmark"></i> Attractions (${DEST_LANG_NAMES[lang]}, one per line)</label>
-                            <textarea id="destAttractions_${lang}" rows="4" placeholder="Attractions in ${DEST_LANG_NAMES[lang]}">${getAttractions(lang).join('\n')}</textarea>
-                        </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-map-marker-alt"></i> Name</label>
+                        <input type="text" id="destName" value="${dest.name}">
                     </div>
-                `).join('')}
-
-                <hr style="margin: 20px 0; border: none; border-top: 1px solid #eee;">
-
-                <!-- Common Fields -->
+                    <div class="form-group">
+                        <label><i class="fas fa-quote-left"></i> Subtitle</label>
+                        <input type="text" id="destSubtitle" value="${dest.subtitle}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-align-left"></i> Description</label>
+                    <textarea id="destDescription" rows="3">${dest.description}</textarea>
+                </div>
                 <div class="form-group">
                     <label><i class="fas fa-image"></i> Current Image</label>
                     <div class="image-preview-container">
@@ -2816,13 +2479,12 @@ Samanid Travel Team
                         <input type="number" id="destTours" value="${dest.tours}" min="0">
                     </div>
                 </div>
+                <div class="form-group">
+                    <label><i class="fas fa-landmark"></i> Attractions (one per line)</label>
+                    <textarea id="destAttractions" rows="5">${dest.attractions.join('\n')}</textarea>
+                </div>
             </form>
             <style>
-                .lang-tabs { display: flex; gap: 5px; margin-bottom: 15px; flex-wrap: wrap; }
-                .lang-tab { padding: 8px 16px; border: 1px solid #ddd; background: #f5f5f5; border-radius: 5px; cursor: pointer; font-size: 13px; }
-                .lang-tab.active { background: #1a5f7a; color: white; border-color: #1a5f7a; }
-                .lang-panel { display: none; }
-                .lang-panel.active { display: block; }
                 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
                 .upload-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: #1a5f7a; color: white; border-radius: 8px; cursor: pointer; transition: all 0.3s; }
                 .upload-btn:hover { background: #c9a227; }
@@ -2858,72 +2520,34 @@ Samanid Travel Team
         }, 100);
     };
 
-    // Switch language tab for destination editing
-    window.switchDestLangTab = function(lang) {
-        document.querySelectorAll('.lang-tab').forEach(tab => tab.classList.remove('active'));
-        document.querySelectorAll('.lang-panel').forEach(panel => panel.classList.remove('active'));
-        document.querySelector(`.lang-tab[data-lang="${lang}"]`).classList.add('active');
-        document.getElementById(`destLangPanel_${lang}`).classList.add('active');
-    };
-
-    // ========== Save Destination (Multilingual) ==========
+    // ========== Save Destination ==========
     window.saveDestination = function(id) {
-        // Get multilingual content
-        const multiLangData = {};
-        DEST_LANGS.forEach(lang => {
-            const nameEl = document.getElementById(`destName_${lang}`);
-            const subtitleEl = document.getElementById(`destSubtitle_${lang}`);
-            const descEl = document.getElementById(`destDescription_${lang}`);
-            const attractionsEl = document.getElementById(`destAttractions_${lang}`);
-
-            // Parse attractions from textarea
-            const attractionsText = attractionsEl ? attractionsEl.value.trim() : '';
-            const attractionsArr = attractionsText.split('\n').map(a => a.trim()).filter(a => a.length > 0);
-
-            if (lang === 'en') {
-                // English is the default
-                if (nameEl) multiLangData.name = nameEl.value.trim();
-                if (subtitleEl) multiLangData.subtitle = subtitleEl.value.trim();
-                if (descEl) multiLangData.description = descEl.value.trim();
-                multiLangData.attractions = attractionsArr;
-            } else {
-                if (nameEl) multiLangData[`name_${lang}`] = nameEl.value.trim();
-                if (subtitleEl) multiLangData[`subtitle_${lang}`] = subtitleEl.value.trim();
-                if (descEl) multiLangData[`description_${lang}`] = descEl.value.trim();
-                multiLangData[`attractions_${lang}`] = attractionsArr;
-            }
-        });
-
+        const name = document.getElementById('destName').value.trim();
+        const subtitle = document.getElementById('destSubtitle').value.trim();
+        const description = document.getElementById('destDescription').value.trim();
         const image = document.getElementById('editDestImage').value;
         const tours = parseInt(document.getElementById('destTours').value) || 0;
+        const attractionsText = document.getElementById('destAttractions').value.trim();
+        const attractions = attractionsText.split('\n').map(a => a.trim()).filter(a => a.length > 0);
 
-        // Validate English (required)
-        if (!multiLangData.name || !multiLangData.subtitle || !multiLangData.description) {
-            alert('Please fill in all English fields (Name, Subtitle, Description)');
+        if (!name || !subtitle || !description) {
+            alert('Please fill in all required fields');
             return;
         }
 
         let destinations = getDestinationsData();
         const index = destinations.findIndex(d => d.id === id);
         if (index !== -1) {
-            const updatedDest = {
+            destinations[index] = {
                 ...destinations[index],
-                ...multiLangData,
+                name: name,
+                subtitle: subtitle,
+                description: description,
                 image: image,
-                tours: tours
+                tours: tours,
+                attractions: attractions
             };
-            destinations[index] = updatedDest;
             saveDestinationsData(destinations);
-
-            // Save to API (primary) - this is the main storage
-            if (window.DestinationsAPI) {
-                DestinationsAPI.update(id, updatedDest)
-                    .then(() => {
-                        console.log('Destination saved to API successfully');
-                    })
-                    .catch(err => console.log('API update failed:', err));
-            }
-
             modal.classList.remove('active');
             showNotification('Destination updated successfully!', 'success');
             loadDestinations();
@@ -3280,249 +2904,6 @@ Samanid Travel Team
             showNotification('Message archived successfully', 'success');
         }
     };
-
-    // ========== Reviews Management ==========
-    let allReviews = [];
-    let currentReviewFilter = 'all';
-
-    window.loadReviews = async function() {
-        console.log('loadReviews called');
-        try {
-            allReviews = await window.ReviewsAPI.getAll();
-            console.log('Reviews loaded:', allReviews.length, allReviews);
-            renderReviews();
-            updateReviewStats();
-        } catch (error) {
-            console.error('Error loading reviews:', error);
-        }
-    }
-
-    function updateReviewStats() {
-        const pending = allReviews.filter(r => r.status === 'pending').length;
-        const approved = allReviews.filter(r => r.status === 'approved').length;
-        const total = allReviews.length;
-
-        const pendingEl = document.getElementById('pendingReviewsCount');
-        const approvedEl = document.getElementById('approvedReviewsCount');
-        const totalEl = document.getElementById('totalReviewsCount');
-
-        if (pendingEl) pendingEl.textContent = pending;
-        if (approvedEl) approvedEl.textContent = approved;
-        if (totalEl) totalEl.textContent = total;
-    }
-
-    function renderReviews() {
-        const reviewsList = document.getElementById('reviewsList');
-        if (!reviewsList) return;
-
-        let filteredReviews = allReviews;
-        if (currentReviewFilter !== 'all') {
-            filteredReviews = allReviews.filter(r => r.status === currentReviewFilter);
-        }
-
-        if (filteredReviews.length === 0) {
-            reviewsList.innerHTML = '<div class="no-data"><i class="fas fa-star"></i><p>No reviews found</p></div>';
-            return;
-        }
-
-        reviewsList.innerHTML = filteredReviews.map(review => `
-            <div class="review-item" data-id="${review.id}">
-                <div class="review-header">
-                    <div class="review-author-info">
-                        <div class="author-avatar"><i class="fas fa-user"></i></div>
-                        <div>
-                            <h4>${escapeHtmlAdmin(review.name)}</h4>
-                            <span class="review-country">${escapeHtmlAdmin(review.country) || 'Unknown'}</span>
-                        </div>
-                    </div>
-                    <div class="review-meta">
-                        <div class="review-rating">
-                            ${'<i class="fas fa-star"></i>'.repeat(review.rating)}${'<i class="far fa-star"></i>'.repeat(5 - review.rating)}
-                        </div>
-                        <span class="status-badge status-${review.status}">${review.status}</span>
-                    </div>
-                </div>
-                <p class="review-text">"${escapeHtmlAdmin(review.text)}"</p>
-                <div class="review-footer">
-                    <span class="review-date"><i class="fas fa-calendar"></i> ${new Date(review.createdAt).toLocaleDateString()}</span>
-                    <div class="review-actions">
-                        ${review.status === 'pending' ? `
-                            <button class="btn-approve" onclick="updateReviewStatus(${review.id}, 'approved')">
-                                <i class="fas fa-check"></i> Approve
-                            </button>
-                            <button class="btn-reject" onclick="updateReviewStatus(${review.id}, 'rejected')">
-                                <i class="fas fa-times"></i> Reject
-                            </button>
-                        ` : ''}
-                        <button class="btn-edit" onclick="editReview(${review.id})">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn-delete" onclick="deleteReview(${review.id})">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    function escapeHtmlAdmin(text) {
-        if (!text) return '';
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
-
-    // Review filter buttons
-    document.querySelectorAll('.reviews-filter .filter-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.reviews-filter .filter-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            currentReviewFilter = btn.dataset.filter;
-            renderReviews();
-        });
-    });
-
-    // Modal star rating
-    const modalStarRating = document.getElementById('modalStarRating');
-    const modalRatingInput = document.getElementById('modalReviewRating');
-
-    if (modalStarRating) {
-        modalStarRating.querySelectorAll('i').forEach(star => {
-            star.addEventListener('click', () => {
-                const rating = parseInt(star.dataset.rating);
-                modalRatingInput.value = rating;
-                modalStarRating.querySelectorAll('i').forEach((s, i) => {
-                    s.classList.toggle('active', i < rating);
-                });
-            });
-        });
-    }
-
-    window.openAddReviewModal = function() {
-        document.getElementById('reviewModalTitle').textContent = 'Add Review';
-        document.getElementById('reviewId').value = '';
-        document.getElementById('modalReviewName').value = '';
-        document.getElementById('modalReviewCountry').value = '';
-        document.getElementById('modalReviewRating').value = '5';
-        document.getElementById('modalReviewText').value = '';
-        document.getElementById('modalReviewStatus').value = 'approved';
-
-        // Reset stars
-        if (modalStarRating) {
-            modalStarRating.querySelectorAll('i').forEach((s, i) => s.classList.toggle('active', i < 5));
-        }
-
-        document.getElementById('reviewModal').classList.add('active');
-    };
-
-    window.editReview = function(id) {
-        const review = allReviews.find(r => r.id === id);
-        if (!review) return;
-
-        document.getElementById('reviewModalTitle').textContent = 'Edit Review';
-        document.getElementById('reviewId').value = id;
-        document.getElementById('modalReviewName').value = review.name;
-        document.getElementById('modalReviewCountry').value = review.country || '';
-        document.getElementById('modalReviewRating').value = review.rating;
-        document.getElementById('modalReviewText').value = review.text;
-        document.getElementById('modalReviewStatus').value = review.status;
-
-        // Set stars
-        if (modalStarRating) {
-            modalStarRating.querySelectorAll('i').forEach((s, i) => s.classList.toggle('active', i < review.rating));
-        }
-
-        document.getElementById('reviewModal').classList.add('active');
-    };
-
-    window.closeReviewModal = function() {
-        document.getElementById('reviewModal').classList.remove('active');
-    };
-
-    window.updateReviewStatus = async function(id, status) {
-        const review = allReviews.find(r => r.id === id);
-        if (!review) return;
-
-        try {
-            await fetch(`${window.API_BASE_URL}/api/reviews/${id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...review, status })
-            });
-            showNotification(`Review ${status}!`, 'success');
-            window.loadReviews();
-        } catch (error) {
-            showNotification('Error updating review', 'error');
-        }
-    };
-
-    window.deleteReview = async function(id) {
-        if (!confirm('Are you sure you want to delete this review?')) return;
-
-        try {
-            await fetch(`${window.API_BASE_URL}/api/reviews/${id}`, { method: 'DELETE' });
-            showNotification('Review deleted!', 'success');
-            window.loadReviews();
-        } catch (error) {
-            showNotification('Error deleting review', 'error');
-        }
-    };
-
-    // Review form submit
-    const reviewModalForm = document.getElementById('reviewModalForm');
-    if (reviewModalForm) {
-        reviewModalForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const id = document.getElementById('reviewId').value;
-            const data = {
-                name: document.getElementById('modalReviewName').value,
-                country: document.getElementById('modalReviewCountry').value,
-                rating: parseInt(document.getElementById('modalReviewRating').value),
-                text: document.getElementById('modalReviewText').value,
-                status: document.getElementById('modalReviewStatus').value
-            };
-
-            try {
-                if (id) {
-                    await fetch(`${window.API_BASE_URL}/api/reviews/${id}`, {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(data)
-                    });
-                    showNotification('Review updated!', 'success');
-                } else {
-                    await fetch(`${window.API_BASE_URL}/api/reviews`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(data)
-                    });
-                    showNotification('Review added!', 'success');
-                }
-                closeReviewModal();
-                window.loadReviews();
-            } catch (error) {
-                showNotification('Error saving review', 'error');
-            }
-        });
-    }
-
-    // Load reviews when navigating to reviews page
-    const navItems = document.querySelectorAll('.sidebar-nav li');
-    navItems.forEach(item => {
-        item.addEventListener('click', () => {
-            if (item.dataset.page === 'reviews') {
-                setTimeout(window.loadReviews, 100);
-            }
-        });
-    });
-
-    // Also preload reviews data
-    setTimeout(() => {
-        console.log('Preloading reviews...');
-        window.loadReviews();
-    }, 500);
 
     console.log('Admin Dashboard loaded successfully!');
 });

@@ -1,9 +1,0 @@
-version: '3.8'
-
-services:
-  samanid-travel:
-    build: .
-    container_name: samanid-travel
-    ports:
-      - "8080:80"
-    restart: unless-stopped

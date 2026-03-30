@@ -4,53 +4,6 @@
 
 document.addEventListener('DOMContentLoaded', function() {
 
-    // ========== Load Company Settings ==========
-    function loadCompanySettings() {
-        const settings = JSON.parse(localStorage.getItem('companySettings'));
-        if (!settings) return;
-
-        // Update header
-        const headerPhone = document.getElementById('headerPhone');
-        const headerPhoneLink = document.getElementById('headerPhoneLink');
-        const headerEmail = document.getElementById('headerEmail');
-        const headerEmailLink = document.getElementById('headerEmailLink');
-
-        if (headerPhone && settings.phone1) {
-            headerPhone.textContent = settings.phone1;
-            if (headerPhoneLink) headerPhoneLink.href = 'tel:' + settings.phone1.replace(/\s/g, '');
-        }
-        if (headerEmail && settings.email) {
-            headerEmail.textContent = settings.email;
-            if (headerEmailLink) headerEmailLink.href = 'mailto:' + settings.email;
-        }
-
-        // Update footer
-        const footerAddress = document.getElementById('footerAddress');
-        const footerPhone1 = document.getElementById('footerPhone1');
-        const footerPhone1Link = document.getElementById('footerPhone1Link');
-        const footerPhone2 = document.getElementById('footerPhone2');
-        const footerPhone2Link = document.getElementById('footerPhone2Link');
-        const footerEmail = document.getElementById('footerEmail');
-        const footerEmailLink = document.getElementById('footerEmailLink');
-
-        if (footerAddress && settings.address) footerAddress.textContent = settings.address;
-        if (footerPhone1 && settings.phone1) {
-            footerPhone1.textContent = settings.phone1;
-            if (footerPhone1Link) footerPhone1Link.href = 'tel:' + settings.phone1.replace(/\s/g, '');
-        }
-        if (footerPhone2 && settings.phone2) {
-            footerPhone2.textContent = settings.phone2;
-            if (footerPhone2Link) footerPhone2Link.href = 'tel:' + settings.phone2.replace(/\s/g, '');
-        }
-        if (footerEmail && settings.email) {
-            footerEmail.textContent = settings.email;
-            if (footerEmailLink) footerEmailLink.href = 'mailto:' + settings.email;
-        }
-    }
-
-    // Load settings on page load
-    loadCompanySettings();
-
     // ========== Default Tours Data (fallback if no localStorage) ==========
     const defaultToursData = [
         { id: 1, name: 'Grand Uzbekistan Discovery', duration: '8 Days', category: 'classic', image: 'images/destinations/samarkand-registan.jpg', badge: 'Best Seller', badgeType: 'best', highlights: ['4 Cities', 'Meals Included', 'All Transfers'], description: 'Explore all major Silk Road cities - Tashkent, Samarkand, Bukhara, and Khiva in one comprehensive journey.', price: '', currency: 'EUR' },
@@ -152,38 +105,17 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.setItem('destinations', JSON.stringify(defaultDestinationsData));
     }
 
-    // API Base URL
-    const API_BASE_URL = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '';
-
-    // Get destinations from localStorage (sync)
+    // Get destinations from localStorage
     function getDestinationsData() {
         return JSON.parse(localStorage.getItem('destinations')) || defaultDestinationsData;
     }
 
-    // Load destinations from API and update localStorage
-    async function loadDestinationsFromAPI() {
-        try {
-            const response = await fetch(`${API_BASE_URL}/api/destinations`);
-            if (response.ok) {
-                const data = await response.json();
-                if (data && data.length > 0) {
-                    localStorage.setItem('destinations', JSON.stringify(data));
-                    return data;
-                }
-            }
-        } catch (error) {
-            console.log('API not available, using localStorage');
-        }
-        return getDestinationsData();
-    }
-
     // ========== Load Destinations Dynamically ==========
-    async function loadDestinationsToPage() {
+    function loadDestinationsToPage() {
         const destinationsGrid = document.querySelector('.destinations-grid');
         if (!destinationsGrid) return;
 
-        // Load from API first
-        const destinations = await loadDestinationsFromAPI();
+        const destinations = getDestinationsData();
         const lang = getCurrentLang();
         destinationsGrid.innerHTML = '';
 
@@ -198,9 +130,8 @@ document.addEventListener('DOMContentLoaded', function() {
             card.setAttribute('data-dest', dest.id);
             card.style.cursor = 'pointer';
 
-            // Get first 2 attractions for highlights (localized)
-            const destAttractions = getLocalizedAttractions(dest, lang);
-            const highlights = destAttractions.slice(0, 2);
+            // Get first 2 attractions for highlights
+            const highlights = (dest.attractions || []).slice(0, 2);
 
             card.innerHTML = `
                 <div class="destination-img">
@@ -238,31 +169,22 @@ document.addEventListener('DOMContentLoaded', function() {
         const modal = document.getElementById('destinationModal');
         if (!modal) return;
 
-        // Get current language
-        const lang = getCurrentLang();
-
-        // Get localized content
-        const destName = getLocalizedValue(dest, 'name', lang);
-        const destSubtitle = getLocalizedValue(dest, 'subtitle', lang);
-        const destDesc = getLocalizedValue(dest, 'description', lang);
-
-        // Set modal content with localized values
+        // Set modal content
         document.getElementById('modalImage').src = dest.image;
-        document.getElementById('modalImage').alt = destName;
-        document.getElementById('modalTitle').textContent = destName;
-        document.getElementById('modalSubtitle').textContent = destSubtitle || '';
+        document.getElementById('modalImage').alt = dest.name;
+        document.getElementById('modalTitle').textContent = dest.name;
+        document.getElementById('modalSubtitle').textContent = dest.subtitle || '';
 
         // Set history/description
         const historyEl = document.getElementById('modalHistory');
         if (historyEl) {
-            historyEl.textContent = destDesc || '';
+            historyEl.textContent = dest.description || '';
         }
 
-        // Set attractions (get localized)
-        const destAttractions = getLocalizedAttractions(dest, lang);
+        // Set attractions
         const attractionsEl = document.getElementById('modalAttractions');
-        if (attractionsEl && destAttractions.length > 0) {
-            attractionsEl.innerHTML = destAttractions.map(a => `<li>${a}</li>`).join('');
+        if (attractionsEl && dest.attractions) {
+            attractionsEl.innerHTML = dest.attractions.map(a => `<li>${a}</li>`).join('');
         }
 
         // Set facts (use attractions as facts for dynamic destinations)
@@ -309,21 +231,6 @@ document.addEventListener('DOMContentLoaded', function() {
         return obj[field] || '';
     }
 
-    // Get localized attractions array
-    function getLocalizedAttractions(obj, lang) {
-        // Try localized attractions first
-        const localizedKey = `attractions_${lang}`;
-        if (obj[localizedKey] && Array.isArray(obj[localizedKey]) && obj[localizedKey].length > 0) {
-            return obj[localizedKey];
-        }
-        // Fallback to English attractions
-        if (obj.attractions_en && Array.isArray(obj.attractions_en) && obj.attractions_en.length > 0) {
-            return obj.attractions_en;
-        }
-        // Fallback to default attractions
-        return obj.attractions || [];
-    }
-
     // ========== Load Tours Dynamically ==========
     function loadToursToPage() {
         const toursGrid = document.getElementById('toursGrid');
@@ -353,28 +260,9 @@ document.addEventListener('DOMContentLoaded', function() {
             card.className = 'tour-card';
             card.setAttribute('data-category', tour.category);
 
-            // Build gallery images array
-            const galleryImages = [tour.image];
-            if (tour.image2) galleryImages.push(tour.image2);
-            if (tour.image3) galleryImages.push(tour.image3);
-            const hasGallery = galleryImages.length > 1;
-
             card.innerHTML = `
-                <div class="tour-image-wrapper">
-                    <div class="tour-gallery" data-current="0">
-                        ${galleryImages.map((img, idx) => `
-                            <div class="tour-image ${idx === 0 ? 'active' : ''}" style="background-image: url('${img}');" data-index="${idx}">
-                                <div class="tour-overlay"></div>
-                            </div>
-                        `).join('')}
-                    </div>
-                    ${hasGallery ? `
-                        <button class="gallery-nav gallery-prev" onclick="event.stopPropagation(); slideTourGallery(this, -1)"><i class="fas fa-chevron-left"></i></button>
-                        <button class="gallery-nav gallery-next" onclick="event.stopPropagation(); slideTourGallery(this, 1)"><i class="fas fa-chevron-right"></i></button>
-                        <div class="gallery-dots">
-                            ${galleryImages.map((_, idx) => `<span class="gallery-dot ${idx === 0 ? 'active' : ''}" data-index="${idx}"></span>`).join('')}
-                        </div>
-                    ` : ''}
+                <div class="tour-image" style="background-image: url('${tour.image}');">
+                    <div class="tour-overlay"></div>
                     ${tour.badge ? `<div class="tour-badge ${tour.badgeType || ''}">${tour.badge}</div>` : ''}
                     <div class="tour-duration"><i class="fas fa-clock"></i> ${durationNum} <span data-i18n="days">Days</span></div>
                 </div>
@@ -432,26 +320,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
-
-    // ========== Tour Gallery Slider ==========
-    window.slideTourGallery = function(btn, direction) {
-        const wrapper = btn.closest('.tour-image-wrapper');
-        const gallery = wrapper.querySelector('.tour-gallery');
-        const images = gallery.querySelectorAll('.tour-image');
-        const dots = wrapper.querySelectorAll('.gallery-dot');
-        const total = images.length;
-
-        let current = parseInt(gallery.dataset.current) || 0;
-        current = (current + direction + total) % total;
-        gallery.dataset.current = current;
-
-        images.forEach((img, idx) => {
-            img.classList.toggle('active', idx === current);
-        });
-        dots.forEach((dot, idx) => {
-            dot.classList.toggle('active', idx === current);
-        });
-    };
 
     // ========== Initialize Inquire Buttons ==========
     function initInquireButtons() {
@@ -804,28 +672,27 @@ ${data.message || 'No message'}
                 }).catch(() => console.log('Telegram notification skipped'));
             });
 
-            // API URL (change for production)
-            const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '';
-
-            // Save to backend database
-            fetch(`${API_URL}/api/bookings`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    fullName: data.name,
-                    email: data.email,
-                    phone: data.phone,
-                    country: data.country,
-                    tourType: data.tour,
-                    travelDate: data.travelDate,
-                    travelers: data.travelers,
-                    message: data.message
-                })
-            }).catch(() => console.log('Backend save skipped'));
-
             // Send email via EmailJS
             emailjs.send('service_4ykfwpq', 'template_mms210m', emailParams)
                 .then(function() {
+                    // Store in localStorage for admin panel
+                    let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+                    const booking = {
+                        id: Date.now(),
+                        fullName: data.name,
+                        email: data.email,
+                        phone: data.phone,
+                        country: data.country,
+                        tourType: data.tour,
+                        travelDate: data.travelDate,
+                        travelers: data.travelers,
+                        message: data.message,
+                        date: new Date().toISOString(),
+                        status: 'new'
+                    };
+                    bookings.unshift(booking);
+                    localStorage.setItem('bookings', JSON.stringify(bookings));
+
                     showNotification(getTranslation('form_success', 'Thank you! Your inquiry has been submitted. We will contact you soon.'), 'success');
                     contactForm.reset();
                 })
@@ -1286,186 +1153,6 @@ ${data.message || 'No message'}
             });
         });
     }
-
-    // ========== Reviews System ==========
-    const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '';
-
-    // Load approved reviews
-    async function loadReviews() {
-        const reviewsTrack = document.getElementById('reviewsTrack');
-        if (!reviewsTrack) return;
-
-        try {
-            const response = await fetch(`${API_BASE}/api/reviews/approved`);
-            const reviews = await response.json();
-
-            if (reviews.length === 0) {
-                reviewsTrack.innerHTML = `
-                    <div class="review-card">
-                        <div class="review-stars">
-                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                        </div>
-                        <p class="review-text" data-i18n="no_reviews">Be the first to share your experience with SamanidTravel!</p>
-                        <div class="review-author">
-                            <div class="author-avatar"><i class="fas fa-user-plus"></i></div>
-                            <div class="author-info"><h4 data-i18n="your_review_here">Your review here</h4></div>
-                        </div>
-                    </div>
-                `;
-                return;
-            }
-
-            reviewsTrack.innerHTML = reviews.map(review => `
-                <div class="review-card">
-                    <div class="review-stars">
-                        ${'<i class="fas fa-star"></i>'.repeat(review.rating)}${'<i class="far fa-star"></i>'.repeat(5 - review.rating)}
-                    </div>
-                    <p class="review-text">"${escapeHtml(review.text)}"</p>
-                    <div class="review-author">
-                        <div class="author-avatar"><i class="fas fa-user"></i></div>
-                        <div class="author-info">
-                            <h4>${escapeHtml(review.name)}</h4>
-                            <span>${escapeHtml(review.country) || ''}</span>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-
-            // Reinitialize slider
-            initReviewsSlider();
-        } catch (error) {
-            console.log('Could not load reviews:', error);
-        }
-    }
-
-    // Escape HTML for security
-    function escapeHtml(text) {
-        if (!text) return '';
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
-
-    // Initialize reviews slider
-    function initReviewsSlider() {
-        const track = document.getElementById('reviewsTrack');
-        const prevBtn = document.querySelector('.reviews-btn.prev');
-        const nextBtn = document.querySelector('.reviews-btn.next');
-        if (!track || !prevBtn || !nextBtn) return;
-
-        const cards = track.querySelectorAll('.review-card');
-        if (cards.length <= 1) return;
-
-        let currentIndex = 0;
-        const cardWidth = cards[0].offsetWidth + 30; // including gap
-
-        function updateSlider() {
-            track.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
-        }
-
-        nextBtn.addEventListener('click', () => {
-            currentIndex = (currentIndex + 1) % cards.length;
-            updateSlider();
-        });
-
-        prevBtn.addEventListener('click', () => {
-            currentIndex = (currentIndex - 1 + cards.length) % cards.length;
-            updateSlider();
-        });
-    }
-
-    // Star rating interaction
-    const starRating = document.getElementById('starRating');
-    const ratingInput = document.getElementById('reviewRating');
-
-    if (starRating && ratingInput) {
-        const stars = starRating.querySelectorAll('i');
-
-        stars.forEach(star => {
-            star.addEventListener('click', () => {
-                const rating = parseInt(star.dataset.rating);
-                ratingInput.value = rating;
-
-                stars.forEach((s, index) => {
-                    s.classList.toggle('active', index < rating);
-                });
-            });
-
-            star.addEventListener('mouseenter', () => {
-                const rating = parseInt(star.dataset.rating);
-                stars.forEach((s, index) => {
-                    s.style.color = index < rating ? '#c9a227' : '#ddd';
-                });
-            });
-        });
-
-        starRating.addEventListener('mouseleave', () => {
-            const currentRating = parseInt(ratingInput.value);
-            stars.forEach((s, index) => {
-                s.style.color = '';
-                s.classList.toggle('active', index < currentRating);
-            });
-        });
-    }
-
-    // Review form submission
-    const reviewForm = document.getElementById('reviewForm');
-    const reviewFormMessage = document.getElementById('reviewFormMessage');
-
-    if (reviewForm) {
-        reviewForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const name = document.getElementById('reviewName').value.trim();
-            const country = document.getElementById('reviewCountry').value.trim();
-            const rating = parseInt(document.getElementById('reviewRating').value);
-            const text = document.getElementById('reviewText').value.trim();
-
-            if (!name || !text) {
-                reviewFormMessage.className = 'form-message error';
-                reviewFormMessage.textContent = 'Please fill in your name and review.';
-                return;
-            }
-
-            const submitBtn = reviewForm.querySelector('button[type="submit"]');
-            const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
-            submitBtn.disabled = true;
-
-            try {
-                const response = await fetch(`${API_BASE}/api/reviews`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, country, rating, text })
-                });
-
-                const result = await response.json();
-
-                if (response.ok) {
-                    reviewFormMessage.className = 'form-message success';
-                    reviewFormMessage.textContent = 'Thank you! Your review has been submitted and will appear after approval.';
-                    reviewForm.reset();
-                    // Reset stars
-                    if (starRating) {
-                        starRating.querySelectorAll('i').forEach((s, i) => s.classList.toggle('active', i < 5));
-                        ratingInput.value = 5;
-                    }
-                } else {
-                    throw new Error(result.error || 'Failed to submit review');
-                }
-            } catch (error) {
-                reviewFormMessage.className = 'form-message error';
-                reviewFormMessage.textContent = 'Sorry, there was an error. Please try again.';
-                console.error('Review submit error:', error);
-            } finally {
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-            }
-        });
-    }
-
-    // Load reviews on page load
-    loadReviews();
 
     console.log('SamanidTravel website loaded successfully!');
 });

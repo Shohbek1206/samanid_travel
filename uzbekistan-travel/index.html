@@ -13,6 +13,14 @@
 
     <!-- Styles -->
     <link rel="stylesheet" href="css/style.css">
+
+    <!-- EmailJS -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script>
+        (function(){
+            emailjs.init("XIc0q2tuIZe4TByqQ");
+        })();
+    </script>
 </head>
 <body>
     <!-- Preloader -->
@@ -27,8 +35,8 @@
     <div class="top-bar">
         <div class="container">
             <div class="top-bar-left">
-                <a href="tel:+998914044459"><i class="fas fa-phone"></i> <span data-i18n="phone1">+998 91 404 44 59</span></a>
-                <a href="mailto:bexruz@samanidtraveluz.com"><i class="fas fa-envelope"></i> bexruz@samanidtraveluz.com</a>
+                <a href="tel:+998914044459" id="headerPhoneLink"><i class="fas fa-phone"></i> <span id="headerPhone" data-i18n="phone1">+998 91 404 44 59</span></a>
+                <a href="mailto:bexruz@samanidtraveluz.com" id="headerEmailLink"><i class="fas fa-envelope"></i> <span id="headerEmail">bexruz@samanidtraveluz.com</span></a>
             </div>
             <div class="top-bar-right">
                 <div class="payment-methods">
@@ -298,85 +306,13 @@
             </div>
 
             <div class="reviews-slider">
-                <div class="reviews-track">
-                    <div class="review-card">
+                <div class="reviews-track" id="reviewsTrack">
+                    <!-- Reviews will be loaded dynamically -->
+                    <div class="review-card loading-placeholder">
                         <div class="review-stars">
                             <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                         </div>
-                        <p class="review-text" data-i18n="review1_text">"An absolutely magical experience! SamanidTravel exceeded all our expectations. The guides were incredibly knowledgeable and the organization was flawless. Uzbekistan is now one of our favorite destinations."</p>
-                        <div class="review-author">
-                            <div class="author-avatar">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <div class="author-info">
-                                <h4>Thomas & Maria Schmidt</h4>
-                                <span data-i18n="review1_location">Germany</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="review-card">
-                        <div class="review-stars">
-                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                        </div>
-                        <p class="review-text" data-i18n="review2_text">"Professional, friendly, and truly passionate about their country. The Silk Road tour was a dream come true. Every detail was perfectly arranged, from comfortable hotels to authentic local meals."</p>
-                        <div class="review-author">
-                            <div class="author-avatar">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <div class="author-info">
-                                <h4>James Anderson</h4>
-                                <span data-i18n="review2_location">United Kingdom</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="review-card">
-                        <div class="review-stars">
-                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                        </div>
-                        <p class="review-text" data-i18n="review3_text">"Viaje increible! The team at SamanidTravel made us feel like family. Their knowledge of history and culture added so much depth to our experience. Highly recommended!"</p>
-                        <div class="review-author">
-                            <div class="author-avatar">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <div class="author-info">
-                                <h4>Carlos & Elena Rodriguez</h4>
-                                <span data-i18n="review3_location">Spain</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="review-card">
-                        <div class="review-stars">
-                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                        </div>
-                        <p class="review-text" data-i18n="review4_text">"Замечательное путешествие! Прекрасная организация, великолепные гиды, незабываемые впечатления. Узбекистан покорил наши сердца. Спасибо SamanidTravel!"</p>
-                        <div class="review-author">
-                            <div class="author-avatar">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <div class="author-info">
-                                <h4>Алексей и Наталья Петровы</h4>
-                                <span data-i18n="review4_location">Russia</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="review-card">
-                        <div class="review-stars">
-                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                        </div>
-                        <p class="review-text" data-i18n="review5_text">"非常专业的旅行社！导游知识渊博，行程安排合理。乌兹别克斯坦是一个令人惊叹的目的地，感谢SamanidTravel让我们的旅行如此完美！"</p>
-                        <div class="review-author">
-                            <div class="author-avatar">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <div class="author-info">
-                                <h4>王伟 & 李娜</h4>
-                                <span data-i18n="review5_location">China</span>
-                            </div>
-                        </div>
+                        <p class="review-text" data-i18n="loading_reviews">Loading reviews...</p>
                     </div>
                 </div>
 
@@ -384,6 +320,40 @@
                     <button class="reviews-btn prev"><i class="fas fa-chevron-left"></i></button>
                     <button class="reviews-btn next"><i class="fas fa-chevron-right"></i></button>
                 </div>
+            </div>
+
+            <!-- Leave a Review Form -->
+            <div class="leave-review">
+                <h3 data-i18n="leave_review_title">Share Your Experience</h3>
+                <form id="reviewForm" class="review-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="reviewName" data-i18n="your_name">Your Name</label>
+                            <input type="text" id="reviewName" required placeholder="John Smith">
+                        </div>
+                        <div class="form-group">
+                            <label for="reviewCountry" data-i18n="your_country">Your Country</label>
+                            <input type="text" id="reviewCountry" placeholder="United States">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="your_rating">Your Rating</label>
+                        <div class="star-rating" id="starRating">
+                            <i class="fas fa-star" data-rating="1"></i>
+                            <i class="fas fa-star" data-rating="2"></i>
+                            <i class="fas fa-star" data-rating="3"></i>
+                            <i class="fas fa-star" data-rating="4"></i>
+                            <i class="fas fa-star active" data-rating="5"></i>
+                        </div>
+                        <input type="hidden" id="reviewRating" value="5">
+                    </div>
+                    <div class="form-group">
+                        <label for="reviewText" data-i18n="your_review">Your Review</label>
+                        <textarea id="reviewText" rows="4" required placeholder="Tell us about your experience..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" data-i18n="submit_review">Submit Review</button>
+                </form>
+                <div id="reviewFormMessage" class="form-message"></div>
             </div>
 
             <div class="reviews-platforms">
@@ -439,10 +409,10 @@
                     </div>
 
                     <div class="contact-social">
-                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-telegram-plane"></i></a>
-                        <a href="https://wa.me/998914044459" class="social-link"><i class="fab fa-whatsapp"></i></a>
+                        <a href="https://www.instagram.com/samanidtravel.uz" target="_blank" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.facebook.com/share/17e73w5EDD/" target="_blank" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://t.me/samanidtraveluz" target="_blank" class="social-link"><i class="fab fa-telegram-plane"></i></a>
+                        <a href="https://wa.me/998914044459" target="_blank" class="social-link"><i class="fab fa-whatsapp"></i></a>
                     </div>
 
                     <div class="payment-info">
@@ -573,10 +543,10 @@
                         <img src="images/logo.png" alt="SamanidTravel" class="footer-logo">
                         <p class="footer-desc" data-i18n="footer_desc">SamanidTravel is a licensed tour operator based in Bukhara, Uzbekistan, specializing in authentic Central Asian travel experiences.</p>
                         <div class="footer-social">
-                            <a href="#"><i class="fab fa-instagram"></i></a>
-                            <a href="#"><i class="fab fa-facebook-f"></i></a>
-                            <a href="#"><i class="fab fa-telegram-plane"></i></a>
-                            <a href="https://wa.me/998914044459"><i class="fab fa-whatsapp"></i></a>
+                            <a href="https://www.instagram.com/samanidtravel.uz" target="_blank"><i class="fab fa-instagram"></i></a>
+                            <a href="https://www.facebook.com/share/17e73w5EDD/" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                            <a href="https://t.me/samanidtraveluz" target="_blank"><i class="fab fa-telegram-plane"></i></a>
+                            <a href="https://wa.me/998914044459" target="_blank"><i class="fab fa-whatsapp"></i></a>
                         </div>
                     </div>
 
@@ -604,11 +574,11 @@
 
                     <div class="footer-col">
                         <h4 data-i18n="footer_contact">Contact Us</h4>
-                        <ul class="footer-contact">
-                            <li><i class="fas fa-map-marker-alt"></i> Mustakillik st 56/1, Bukhara</li>
-                            <li><i class="fas fa-phone"></i> <a href="tel:+998914044459">+998 91 404 44 59</a></li>
-                            <li><i class="fas fa-phone"></i> <a href="tel:+998907155195">+998 90 715 51 95</a></li>
-                            <li><i class="fas fa-envelope"></i> <a href="mailto:bexruz@samanidtraveluz.com">bexruz@samanidtraveluz.com</a></li>
+                        <ul class="footer-contact" id="footerContactInfo">
+                            <li><i class="fas fa-map-marker-alt"></i> <span id="footerAddress">Mustakillik st 56/1, Bukhara</span></li>
+                            <li><i class="fas fa-phone"></i> <a href="tel:+998914044459" id="footerPhone1Link"><span id="footerPhone1">+998 91 404 44 59</span></a></li>
+                            <li><i class="fas fa-phone"></i> <a href="tel:+998907155195" id="footerPhone2Link"><span id="footerPhone2">+998 90 715 51 95</span></a></li>
+                            <li><i class="fas fa-envelope"></i> <a href="mailto:bexruz@samanidtraveluz.com" id="footerEmailLink"><span id="footerEmail">bexruz@samanidtraveluz.com</span></a></li>
                         </ul>
                     </div>
                 </div>
